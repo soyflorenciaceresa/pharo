@@ -1,0 +1,47 @@
+:root {
+  /* Figma — Pharo Design System (extraído vía get_variable_defs / get_design_context) */
+  --color-primary-default: #4059fd;
+  --color-primary-pressed: #2d3eb1;
+  --color-primary-disabled: #d9deff;
+  --color-surface-inverse: #061e30;
+  --color-surface-hover: #f7f8fa;
+  --color-text-inverse: #ffffff;
+  --color-danger-default: #dc2626;
+  --color-border-default: #e3e5ea;
+  --color-ink-300: #c8ced1;
+  --color-ink-500: #8f9aa2;
+  --color-ink-800: #243949;
+  --color-surface-default: #ffffff;
+  --color-surface-selected: #f1f2f4;
+  --color-text-default: #061e30;
+  --color-text-secondary: #6a7883;
+  --color-surface-card: #ffffff;
+  --color-accent-metric: #7c3aed;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-md-dense: 12px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-3: 6px;
+  --radius-nav-md: 10px;
+  --radius-card: 16px;
+  --radius-full: 9999px;
+
+  --size-header-height: 64px;
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Validado contra producción (NavMenu.razor real) — sin variable equivalente
+     confirmada en Figma todavía. Ajustar acá cuando se documenten en el archivo
+     de tokens de Figma. */
+  --sidebar-bg-hover: #0d2c44;
+  --sidebar-accent: #448eff;
+  --sidebar-w-collapsed: 3.5rem;
+  --sidebar-w-expanded: 18rem;
+}
