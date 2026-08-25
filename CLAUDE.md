@@ -56,18 +56,19 @@ npm run dev
 import Sidebar from '../../components/Sidebar/Sidebar.jsx';
 
 <Sidebar
-  brandLabel="PHARO°"
-  brandIcon="bi-cart"
+  brandLabel="Ports"
+  brandIcon="icon-gear"
+  brandAccent="violet"
   homeHref="/"
   groups={[
-    { label: 'Maestros', icon: 'bi-archive-fill', items: [
-      { label: 'Proveedores', icon: 'bi-building', href: '/proveedores' },
+    { label: 'Maestros', icon: 'icon-maestros', items: [
+      { label: 'Buque', icon: 'icon-buques', href: '/buques' },
     ]},
   ]}
   companies={[{ id: 'pn', name: 'Puerto Norte S.A.' }]}
   defaultActiveCompanyId="pn"
   user={{ name: 'Carlos Mendoza', email: 'carlos@mendoza.com', role: 'Administrador' }}
-  defaultActiveHref="/proveedores"
+  defaultActiveHref="/buques"
   onNavigate={({ href, label }) => ...}
   onCompanyChange={(company) => ...}
   onLogout={() => ...}
@@ -77,7 +78,8 @@ import Sidebar from '../../components/Sidebar/Sidebar.jsx';
 
 - **Comportamiento fijo (no tocar):** expande al hover, colapsa al mouse-leave (no es toggle por click); botón de pin fija el estado expandido; grupos de navegación se abren de a uno; selector de empresa y menú de usuario son desplegables independientes (mutuamente excluyentes) — el de usuario expande hacia arriba.
 - El ítem de nav activo y la empresa activa son semi-controlados: se inicializan por `defaultActiveHref`/`defaultActiveCompanyId`, y a partir de ahí el propio componente mueve el estado, avisando por los callbacks.
-- **Íconos:** prefijo `bi-*`, definidos en `app/src/icons/icons.jsx` (aproximaciones dibujadas a mano de Bootstrap Icons, pendientes de reemplazar por los SVG reales).
+- **`brandIcon`/`brandLabel`/`brandAccent` son por módulo** — cada pantalla que use `Sidebar` pasa el ícono/nombre/color de su propio módulo (ej. "Ports" arriba). `brandAccent` es uno de los 8 nombres fijos de la paleta de acento (`blue` default, `violet`, `green`, `amber`, `red`, `cyan`, `pink`, `indigo` — mismos tokens `color/accent/<n>`/`color/accent/<n>-subtle` que `CardModule`), tiñe el fondo+ícono del badge vía `[data-accent]` en `Sidebar.module.css`. `groups` (items/subitems) también son 100% por módulo — no hay contenido de nav "por defecto".
+- **Íconos:** prefijo `bi-*` = aproximaciones dibujadas a mano de Bootstrap Icons; prefijo `icon-*` (`icon-gear`, `icon-maestros`, `icon-buques`, `icon-clientes`, `icon-tipos-turnos`, `icon-nueva-operacion`) = trazas vectoriales exactas de Figma (página *Sidebar*, nodos 442:598, 450:679, 450:694, 450:693, 450:692, 450:691, 450:690) — no dibujadas a mano. `icon-gear` es compartido por el badge de marca (Isotype, 442:602) y por el ítem "Procesos" (450:679): mismo glyph en Figma.
 
 ### `TopBar` — `app/src/components/TopBar/`
 
@@ -149,6 +151,23 @@ Origen: Figma, página *Cards*, componente `Card-Module` (431:2608), variantes D
 />
 ```
 
+**Pendiente de traer a código:** variantes de color por módulo, ya definidas en Figma (sección *Card-Module — Color accents*, página *Cards*, nodos `445:16`–`445:70`) — 8 colores fijos, 7 con su propio componente de referencia (`Card-Module / Violet`, `/Green`, `/Amber`, `/Red`, `/Cyan`, `/Pink`, `/Indigo`); **Blue no tiene componente propio** — es el mismo `Propiedad 1=Default` (431:2607) de siempre, que ya usa esos tokens y ya es el maestro real de las instancias colocadas en el Home (no se duplicó para no romperlas). Cada color tiene un par de variables en Figma (colección *Alias*), ya con code syntax WEB listo para `tokens.css`:
+
+| Color | Ícono (`color/accent/<n>`) | Fondo badge (`color/accent/<n>-subtle`) |
+|---|---|---|
+| Blue | `--color-primary-default` (existente) | `--color-primary-disabled` (existente) |
+| Violet | `--color-accent-violet` `#7c3aed` | `--color-accent-violet-subtle` `#ede9fe` |
+| Green | `--color-accent-green` `#16a34a` | `--color-accent-green-subtle` `#dcfce7` |
+| Amber | `--color-accent-amber` `#d97706` | `--color-accent-amber-subtle` `#fef3c7` |
+| Red | `--color-accent-red` `#dc2626` | `--color-accent-red-subtle` `#fee2e2` |
+| Cyan | `--color-accent-cyan` `#0891b2` | `--color-accent-cyan-subtle` `#cffafe` |
+| Pink | `--color-accent-pink` `#db2777` | `--color-accent-pink-subtle` `#fce7f3` |
+| Indigo | `--color-accent-indigo` `#4f46e5` | `--color-accent-indigo-subtle` `#e0e7ff` |
+
+Nota: `color/accent/red` es un token nuevo y distinto de `color/danger/default` (mismo tono, pero semánticamente separado — uno es decorativo, el otro es de error) para no acoplar el color de un módulo al color de un estado de error.
+
+Cuando se implemente en código: agregar prop `accent` a `CardModule.jsx` (uno de los 8 nombres de la tabla), sumar los pares de tokens a `tokens/tokens.css`, y asignar `accent` por módulo en el array `MODULES` de `modules/Main/Home/Home.jsx`.
+
 **Ambas cards comparten:**
 - Mismo shell que `CardMetric` (`surface/card`, `color/border/default`, `radius/card`, ancho fluido `min-width: 169px`) pero sin la franja de acento — no se refactorizó a un "Card" base compartido todavía, cada una tiene su propio CSS.
 - Hover es solo sombra sutil (dos capas, sin cambio de borde) — distinto del hover de `CardMetric`, que sí tiene borde + sombra más marcada. Son recetas de sombra reales de Figma, no inventadas.
@@ -217,10 +236,12 @@ import LayoutBase from '../../templates/LayoutBase/LayoutBase.jsx';
 Un folder por módulo de negocio. Cada pantalla real va en `modules/<Módulo>/<Pantalla>/<Pantalla>.jsx`.
 
 - **`Main/Home/`** — pantalla raíz de la app (`Desktop — Layout Home`, Figma 429:2249), home del módulo `Main`. Es lo que renderiza `App.jsx` hoy. Compone, de arriba a abajo:
-  1. Sección "Acceso rápido" — fila de 6 `CardQuickAccess` (uno por cada ítem de Maestros/Procesos del sidebar).
+  1. Sección "Acceso rápido" — fila de `CardQuickAccess` (uno por cada ítem de Maestros/Procesos del sidebar).
   2. Fila inferior de dos columnas: a la izquierda "Módulos" — grilla de 4 columnas de `CardModule` (12 por página) + `Pagination`; a la derecha "Actividad reciente" (302px fijo) — `ActivityList` con 6 ítems.
 
   No usa `CardMetric` — esa fila no forma parte del frame 429:2249 en Figma (se había agregado antes por error a partir de una versión previa de la pantalla; se sacó).
+
+  **El `Sidebar` de esta pantalla usa contenido real del módulo "Ports"** (brand `Ports` + acento violeta, Maestros → Buque/Clientes/Tipos de turnos, Procesos → Nueva Operación — ver props de `Sidebar` arriba) a modo de ejemplo, porque hoy es la única pantalla que renderiza el componente. Cuando exista una pantalla propia para el módulo Ports (`modules/Ports/...`), este contenido debería vivir ahí y `Main/Home` volver a un sidebar genérico/neutro.
 
   **Todos los datos de esta pantalla son de ejemplo** — reemplazar por datos reales cuando estén disponibles. En particular: el diseño de Figma tenía "Acceso rápido"/"Módulos"/"Actividad" con la misma card repetida N veces (placeholder de diseño); se completaron con contenido de ejemplo distinto por card, conservando el primer valor real de cada grupo (`Ports / Gestión de operaciones portuarias` para Módulos, `Carlos M. / Aprobó turno de camión` para Actividad). La sección derecha decía "Módulos" en Figma pero el contenido es un feed de actividad — se corrigió el título a "Actividad reciente" acá.
 

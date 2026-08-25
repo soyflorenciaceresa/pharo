@@ -18,6 +18,7 @@ function cx(...classes) {
 export default function Sidebar({
   brandLabel = '',
   brandIcon = 'bi-cart',
+  brandAccent = 'blue',
   homeHref = '/',
   groups = [],
   companies = [],
@@ -98,7 +99,7 @@ export default function Sidebar({
           aria-label="Ir al inicio"
           onClick={() => onNavigate?.({ href: homeHref, label: 'home' })}
         >
-          <span className={styles.brandIconBox}>
+          <span className={styles.brandIconBox} data-accent={brandAccent}>
             <Icon name={brandIcon} size={16} />
           </span>
           <span className={styles.brandLabel}>{brandLabel}</span>
@@ -118,8 +119,6 @@ export default function Sidebar({
           </span>
         </button>
       </div>
-
-      <div className={styles.divider} />
 
       <div className={cx(styles.companyWrap, companyOpen && styles.open)} ref={companyRef}>
         <button

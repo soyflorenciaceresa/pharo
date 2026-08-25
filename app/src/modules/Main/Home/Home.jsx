@@ -6,23 +6,24 @@ import ActivityList from '../../../components/ActivityList/ActivityList.jsx';
 import Pagination from '../../../components/Pagination/Pagination.jsx';
 import styles from './Home.module.css';
 
+// Contenido del módulo "Ports" (Figma: brand Isotype/Logotype 442:602/450:659,
+// íconos de nav 450:679–450:694). El sidebar es genérico — brandIcon/brandLabel/
+// brandAccent/groups van a cambiar según el módulo que use este componente.
 const GROUPS = [
   {
     label: 'Maestros',
-    icon: 'bi-archive-fill',
+    icon: 'icon-maestros',
     items: [
-      { label: 'Proveedores', icon: 'bi-building', href: '/proveedores' },
-      { label: 'Artículos', icon: 'bi-box-seam', href: '/articulos' },
-      { label: 'Depósitos', icon: 'bi-house-door', href: '/depositos' },
+      { label: 'Buque', icon: 'icon-buques', href: '/buques' },
+      { label: 'Clientes', icon: 'icon-clientes', href: '/clientes' },
+      { label: 'Tipos de turnos', icon: 'icon-tipos-turnos', href: '/tipos-turnos' },
     ],
   },
   {
     label: 'Procesos',
-    icon: 'bi-grid-1x2-fill',
+    icon: 'icon-gear',
     items: [
-      { label: 'Órdenes de compra', icon: 'bi-receipt', href: '/ordenes-compra' },
-      { label: 'Recepciones', icon: 'bi-inbox', href: '/recepciones' },
-      { label: 'Facturas', icon: 'bi-file-earmark-text', href: '/facturas' },
+      { label: 'Nueva Operación', icon: 'icon-nueva-operacion', href: '/nueva-operacion' },
     ],
   },
 ];
@@ -41,12 +42,10 @@ const USER = {
 
 // Ejemplo — reemplazar por los maestros/procesos que el usuario haya marcado como favoritos.
 const QUICK_ACCESS = [
-  { icon: 'bi-building', title: 'Proveedores', subtitle: 'Maestros', href: '/proveedores' },
-  { icon: 'bi-box-seam', title: 'Artículos', subtitle: 'Maestros', href: '/articulos' },
-  { icon: 'bi-house-door', title: 'Depósitos', subtitle: 'Maestros', href: '/depositos' },
-  { icon: 'bi-receipt', title: 'Órdenes de compra', subtitle: 'Procesos', href: '/ordenes-compra' },
-  { icon: 'bi-inbox', title: 'Recepciones', subtitle: 'Procesos', href: '/recepciones' },
-  { icon: 'bi-file-earmark-text', title: 'Facturas', subtitle: 'Procesos', href: '/facturas' },
+  { icon: 'icon-buques', title: 'Buque', subtitle: 'Maestros', href: '/buques' },
+  { icon: 'icon-clientes', title: 'Clientes', subtitle: 'Maestros', href: '/clientes' },
+  { icon: 'icon-tipos-turnos', title: 'Tipos de turnos', subtitle: 'Maestros', href: '/tipos-turnos' },
+  { icon: 'icon-nueva-operacion', title: 'Nueva Operación', subtitle: 'Procesos', href: '/nueva-operacion' },
 ];
 
 // Ejemplo — el diseño de Figma repetía "Ports" x14; se completó con nombres de
@@ -90,8 +89,9 @@ export default function Home() {
   return (
     <LayoutBase
       sidebarProps={{
-        brandLabel: 'PHARO°',
-        brandIcon: 'bi-cart',
+        brandLabel: 'Ports',
+        brandIcon: 'icon-gear',
+        brandAccent: 'violet',
         homeHref: '/',
         groups: GROUPS,
         companies: COMPANIES,

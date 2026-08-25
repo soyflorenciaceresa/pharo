@@ -18,6 +18,23 @@
   --color-surface-card: #ffffff;
   --color-accent-metric: #7c3aed;
 
+  /* Paleta de acento por módulo (Card-Module en Figma, sección "Color accents"
+     — 8 colores fijos, uno de ellos usado también en el brand icon del sidebar). */
+  --color-accent-violet: #7c3aed;
+  --color-accent-violet-subtle: #ede8fd;
+  --color-accent-green: #16a34a;
+  --color-accent-green-subtle: #dcfce7;
+  --color-accent-amber: #d97706;
+  --color-accent-amber-subtle: #fef3c7;
+  --color-accent-red: #dc2626;
+  --color-accent-red-subtle: #fee2e2;
+  --color-accent-cyan: #0891b2;
+  --color-accent-cyan-subtle: #cffafe;
+  --color-accent-pink: #db2777;
+  --color-accent-pink-subtle: #fce7f3;
+  --color-accent-indigo: #4f46e5;
+  --color-accent-indigo-subtle: #e0e7ff;
+
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
