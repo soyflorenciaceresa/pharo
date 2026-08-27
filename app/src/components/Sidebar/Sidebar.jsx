@@ -162,10 +162,11 @@ export default function Sidebar({
                 type="button"
                 className={styles.groupHeader}
                 aria-expanded={openGroup === gi}
+                title={group.label || ''}
                 onClick={() => setOpenGroup(openGroup === gi ? -1 : gi)}
               >
                 <span className={styles.icon}>
-                  <Icon name={group.icon || 'bi-archive-fill'} size={20} />
+                  <Icon name={group.icon || 'bi-archive-fill'} size={16} />
                 </span>
                 <span className={styles.label}>{group.label || ''}</span>
                 <span className={styles.chevron}>
@@ -180,13 +181,14 @@ export default function Sidebar({
                       href={item.href || '#'}
                       className={styles.item}
                       aria-current={item.href === activeHref}
+                      title={item.label || ''}
                       onClick={(e) => {
                         e.preventDefault();
                         selectItem(item);
                       }}
                     >
                       <span className={styles.icon}>
-                        <Icon name={item.icon || 'bi-box-seam'} size={20} />
+                        <Icon name={item.icon || 'bi-box-seam'} size={16} />
                       </span>
                       <span className={styles.label}>{item.label || ''}</span>
                       <span className={styles.ext}>

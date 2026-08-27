@@ -4,67 +4,39 @@ import CardQuickAccess from '../../../components/CardQuickAccess/CardQuickAccess
 import CardModule from '../../../components/CardModule/CardModule.jsx';
 import ActivityList from '../../../components/ActivityList/ActivityList.jsx';
 import Pagination from '../../../components/Pagination/Pagination.jsx';
+import { MAIN_SIDEBAR_PROPS } from '../../../config/sidebars/main.js';
 import styles from './Home.module.css';
 
-// Contenido del módulo "Ports" (Figma: brand Isotype/Logotype 442:602/450:659,
-// íconos de nav 450:679–450:694). El sidebar es genérico — brandIcon/brandLabel/
-// brandAccent/groups van a cambiar según el módulo que use este componente.
-const GROUPS = [
-  {
-    label: 'Maestros',
-    icon: 'icon-maestros',
-    items: [
-      { label: 'Buque', icon: 'icon-buques', href: '/buques' },
-      { label: 'Clientes', icon: 'icon-clientes', href: '/clientes' },
-      { label: 'Tipos de turnos', icon: 'icon-tipos-turnos', href: '/tipos-turnos' },
-    ],
-  },
-  {
-    label: 'Procesos',
-    icon: 'icon-gear',
-    items: [
-      { label: 'Nueva Operación', icon: 'icon-nueva-operacion', href: '/nueva-operacion' },
-    ],
-  },
-];
-
-const COMPANIES = [
-  { id: 'puerto-norte', name: 'Puerto Norte S.A.' },
-  { id: 'del-sur', name: 'Del Sur Logística' },
-  { id: 'andina', name: 'Andina Comercial S.A.' },
-];
-
-const USER = {
-  name: 'Carlos Mendoza',
-  email: 'carlos.mendoza@gmail.com',
-  role: 'Administrador',
-};
-
-// Ejemplo — reemplazar por los maestros/procesos que el usuario haya marcado como favoritos.
+// Ejemplo — reemplazar por los ítems que el usuario haya marcado como favoritos
+// (hoy: un ejemplo de cada grupo del sidebar de Main).
 const QUICK_ACCESS = [
-  { icon: 'icon-buques', title: 'Buque', subtitle: 'Maestros', href: '/buques' },
-  { icon: 'icon-clientes', title: 'Clientes', subtitle: 'Maestros', href: '/clientes' },
-  { icon: 'icon-tipos-turnos', title: 'Tipos de turnos', subtitle: 'Maestros', href: '/tipos-turnos' },
-  { icon: 'icon-nueva-operacion', title: 'Nueva Operación', subtitle: 'Procesos', href: '/nueva-operacion' },
+  { icon: 'icon-usuarios', title: 'Usuarios', subtitle: 'Administración', href: '/admin/usuarios' },
+  { icon: 'icon-empresas', title: 'Empresas', subtitle: 'Administración', href: '/admin/empresas' },
+  { icon: 'icon-parametros', title: 'Parámetros', subtitle: 'Configuración', href: '/config/parametros' },
+  { icon: 'icon-paises', title: 'Países', subtitle: 'Datos maestros', href: '/datos-maestros/paises' },
 ];
 
-// Ejemplo — el diseño de Figma repetía "Ports" x14; se completó con nombres de
-// módulo de ejemplo. Reemplazar por el catálogo real de módulos disponibles.
+// Catálogo real de módulos (Figma, página *Cards*, sección "Card-Module —
+// Color accents", 446:14 — 14 cards). El texto de descripción en Figma
+// estaba repetido igual en las 14 ("Gestión de operaciones portuarias",
+// placeholder de diseño) salvo en "Ports", donde sí describe al módulo — se
+// completó una descripción propia por módulo, mismo criterio que el resto
+// del kit. `icon`/`accent` sí son 1:1 con Figma.
 const MODULES = [
-  { title: 'Ports', description: 'Gestión de operaciones portuarias' },
-  { title: 'Almacenes', description: 'Gestión de depósitos y stock' },
-  { title: 'Compras', description: 'Órdenes de compra y proveedores' },
-  { title: 'Facturación', description: 'Emisión y control de facturas' },
-  { title: 'Flota', description: 'Seguimiento de camiones y choferes' },
-  { title: 'Aduanas', description: 'Trámites y documentación aduanera' },
-  { title: 'Recepciones', description: 'Control de ingreso de mercadería' },
-  { title: 'Embarques', description: 'Planificación de despachos' },
-  { title: 'Inventario', description: 'Control de artículos y existencias' },
-  { title: 'Reportes', description: 'Indicadores y analítica operativa' },
-  { title: 'Usuarios', description: 'Administración de accesos y roles' },
-  { title: 'Notificaciones', description: 'Alertas y avisos del sistema' },
-  { title: 'Configuración', description: 'Ajustes generales de la plataforma' },
-  { title: 'Soporte', description: 'Centro de ayuda y tickets' },
+  { title: 'Ports', description: 'Gestión de operaciones portuarias', icon: 'icon-gear', accent: 'violet', href: '/operaciones' },
+  { title: 'Free Zone', description: 'Administración de zonas francas', icon: 'app-window', accent: 'green' },
+  { title: 'Human Resources', description: 'Gestión de personal y RR. HH.', icon: 'icon-administracion', accent: 'amber' },
+  { title: 'Tax', description: 'Cálculo y liquidación de impuestos', icon: 'app-window', accent: 'red' },
+  { title: 'Purchases', description: 'Órdenes de compra y proveedores', icon: 'bi-cart', accent: 'cyan' },
+  { title: 'Dashboard', description: 'Indicadores generales de la plataforma', icon: 'app-window', accent: 'pink' },
+  { title: 'Truckshift', description: 'Turnos y asignación de camiones', icon: 'icon-truckshift', accent: 'indigo' },
+  { title: 'Access Control', description: 'Control de accesos e ingresos', icon: 'icon-truckshift', accent: 'neutral' },
+  { title: 'Scales', description: 'Pesaje y control de cargas', icon: 'icon-truckshift', accent: 'violet' },
+  { title: 'Billing', description: 'Facturación y cobranzas', icon: 'icon-truckshift', accent: 'green' },
+  { title: 'Accounting', description: 'Contabilidad y balances', icon: 'icon-truckshift', accent: 'amber' },
+  { title: 'Agro', description: 'Gestión de cargas agroindustriales', icon: 'icon-truckshift', accent: 'red' },
+  { title: 'Servicios', description: 'Solicitud y seguimiento de servicios', icon: 'icon-check2circle', accent: 'cyan' },
+  { title: 'Stock', description: 'Control de inventario y existencias', icon: 'icon-box', accent: 'neutral' },
 ];
 const MODULES_PER_PAGE = 12;
 
@@ -78,7 +50,7 @@ const ACTIVITY = [
   { name: 'Martín G.', time: 'hace 2 h', description: 'Cerró incidencia de depósito' },
 ];
 
-export default function Home() {
+export default function Home({ onNavigate }) {
   const [modulesPage, setModulesPage] = useState(1);
   const totalModulePages = Math.ceil(MODULES.length / MODULES_PER_PAGE);
   const visibleModules = MODULES.slice(
@@ -89,15 +61,9 @@ export default function Home() {
   return (
     <LayoutBase
       sidebarProps={{
-        brandLabel: 'Ports',
-        brandIcon: 'icon-gear',
-        brandAccent: 'violet',
-        homeHref: '/',
-        groups: GROUPS,
-        companies: COMPANIES,
-        defaultActiveCompanyId: 'puerto-norte',
-        user: USER,
-        onNavigate: (d) => console.log('navigate', d),
+        ...MAIN_SIDEBAR_PROPS,
+        defaultActiveHref: '/',
+        onNavigate: onNavigate ?? ((d) => console.log('navigate', d)),
         onCompanyChange: (c) => console.log('company change', c),
         onLogout: () => console.log('logout'),
         onToggle: (d) => console.log('toggle', d),

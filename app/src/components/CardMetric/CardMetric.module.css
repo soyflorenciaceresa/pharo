@@ -1,9 +1,16 @@
 .accentWrap {
   display: inline-flex;
   width: 100%;
-  background: var(--color-accent-metric);
+  background: var(--color-primary-default);
   border-radius: var(--radius-card);
   padding-left: var(--spacing-xs);
+  transition: box-shadow 0.15s ease;
+}
+
+.accentWrap:hover {
+  box-shadow:
+    0px 1px 3px rgba(15, 30, 52, 0.06),
+    0px 1px 2px rgba(15, 30, 52, 0.04);
 }
 
 .card {
@@ -16,16 +23,10 @@
   background: var(--color-surface-card);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-card);
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.accentWrap:hover .card {
-  border-color: var(--color-accent-metric);
-  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.14);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card { transition: none; }
+  .accentWrap { transition: none; }
 }
 
 .row {
@@ -54,7 +55,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  color: var(--color-accent-metric);
+  color: var(--color-primary-default);
 }
 
 .sparkline {
@@ -75,7 +76,7 @@
   align-items: center;
   gap: 3.5px;
   padding-bottom: 2px;
-  color: var(--color-accent-metric);
+  color: var(--color-primary-default);
 }
 
 .trend span {

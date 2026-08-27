@@ -1,0 +1,202 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--spacing-md) var(--spacing-md-dense);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.search {
+  width: 100%;
+  max-width: 360px;
+}
+
+.grid {
+  width: 100%;
+  background: var(--color-surface-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.headerRow,
+.row {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.headerRow:last-child,
+.row:last-child {
+  border-bottom: none;
+}
+
+.row {
+  background: var(--color-surface-default);
+  transition: background-color 0.1s ease;
+}
+
+.row:hover {
+  background: var(--color-surface-hover);
+}
+
+.row.rowSelected,
+.row.rowSelected:hover {
+  background: var(--color-surface-selected);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row { transition: none; }
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: var(--spacing-sm) var(--spacing-md-dense);
+}
+
+.cellFlex {
+  flex: 1 0 0;
+}
+
+.checkboxCell {
+  flex-shrink: 0;
+  width: 56px;
+}
+
+.actionsCell {
+  flex-shrink: 0;
+  width: 132px;
+}
+
+.headerCell {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.cellText {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text-default);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.empty {
+  padding: var(--spacing-lg) var(--spacing-md-dense);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* Checkbox */
+
+.checkbox {
+  position: relative;
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.checkbox input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkboxBox {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-default);
+}
+
+.checkboxChecked {
+  background: var(--color-primary-default);
+  border-color: var(--color-primary-default);
+}
+
+.checkboxDash {
+  width: 8px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--color-text-inverse);
+}
+
+.checkbox input:focus-visible + .checkboxBox {
+  outline: 2px solid var(--sidebar-accent);
+  outline-offset: 2px;
+}
+
+/* Status chip */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.chip[data-tone='success'] { background: var(--color-success-subtle); color: var(--color-success-default); }
+.chip[data-tone='warning'] { background: var(--color-warning-subtle); color: var(--color-warning-default); }
+.chip[data-tone='danger'] { background: var(--color-danger-subtle); color: var(--color-danger-default); }
+.chip[data-tone='primary'] { background: var(--color-primary-subtle); color: var(--color-primary-default); }
+.chip[data-tone='neutral'] { background: var(--color-surface-selected); color: var(--color-text-secondary); }
+
+/* Actions */
+
+.actionsGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.actionButton {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  color: var(--color-text-default);
+}
+
+.actionButton:focus-visible {
+  outline: 2px solid var(--sidebar-accent);
+  outline-offset: 2px;
+}

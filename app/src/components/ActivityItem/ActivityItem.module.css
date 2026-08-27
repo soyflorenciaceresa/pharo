@@ -28,7 +28,7 @@
   width: 24.5px;
   height: 24.5px;
   border-radius: var(--radius-full);
-  background: var(--color-primary-default);
+  background: var(--avatar-bg, var(--color-primary-default));
   color: var(--color-text-inverse);
   font-family: var(--font-sans);
   font-size: 9px;

@@ -16,7 +16,21 @@
   --color-text-default: #061e30;
   --color-text-secondary: #6a7883;
   --color-surface-card: #ffffff;
-  --color-accent-metric: #7c3aed;
+  --color-primary-subtle: #f5f7ff;
+
+  /* Status Chip (Data Grid, página *Data Grid*, 304:388) — success/warning ya
+     existían como colores nombrados en Figma pero no como variable, así que se
+     agregan acá. El fondo "subtle" de cada chip no es una variable en Figma
+     (es el mismo color base con opacidad ~15% aplicada a la capa) — se
+     resuelve el blend sobre blanco para tener un color plano reutilizable.
+     No reusar --color-accent-*-subtle: son la paleta de acento de módulo,
+     semánticamente distinta de un estado (mismo criterio que color/accent/red
+     vs color/danger/default, ver nota de CardModule). */
+  --color-success-default: #16a34a;
+  --color-success-subtle: #dcf1e4;
+  --color-warning-default: #eab308;
+  --color-warning-subtle: #fcf4da;
+  --color-danger-subtle: #fadede;
 
   /* Paleta de acento por módulo (Card-Module en Figma, sección "Color accents"
      — 8 colores fijos, uno de ellos usado también en el brand icon del sidebar). */
@@ -34,6 +48,30 @@
   --color-accent-pink-subtle: #fce7f3;
   --color-accent-indigo: #4f46e5;
   --color-accent-indigo-subtle: #e0e7ff;
+
+  /* Paleta de avatares (Activity Item 433:2719 / Activity List 433:2810 en Figma
+     — cada fila del listado usa un color de fondo distinto, sin atarse a ningún
+     token del sistema; se nombran acá para no hardcodear el hex en el componente). */
+  --color-avatar-1: #3563e9;
+  --color-avatar-2: #14b8a6;
+  --color-avatar-3: #8b5cf6;
+  --color-avatar-4: #f97316;
+  --color-avatar-5: #ec4899;
+  --color-avatar-6: #22c55e;
+
+  /* Botones (Button/Primary 10:127, Button/Secondary 261:228) — el resto de
+     sus colores reusa --color-primary-*/--color-surface-*/--color-border-*. */
+  --color-action-hover: #364cd7;
+  --color-action-secondary-hover-bg: #f5f7ff;
+  --color-action-secondary-pressed-bg: #eceeff;
+  --color-text-disabled: #a3a3a3;
+  --color-border-focus: #667afd;
+
+  /* Text Field (327:22) — el resto reusa --color-border-default/--color-danger-default/
+     --color-text-default/--color-text-disabled/--radius-sm/--spacing-*. */
+  --color-text-placeholder: #afb7bd;
+  --color-surface-input-disabled: #f5f5f5;
+  --color-border-input-disabled: #e5e5e5;
 
   --spacing-xs: 4px;
   --spacing-sm: 8px;

@@ -39,10 +39,23 @@
   justify-content: center;
   padding: 10px;
   width: fit-content;
-  background: var(--color-primary-disabled);
   border-radius: var(--radius-md);
-  color: var(--color-primary-default);
 }
+
+/* Paleta de acento por módulo (Card-Module — Color accents, 446:14) — mismos
+   8 nombres/tokens que [data-accent] en Sidebar.module.css. "neutral" no es
+   uno de los 8 (no existe en Figma como accent-color con nombre propio) —
+   es el fondo/texto gris que usan un par de módulos (Access Control, Stock)
+   en vez de un color, reusando los mismos tokens que StatusChip tone="neutral". */
+.iconBadge[data-accent='blue'] { background: var(--color-primary-disabled); color: var(--color-primary-default); }
+.iconBadge[data-accent='violet'] { background: var(--color-accent-violet-subtle); color: var(--color-accent-violet); }
+.iconBadge[data-accent='green'] { background: var(--color-accent-green-subtle); color: var(--color-accent-green); }
+.iconBadge[data-accent='amber'] { background: var(--color-accent-amber-subtle); color: var(--color-accent-amber); }
+.iconBadge[data-accent='red'] { background: var(--color-accent-red-subtle); color: var(--color-accent-red); }
+.iconBadge[data-accent='cyan'] { background: var(--color-accent-cyan-subtle); color: var(--color-accent-cyan); }
+.iconBadge[data-accent='pink'] { background: var(--color-accent-pink-subtle); color: var(--color-accent-pink); }
+.iconBadge[data-accent='indigo'] { background: var(--color-accent-indigo-subtle); color: var(--color-accent-indigo); }
+.iconBadge[data-accent='neutral'] { background: var(--color-surface-selected); color: var(--color-text-secondary); }
 
 .textCol {
   display: flex;
