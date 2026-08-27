@@ -125,6 +125,7 @@ Origen: Figma, página *Cards*, componente `Card-Metric` (457:1054) — `Propied
 - `data` genera el mini-gráfico (sparkline) real a partir de la serie — no es decorativo fijo.
 - `trendDirection` rota la flecha de tendencia.
 - Ancho fluido (`width: 100%`, `min-width: 169px`) — pensado para ir en una fila con `flex: 1` por card (ver `modules/Operaciones/Home`), no un tamaño fijo.
+- **Alto fijo** (`height: 104.25px` en `.card`, `box-sizing: border-box`) — todas las `CardMetric` de una fila miden exactamente lo mismo sin importar el largo de `label` o si vienen `data`/`trendLabel`. `.label` tiene `height: 30.25px` (exacto a 2 líneas con su `font-size`/`line-height`) + `-webkit-line-clamp: 2` (con `line-clamp: 2` sin prefijo también, `overflow: hidden`, `text-overflow: ellipsis`) — un `label` que no entra en 2 líneas se trunca con `…` en vez de agregar una tercera línea y estirar la card. Los 104.25px salen de sumar padding (`--spacing-md` × 2) + gap (`--spacing-md`) + alto del label (30.25px, el más alto de la primera fila, más que el sparkline de 20px) + alto de `.value` (line-height 1 × font-size 26px) — si se cambia algún token/tamaño de esos, recalcular este valor a mano (no hay `calc()` con las custom properties de por medio, están hardcodeadas en px como el resto del archivo).
 - Hover es solo una sombra sutil en la franja de acento (`0px 1px 3px rgba(15,30,52,0.06), 0px 1px 2px rgba(15,30,52,0.04)`, sin cambio de borde) — CSS puro, sin estado de React.
 - El acento (franja izquierda, sparkline y texto de tendencia) usa `--color-primary-default` — el mismo azul del resto del sistema. (Antes usaba un token `color/accent/metric` violeta inventado porque esa variable no existía en Figma; se corrigió tras confirmar que el Figma actual está atado a `color/primary/default`/`text/action/secondary/default`, ambos `#4059fd`.)
 
@@ -267,6 +268,20 @@ import TextField from '../../components/TextField/TextField.jsx';
 - `label` usa `htmlFor`/`id` reales (`React.useId()` si no se pasa `id` explícito) — accesible por teclado y lector de pantalla, no son elementos sueltos.
 - `error` (boolean) + `helperText`: el texto de ayuda solo se muestra cuando `error` es true (igual que en Figma, donde el helper text solo aparece en el estado Error) y queda asociado al input vía `aria-describedby`.
 - Tokens nuevos en `tokens.css`: `--color-text-placeholder`, `--color-surface-input-disabled`, `--color-border-input-disabled` — el resto reusa `--color-border-default`/`--color-danger-default`/`--color-border-focus`/`--color-text-default`/`--color-text-disabled`/`--radius-sm`/`--spacing-*` ya existentes.
+
+### `Checkbox` — `app/src/components/Checkbox/`
+
+Origen: mismo trazo/visual que la celda de checkbox de `DataGrid` (Figma `Checkbox`, 278:4, y el tick 278:6) — acá como control de formulario independiente (checkbox + label), no como parte de una tabla. No había un componente de checkbox reusable todavía (el de `DataGrid` es interno del archivo, acoplado a selección/indeterminate); esta es la versión genérica.
+
+```jsx
+import Checkbox from '../../components/Checkbox/Checkbox.jsx';
+
+<Checkbox label="Inactivo" checked={inactivo} onChange={(e) => setInactivo(e.target.checked)} />
+```
+
+- `<input type="checkbox">` real (accesible, `label` con `htmlFor`/`id` vía `useId()` si no se pasa `id`) posicionado invisible sobre la caja visual — mismo patrón de accesibilidad que `RowCheckbox` de `DataGrid` y que `TextField`.
+- No comparte código con `RowCheckbox` (que sigue viviendo dentro de `DataGrid.jsx`, con su lógica propia de indeterminate) — mismo criterio ya establecido en el kit de "cada uno su propio CSS/lógica, no refactorizar a una base común antes de que haga falta de verdad".
+- **`disabled`** (agregado para el modo "Visualizar" de `BuqueFormulario`): deshabilita el `<input>` real y aplica el mismo tratamiento visual que `TextField` (`--color-surface-input-disabled`/`--color-border-input-disabled`/`--color-text-disabled`) — el estilo `disabled` gana sobre `checked` si están ambos (orden de las reglas en el CSS). Sin prop `indeterminate` todavía — agregarla si algún formulario real la necesita (no confundir con el indeterminate de `RowCheckbox`/select-all en `DataGrid`, que es un caso distinto).
 
 ### `DataGrid` — `app/src/components/DataGrid/`
 
@@ -448,21 +463,61 @@ import { OPERACIONES_SIDEBAR_PROPS } from '../../../config/sidebars/operaciones.
 - **Breadcrumb**: array de `{ label }`, separados con el ícono ya existente `bi-chevron-right` (no se agregó un ícono nuevo — Figma trae un chevron con fill sólido distinto, pero visualmente es el mismo glyph que ya está en el set). El color de texto del breadcrumb en Figma es un hex suelto (`#9ca3af`) sin variable asociada, mientras que el ícono al lado sí está atado a `color/icon/default` (`#6a7883`, mismo valor que `--color-text-secondary`) — se usó `--color-text-secondary` para ambos por consistencia, tratando el hex suelto como un descuido del archivo de Figma (mismo criterio aplicado antes en `CardMetric`).
 - El título usa `--color-text-default` (no `black` literal, que es lo que trae Figma sin token) — mismo criterio que el resto de los `Heading/H2` del kit.
 
-## Ruteo (`app/src/App.jsx`)
+### `LayoutMaestroBasico` — `app/src/templates/LayoutMaestroBasico/`
 
-El kit no tiene `react-router` ni ninguna librería de ruteo — es un router mínimo casero, a propósito (agregar una dependencia de routing es más de lo que necesita un kit de prototipado). `App.jsx` mapea `href` → componente de pantalla en un objeto `ROUTES`, y usa la History API real (`pushState`/`popstate`) para que la URL del navegador quede sincronizada:
+Origen: Figma, frame `Layout Maestro Basico` (458:1396) — pantalla de alta/edición básica de un maestro (formulario simple, a diferencia de `LayoutMaestroDataGrid` que es el listado). Compone `LayoutBase` (Sidebar + TopBar) y, dentro: mismo header que `LayoutMaestroDataGrid` (breadcrumb + título + botones a la derecha, acá `Guardar`/`Cancelar` en vez de `Nuevo`/`Recargar`/`Exportar`), y debajo un único `FormContainer` — **ya existente**, no se creó nada nuevo para el card de icono+título+divisor+contenido, coincide exacto con la card "Nuevo proveedor" de Figma.
 
 ```jsx
-const ROUTES = {
-  '/': Home,                    // Main/Home
-  '/operaciones': OperacionesHome,  // home del módulo Operaciones — se abre desde la card "Ports" en Módulos
-  '/buques': Buque,             // Operaciones/Buque (maestro, se abre desde el sidebar)
-};
+import LayoutMaestroBasico from '../../../templates/LayoutMaestroBasico/LayoutMaestroBasico.jsx';
+import TextField from '../../../components/TextField/TextField.jsx';
+import { OPERACIONES_SIDEBAR_PROPS } from '../../../config/sidebars/operaciones.js';
+
+<LayoutMaestroBasico
+  sidebar={OPERACIONES_SIDEBAR_PROPS}  // config del sidebar del módulo — obligatorio, ver nota en Sidebar
+  activeHref="/buques"
+  onNavigate={(d) => ...} onCompanyChange={(c) => ...} onLogout={() => ...} onToggle={(d) => ...}
+  breadcrumb={[{ label: 'Familias de productos' }, { label: 'Crear familias de productos' }]}
+  title="Crear familias de productos"
+  onSave={() => ...}   saveLabel="Guardar"     // cada botón solo aparece si se pasa su handler
+  onCancel={() => ...} cancelLabel="Cancelar"
+  formIcon="icon-gear"      // se pasan directo a FormContainer
+  formTitle="Nuevo proveedor"
+>
+  {/* children = Content de FormContainer, sin restricciones — acá, 3 TextField en una fila (wrapper flex propio de la pantalla, FormContainer no fuerza fila) */}
+  <div style={{ display: 'flex', gap: 16 }}>
+    <div style={{ flex: 1 }}><TextField label="Nombre" placeholder="Del Sur Logística S.A." /></div>
+    <div style={{ flex: 1 }}><TextField label="CUIT" placeholder="30-71234567-8" /></div>
+    <div style={{ flex: 1 }}><TextField label="Email de contacto" placeholder="compras@delsurlogistica.com" /></div>
+  </div>
+</LayoutMaestroBasico>
 ```
 
-- Cada pantalla que quiera ser ruteable recibe `onNavigate` como prop (con fallback a `console.log` si se la usa sin router, ej. en pruebas sueltas) y se lo pasa tal cual a su template (`LayoutBase`/`LayoutHomeModule`/`LayoutMaestroDataGrid`), que a su vez se lo pasa al `Sidebar`. El `Sidebar` llama `onNavigate({ href, label })` al clickear un ítem de nav — `App.jsx` intercepta ese `href` y cambia de pantalla.
-- Funciona tanto para navegación por sidebar (soft nav, sin recargar) como para una URL pegada directo en el navegador o un `<a href>` normal (ej. las cards de `CardQuickAccess`/`CardModule`, que renderizan `<a>` reales) — Vite sirve `index.html` para cualquier ruta no encontrada (`appType: 'spa'`, default) y `App.jsx` lee `window.location.pathname` al montar.
-- **Al crear una pantalla nueva accesible desde el sidebar**: 1) agregarla a `ROUTES` en `App.jsx` con el mismo `href` que ya tiene su ítem en el config del sidebar de su módulo (`app/src/config/sidebars/<módulo>.js`), 2) pasarle `sidebar={MODULO_SIDEBAR_PROPS}` y `activeHref="<ese href>"` al template para que el ítem quede resaltado (ver nota en `LayoutHomeModule`/`LayoutMaestroDataGrid` arriba).
+- **Mismo criterio de sidebar por módulo, breadcrumb y título que `LayoutMaestroDataGrid`** — ver esas notas arriba, aplican igual acá.
+- **`onSave`/`onCancel` son independientes**, mismo patrón que los botones de `LayoutMaestroDataGrid` — cada uno se renderiza solo si se pasa su handler. `ButtonPrimary` para Guardar, `ButtonSecondary` para Cancelar, tamaño `md` default. Íconos nuevos en `icons.jsx` (`icon-check2`, `icon-close`): trazado exacto de los assets de Figma de esta pantalla (`Check2`, `XLg`).
+- **`FormContainer` no se modificó** — su `.content` ya es `flex-direction: column`, pensado para cualquier contenido (una fila, varias, un `Accordion`, etc.); si una pantalla necesita varios campos en una fila como en el ejemplo de Figma, arma ese wrapper flex ella misma como `children` — no es responsabilidad del template ni de `FormContainer` imponer esa disposición.
+- El ícono del badge de `FormContainer` en este frame de Figma (`Ports`, 462:2886) es el mismo glyph que `icon-gear` ya existente — no se agregó un ícono nuevo.
+
+## Ruteo (`app/src/App.jsx`)
+
+El kit no tiene `react-router` ni ninguna librería de ruteo — es un router mínimo casero, a propósito (agregar una dependencia de routing es más de lo que necesita un kit de prototipado). `App.jsx` mapea un `pattern` de ruta → componente de pantalla en un array `ROUTES`, y usa la History API real (`pushState`/`popstate`) para que la URL del navegador quede sincronizada:
+
+```jsx
+const ROUTES = [
+  { pattern: '/', Component: Home },
+  { pattern: '/operaciones', Component: OperacionesHome },  // home del módulo Operaciones — se abre desde la card "Ports" en Módulos
+  { pattern: '/buques', Component: Buque },                 // maestro, se abre desde el sidebar
+  { pattern: '/buques/nuevo', Component: BuqueFormulario, props: { mode: 'create' } },
+  { pattern: '/buques/:id/ver', Component: BuqueFormulario, props: { mode: 'view' } },
+  { pattern: '/buques/:id/editar', Component: BuqueFormulario, props: { mode: 'edit' } },
+];
+```
+
+- **`pattern` soporta segmentos dinámicos `:nombre`** (`matchRoute` en `App.jsx`) — matchea por cantidad de segmentos + coincidencia exacta de los fijos, devuelve un objeto `params` con lo capturado (ej. `{ id: '3' }` para `/buques/3/editar`). La pantalla resuelta recibe ese objeto como prop `params`. No es una librería, es a propósito minimal — si algún día hace falta más (rutas anidadas, query params, etc.) recién ahí se justifica sumar `react-router`.
+- **`props` en una entrada de `ROUTES` son props fijas propias de esa ruta**, se le suman a las comunes (`onNavigate`/`rows`/`onCreate`/`onUpdate`/`params`) antes de renderizar — así una misma pantalla (`BuqueFormulario`) sirve para 3 rutas distintas (`create`/`view`/`edit`) sin duplicar código, solo cambia `mode`.
+- Cada pantalla que quiera ser ruteable recibe `onNavigate` como prop (con fallback a `console.log` si se la usa sin router, ej. en pruebas sueltas) y se lo pasa tal cual a su template (`LayoutBase`/`LayoutHomeModule`/`LayoutMaestroDataGrid`/`LayoutMaestroBasico`), que a su vez se lo pasa al `Sidebar`. El `Sidebar` llama `onNavigate({ href, label })` al clickear un ítem de nav — `App.jsx` intercepta ese `href` y cambia de pantalla. Una pantalla también puede llamar a su propio `onNavigate({ href, label })` directo (no solo el `Sidebar`) para navegar por código — ej. el botón "Nuevo" de `Buque`, las acciones Visualizar/Editar de cada fila (arman el `href` con el `id` de esa fila), o "Cancelar"/"Volver" de `BuqueFormulario`.
+- Funciona tanto para navegación por sidebar (soft nav, sin recargar) como para una URL pegada directo en el navegador o un `<a href>` normal (ej. las cards de `CardQuickAccess`/`CardModule`, que renderizan `<a>` reales) — Vite sirve `index.html` para cualquier ruta no encontrada (`appType: 'spa'`, default) y `App.jsx` lee `window.location.pathname` al montar. Esto incluye rutas con `:id` — probado navegando directo a `/buques/2/editar` sin pasar por `/buques` antes.
+- **Al crear una pantalla nueva accesible desde el sidebar**: 1) agregarla a `ROUTES` en `App.jsx` con el mismo `href` que ya tiene su ítem en el config del sidebar de su módulo (`app/src/config/sidebars/<módulo>.js`), 2) pasarle `sidebar={MODULO_SIDEBAR_PROPS}` y `activeHref="<ese href>"` al template para que el ítem quede resaltado (ver nota en `LayoutHomeModule`/`LayoutMaestroDataGrid` arriba). Una pantalla accesible solo por botón/acción (no por el sidebar, ej. `/buques/nuevo`, `/buques/:id/ver`, `/buques/:id/editar`) no necesita `activeHref` propio — usa el mismo que la pantalla desde la que se llega (ej. `/buques`), así el sidebar no "pierde" el ítem resaltado al entrar al formulario.
+- **Datos compartidos entre pantallas de un mismo maestro (ej. `/buques`, `/buques/nuevo`, `/buques/:id/editar`) viven en `App.jsx`**, no en la pantalla — no hay backend ni store todavía, así que el estado (`useState`) que necesitan leer/escribir varias rutas tiene que estar arriba de todas ellas. `App.jsx` le pasa `rows`/`onCreate`/`onUpdate`/`params` a **todas** las pantallas ruteadas por igual (las que no los usan simplemente no los destructuran — inofensivo). `onCreate`/`onUpdate` hacen el `setState` **y** navegan de vuelta a `/buques` — la pantalla de formulario no navega ella misma al guardar, solo arma el objeto y llama al callback. Ver `INITIAL_BUQUES`/`addBuque`/`updateBuque` en `App.jsx` y la nota de `Buque`/`BuqueFormulario` abajo como referencia para el próximo maestro con alta/edición.
 - **Home de un módulo vs. maestro de un módulo**: la home de un módulo (ej. `/operaciones`) se abre desde una `CardModule` en la grilla de "Módulos" de `Main/Home` (`href` en el objeto de `MODULES`), no desde el sidebar de ese módulo — cada sidebar lista los ítems propios de SU módulo (Maestros/Procesos de Operaciones, Administración/Configuración/etc. de Main), no una lista de módulos. Un maestro (ej. `/buques`) sí se abre desde el sidebar del módulo al que pertenece.
 
 ## Módulos (`app/src/modules/`)
@@ -483,7 +538,16 @@ Un folder por módulo de negocio. Cada pantalla real va en `modules/<Módulo>/<P
 
 - **`Operaciones/Home/`** — home del módulo Operaciones (Figma `Layout Home Module`, 456:699), armada con el template `LayoutHomeModule`. Es la ruta `/operaciones` en `App.jsx` — la pantalla que se muestra al **abrir el módulo** (a diferencia de sus maestros, ej. `Buque` en `/buques`, que se abren desde el sidebar). Se llega acá clickeando la card "Ports" en la grilla de Módulos de `Main/Home` (`MODULES[0].href = '/operaciones'` — el nombre visible es "Ports", el folder de código es "Operaciones"; ver nota de esa card abajo). Usa `OPERACIONES_SIDEBAR_PROPS` de `app/src/config/sidebars/operaciones.js`, pasado por prop (`sidebar={...}`) — distinto del sidebar de `Main` (ver nota en `Sidebar` arriba). Lo que sí es propio de esta pantalla: 4 `CardMetric` de ejemplo (KPIs de operaciones), 4 `CardQuickAccess` (uno por ítem real de Maestros/Procesos de este sidebar, con `href` real — navegan de verdad) y `ActivityList` con 5 ítems de ejemplo. Todos los datos de contenido son de ejemplo — mismo criterio que `Main/Home`.
 
-- **`Operaciones/Buque/`** — pantalla principal del maestro "Buque" (Figma `Layout Maestro Data Grid`, 492:3534), armada con el template `LayoutMaestroDataGrid`. Es la ruta `/buques` en `App.jsx` — coincide con el `href` que ya tenía el ítem "Buque" en `OPERACIONES_SIDEBAR_PROPS`, así que clickearlo en el sidebar navega acá de verdad. Usa `sidebar={OPERACIONES_SIDEBAR_PROPS}` (mismo config que `Operaciones/Home`, no un sidebar propio de la pantalla). Columnas: Código (ancho fijo 120px), Denominación, Estado (`StatusChip` — tone `success` para "Activo", `neutral` para "Inactivo"); acciones por fila: Visualizar (`bi-eye`) y Editar (`icon-edit`) — sin eliminar ni compartir, a diferencia del ejemplo por default de `DataGrid`. Botones de cabecera: los 3 (Nuevo/Recargar/Exportar). Breadcrumb `Maestros > Buque`, coincidiendo con la jerarquía real del sidebar. **Todos los datos son de ejemplo** (5 buques ficticios) — reemplazar por el catálogo real.
+- **`Operaciones/Buque/`** — pantalla principal del maestro "Buque" (Figma `Layout Maestro Data Grid`, 492:3534), armada con el template `LayoutMaestroDataGrid`. Es la ruta `/buques` en `App.jsx` — coincide con el `href` que ya tenía el ítem "Buque" en `OPERACIONES_SIDEBAR_PROPS`, así que clickearlo en el sidebar navega acá de verdad. Usa `sidebar={OPERACIONES_SIDEBAR_PROPS}` (mismo config que `Operaciones/Home`, no un sidebar propio de la pantalla). **Sin `breadcrumb`** (no se le pasa esa prop — la pantalla de grilla de un maestro no lo necesita, a diferencia de sus formularios). Columnas: Código (ancho fijo 120px), Denominación, Estado (`StatusChip` — tone `success` para "Activo", `neutral` para "Inactivo") — **`Tipo` no es columna de la grilla** aunque cada fila sí tenga ese dato (lo captura el formulario); si hiciera falta mostrarlo, agregarlo de vuelta a `COLUMNS`. Acciones por fila: Visualizar (`bi-eye`) y Editar (`icon-edit`) — sin eliminar ni compartir, a diferencia del ejemplo por default de `DataGrid`; **navegan** a `/buques/<id>/ver` y `/buques/<id>/editar` respectivamente (antes solo hacían `console.log`) — mismo `BuqueFormulario` del lado, distinto `mode` según la ruta (ver `BuqueFormulario` abajo y la nota de `Ruteo`). Botones de cabecera: los 3 (Nuevo/Recargar/Exportar) — "Nuevo" navega a `/buques/nuevo`. **Recibe `rows` por prop** (`App.jsx` le pasa el estado compartido `buques`) con fallback a `DEFAULT_ROWS` local (5 buques de ejemplo) si se usa la pantalla suelta sin ese prop — reemplazar `DEFAULT_ROWS`/`INITIAL_BUQUES` (en `App.jsx`) por el catálogo real.
+
+- **`Operaciones/Buque/BuqueFormulario.jsx`** — alta/visualización/edición de un buque, armada con el template `LayoutMaestroBasico`. Una sola pantalla para las 3 rutas `/buques/nuevo`, `/buques/:id/ver` y `/buques/:id/editar` — el `mode` (`'create'`/`'view'`/`'edit'`) le llega como prop fija de `ROUTES` en `App.jsx` (ver nota de `Ruteo`), no lo decide la pantalla. Ninguna tiene ítem propio en el sidebar (`activeHref="/buques"` siempre, para que "Buque" siga resaltado). Mismo `sidebar={OPERACIONES_SIDEBAR_PROPS}` que el resto del módulo.
+  - **Título y breadcrumb varían por `mode`** (`TITLES` — "Crear Buque"/"Visualizar Buque"/"Editar Buque"; breadcrumb siempre `Buque > <ese título>`).
+  - **`view`**: cachea la fila (`rows.find` por `params.id`) y precarga los campos de solo lectura — cada `TextField`/`Checkbox` recibe `disabled={isView}` (ambos componentes ya soportaban `disabled`; se le sumó esa prop a `Checkbox`, que no la tenía). `onSave` no se pasa al template (`isView ? undefined : handleSave`) → el botón "Guardar" ni se renderiza (mismo patrón "el botón solo aparece si hay handler" de `LayoutMaestroBasico`/`LayoutMaestroDataGrid`). El botón de cancelar cambia de label a "Volver" (mismo botón/ícono, `cancelLabel` distinto).
+  - **`edit`**: precarga los campos igual que `view` pero editables, y en vez de `onCreate` llama a `onUpdate` al guardar (reemplaza la fila por `id` en vez de agregar una nueva).
+  - **`create`**: campos vacíos, llama a `onCreate`.
+  - **Buque inexistente** (`view`/`edit` con un `id` que no matchea ninguna fila, ej. URL directa con id inválido): en vez de romper, se muestra el mismo shell con título "Buque no encontrado" y sin formulario — el `existing` se busca antes de todo, si no aparece se corta ahí con un `return` temprano.
+  - **`Código` y `Denominación` son obligatorios** — `handleSave` valida ambos (`.trim()` vacío) antes de llamar a `onCreate`/`onUpdate`; si falla, `setErrors` pone `error`/`helperText="Campo requerido"` en el `TextField` correspondiente (ya soportaba esas props) y **no navega ni guarda nada**. El error de un campo se limpia solo en cuanto el usuario vuelve a tipear ahí (`updateField`), no hace falta reintentar el submit para verlo desaparecer. `Tipo` no es obligatorio.
+  - Campos: `TextField` de Código/Denominación/Tipo en una fila (`children` propio de la pantalla, `FormContainer` no impone esa disposición — ver nota de `LayoutMaestroBasico` arriba) + `Checkbox` "Inactivo" debajo. `FormContainer` con ícono `icon-pencil-square` (trazo exacto de Figma, 503:970) y título "Datos del buque". Estado de los campos manejado con `useState` local (controlado, no semi-controlado). El objeto que arma "Guardar" deriva `estado` del checkbox: marcado → `{label:'Inactivo', tone:'neutral'}`, si no → `{label:'Activo', tone:'success'}`. "Cancelar"/"Volver" navega a `/buques` sin guardar nada, siempre (no depende de ningún prop externo) — a diferencia de Guardar, que delega el guardado + la navegación de vuelta al callback que le inyecta `App.jsx` (ver nota de `Ruteo`).
 
 ## Cómo agregar un componente nuevo
 
