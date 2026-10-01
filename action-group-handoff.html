@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Action Group — Handoff para developers</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --surface-action-default:#4059fd; --text-on-action:#fff;
+  --surface-action-secondary-default:#fff; --border-action-secondary-default:#4059fd; --text-action-secondary-default:#4059fd;
+  --border-action-secondary-width:1px; --spacing-sm:8px; --spacing-xs:4px;
+  --color-border-focus:#667afd; --border-width-focus:2px;
+  --ink:#061e30; --mut:#6a7883; --code:#2d3eb1; --line:#e3e5ea; --page:#f7f8fa; --red:#dc2626;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.4 Inter,system-ui,sans-serif}
+main{max-width:1200px;margin:0 auto;padding:64px 64px 96px}
+header{margin-bottom:24px}
+.eyebrow{font-size:12px;font-weight:500;color:var(--mut)}
+h1{font-size:24px;line-height:1.2;margin:8px 0}
+.desc{color:var(--mut);margin:0 0 8px}
+.meta{display:flex;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--mut)}
+section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px;margin:0 0 24px}
+section.warn{background:#fef3c7}
+h2{display:flex;align-items:center;gap:12px;font-size:20px;line-height:1.2;margin:0 0 16px}
+h2 .n{font:400 11px 'JetBrains Mono',monospace;color:var(--code)}
+h3{font-size:16px;font-weight:600;margin:24px 0 12px;line-height:1.2}
+p{margin:0 0 12px}
+.lead{color:var(--mut);margin:0 0 16px}
+code{font:400 13px 'JetBrains Mono',monospace;color:var(--code)}
+pre{background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:16px;overflow:auto;margin:0 0 16px}
+pre code{color:var(--ink);font-size:12.5px;line-height:1.55}
+table{width:100%;border-collapse:collapse;margin:0 0 16px}
+th{background:#f7f8fa;color:var(--mut);font-size:12px;font-weight:500;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+td.k{font-weight:600;white-space:nowrap}
+.note{background:#fef3c7;border-radius:10px;padding:16px;margin:16px 0 0}
+.note p:last-child{margin:0}
+.pend{font-weight:600}
+ol.q{margin:0;padding-left:22px} ol.q li{margin:8px 0}
+ul.l{margin:0 0 12px;padding-left:20px} ul.l li{margin:6px 0}
+kbd{font:400 12px 'JetBrains Mono',monospace;border:1px solid #c9ced8;border-radius:4px;padding:1px 5px;background:#fff}
+.matrix{background:#f7f8fa;border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:20px}
+.matrix figcaption{font-size:12px;color:var(--mut);margin-bottom:8px;text-transform:uppercase;letter-spacing:.02em}
+.matrix figure{margin:0}
+.panel{background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:24px;position:relative;min-height:190px;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.panel small{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:var(--mut);font-size:12px}
+
+/* Componente (réplica del Button + gap del grupo) */
+.ag{display:flex;align-items:center;gap:var(--spacing-sm)}
+.btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-xs);padding:8px 16px;border-radius:8px;font:600 14px/1.2 Inter,sans-serif;cursor:pointer;white-space:nowrap}
+.btn.solid{background:var(--surface-action-default);color:var(--text-on-action)}
+.btn.outline{background:var(--surface-action-secondary-default);color:var(--text-action-secondary-default);box-shadow:inset 0 0 0 var(--border-action-secondary-width) var(--border-action-secondary-default)}
+.btn:focus-visible{outline:var(--border-width-focus) solid var(--color-border-focus);outline-offset:2px}
+
+/* Diagramas (escala 2×) */
+.z2{display:flex;align-items:center}
+.z2 .btn{padding:16px 32px;border-radius:16px;font-size:28px;gap:8px}
+.z2 .g{width:16px;height:66px;border:1px dashed var(--red);background:rgba(220,38,38,.1);flex:none;position:relative}
+.z2 .g b{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font:400 11px 'JetBrains Mono',monospace;color:var(--red);white-space:nowrap}
+.mk{position:absolute;width:20px;height:20px;border-radius:10px;background:var(--ink);color:#fff;font:600 12px/20px Inter;text-align:center}
+.ln{position:absolute;background:var(--ink)}
+.d{position:relative}
+@media(max-width:900px){main{padding:24px 16px}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="eyebrow">PHARO DESIGN SYSTEM · HANDOFF DEV</div>
+  <h1>Action Group — Handoff para developers</h1>
+  <p class="desc">Spec de implementación del component set Action Group (669:189): partes, sizing, tokens, estados, comportamiento, accesibilidad, responsive, edge cases y composición. Complementa a "Action Group - Spec" (uso y reglas de diseño). Es una molécula compuesta por <code>Button</code>. <strong>En código</strong> es <code>ActionGroup</code> (<code>app/src/components/ActionGroup/</code>); lo usan <code>LayoutMaestroDataGrid</code>, <code>LayoutMaestroBasico</code> y el footer del <code>Modal</code> de <code>PerfilFormulario</code>.</p>
+  <div class="meta"><span>Component set 669:189</span><span>4 variantes (Buttons = 2 a 5)</span><span>Molécula · usa Button (591:1937)</span><span>Actualizado 29/09/2026</span><span>Estado: borrador para revisión</span></div>
+</header>
+
+<!-- 00 -->
+<section>
+<h2><span class="n">00</span>Resumen y API</h2>
+<p class="lead">Grupo horizontal de 2 a 5 botones con <strong>un solo primario a la izquierda</strong> (<code>Solid</code>) y de 1 a 4 secundarios (<code>Outline</code>). En Figma la única propiedad es <code>Buttons</code> (2 a 5). En código se implementó una API (opción A) que <strong>hace imposible el estado inválido</strong>: el primario es una prop aparte y los secundarios, una lista. Hover, Pressed y Focus los resuelve cada <code>Button</code> (<code>:hover</code>, <code>:active</code>, <code>:focus-visible</code>). Ver Preguntas abiertas #1.</p>
+<pre><code>&lt;ActionGroup
+  aria-label="Acciones del formulario"
+  primary={{ label: 'Guardar', onClick: handleSave }}
+  secondary={[
+    { label: 'Cancelar', onClick: handleCancel },
+    { label: 'Recargar', onClick: handleReload, disabled: true },
+  ]}
+/&gt;</code></pre>
+<table>
+<tr><th>Prop</th><th>Tipo</th><th>Default</th><th>Mapea a Figma</th></tr>
+<tr><td><code>primary</code></td><td><code>{ label, onClick, iconStart?, iconEnd?, disabled?, type?, href? }</code></td><td>— (obligatoria)</td><td>Capa <code>Primary</code> (<code>Button</code> <code>Variant=Solid</code>), siempre primera</td></tr>
+<tr><td><code>secondary</code></td><td><code>Action[]</code> (1 a 4 ítems, mismo shape que <code>primary</code>)</td><td>— (obligatoria)</td><td>Capas <code>Secondary 1…4</code> (<code>Button</code> <code>Variant=Outline</code>). <code>Buttons</code> = 1 + <code>secondary.length</code></td></tr>
+<tr><td><code>aria-label</code></td><td><code>string</code></td><td>—</td><td>— (solo código) <span class="pend">⚠️ #8</span></td></tr>
+<tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>— (solo código)</td></tr>
+</table>
+<p>Cada <code>Action</code> acepta las mismas props que <code>Button</code> salvo <code>variant</code> (lo decide la posición): <code>label</code> se pasa como <code>children</code>.</p>
+<h3>Matriz de variantes (referencia de implementación)</h3>
+<div class="matrix">
+  <figure><figcaption>Buttons=2</figcaption><div class="ag"><button class="btn solid">Guardar</button><button class="btn outline">Cancelar</button></div></figure>
+  <figure><figcaption>Buttons=3</figcaption><div class="ag"><button class="btn solid">Guardar</button><button class="btn outline">Cancelar</button><button class="btn outline">Recargar</button></div></figure>
+  <figure><figcaption>Buttons=4</figcaption><div class="ag"><button class="btn solid">Guardar</button><button class="btn outline">Cancelar</button><button class="btn outline">Recargar</button><button class="btn outline">Exportar</button></div></figure>
+  <figure><figcaption>Buttons=5</figcaption><div class="ag"><button class="btn solid">Guardar</button><button class="btn outline">Cancelar</button><button class="btn outline">Recargar</button><button class="btn outline">Exportar</button><button class="btn outline">Imprimir</button></div></figure>
+</div>
+</section>
+
+<!-- 01 -->
+<section>
+<h2><span class="n">01</span>Partes (anatomía)</h2>
+<div class="panel">
+  <div class="d" style="padding:36px 0 8px">
+    <div class="z2"><button class="btn solid" tabindex="-1">Guardar</button><span style="width:16px"></span><button class="btn outline" tabindex="-1">Cancelar</button><span style="width:16px"></span><button class="btn outline" tabindex="-1">Recargar</button></div>
+    <div style="position:absolute;left:-8px;top:24px;width:calc(100% + 16px);height:90px;border:1px dashed var(--ink);border-radius:4px"></div>
+    <div class="mk" style="right:-18px;top:14px">1</div>
+    <div class="mk" style="left:76px;top:-20px">2</div><div class="ln" style="left:86px;top:0;width:1px;height:36px"></div>
+    <div class="mk" style="left:270px;top:-20px">3</div><div class="ln" style="left:280px;top:0;width:1px;height:36px"></div>
+  </div>
+  <small>Composición ilustrativa a escala 2× (Buttons=3).</small>
+</div>
+<table>
+<tr><th>#</th><th>Parte</th><th>Elemento / slot</th><th>Obligatoria</th><th>Descripción</th></tr>
+<tr><td>1</td><td><code>root</code></td><td><code>&lt;div role="group"&gt;</code></td><td>Sí</td><td>Contenedor. Fila con gap <code>--spacing-sm</code>. Capa Figma: el propio <code>Buttons=…</code>.</td></tr>
+<tr><td>2</td><td><code>primary</code></td><td><code>&lt;Button variant="solid"&gt;</code></td><td>Sí (exactamente 1)</td><td>Acción principal; siempre el primer hijo del DOM. Prop <code>primary</code>. Capa Figma: <code>Primary</code>.</td></tr>
+<tr><td>3</td><td><code>secondary</code></td><td><code>&lt;Button variant="outline"&gt;</code> × 1 a 4</td><td>Sí (mínimo 1)</td><td>Acciones alternativas, en el orden de la lista. Prop <code>secondary</code>. Capas Figma: <code>Secondary 1</code> a <code>Secondary 4</code>.</td></tr>
+</table>
+<p style="color:var(--mut);font-size:12px">El grupo no tiene partes opcionales: sin primario o sin ningún secundario, ya no es un <code>Action Group</code> (ver Edge cases).</p>
+</section>
+
+<!-- 02 -->
+<section>
+<h2><span class="n">02</span>Sizing</h2>
+<p class="lead">Layout de <code>root</code>: <code>display: flex</code>, <code>flex-direction: row</code>, <code>align-items: center</code>, <code>gap: var(--spacing-sm)</code>. Ancho <strong>hug</strong> (suma de los botones + gaps; sin min/max) y alto igual al del <code>Button</code>. Ningún botón crece ni se encoge. Cotas a escala 2×, valores en px reales.</p>
+<div class="panel">
+  <div class="z2" style="padding-top:26px"><button class="btn solid" tabindex="-1">Guardar</button><span class="g"><b>gap 8</b></span><button class="btn outline" tabindex="-1">Cancelar</button><span class="g"><b>gap 8</b></span><button class="btn outline" tabindex="-1">Recargar</button></div>
+  <small>Gap entre botones = <code>--spacing-sm</code> (8 px)</small>
+</div>
+<table>
+<tr><th>Propiedad</th><th>Valor</th><th>Token / nota</th></tr>
+<tr><td>Width</td><td>hug (no hay min/max)</td><td>Buttons=2 → 190 px · 3 → 293 · 4 → 394 · 5 → 493 (en Figma, con labels de ejemplo)</td></tr>
+<tr><td>Height</td><td>= alto del <code>Button</code></td><td>Código: 32,8 px para <code>Solid</code> y <code>Outline</code> · Figma: 33 px (<code>Solid</code>) y 35 px (<code>Outline</code>)</td></tr>
+<tr><td>Gap entre botones</td><td>8 px</td><td><code>--spacing-sm</code></td></tr>
+<tr><td>Alineación vertical</td><td><code>center</code></td><td>—</td></tr>
+<tr><td>Padding</td><td>No aplica (0)</td><td>El respiro lo dan los botones</td></tr>
+<tr><td>Radius / Borde / Fondo</td><td>No aplica</td><td>Los define cada <code>Button</code> (radius <code>--radius-button</code> 8 px)</td></tr>
+<tr><td>Botones</td><td>padding 16 × 8, gap ícono–label 4</td><td>Heredado de <code>Button</code>: <code>--spacing-padding-button-x</code> / <code>-y</code>, <code>--spacing-gap-button</code></td></tr>
+</table>
+<div class="note"><p><strong>Nota — 33 vs 35 px en Figma:</strong> en Figma el borde de <code>Outline</code> queda fuera de la caja y suma 2 px al alto. En código <code>Button</code> dibuja el borde con <code>box-shadow: inset</code>, así que todos miden lo mismo (32,8 px) y la alineación se resuelve sola. Se deja <code>align-items: center</code> por si algún botón cambia de alto (por ejemplo, con ícono).</p></div>
+</section>
+
+<!-- 03 -->
+<section>
+<h2><span class="n">03</span>Tokens</h2>
+<p class="lead">Nombres en formato CSS variable. El grupo agrega un solo token propio (el gap); el resto viene de <code>Button</code>. Solo existe el tema claro.</p>
+<h3>Color (heredado de Button)</h3>
+<table>
+<tr><th>Parte</th><th>Propiedad</th><th>Token</th><th>Valor</th></tr>
+<tr><td><code>primary</code></td><td>background</td><td><code>--surface-action-default</code></td><td>#4059FD</td></tr>
+<tr><td><code>primary</code></td><td>color (label)</td><td><code>--text-on-action</code></td><td>#FFFFFF</td></tr>
+<tr><td><code>secondary</code></td><td>background</td><td><code>--surface-action-secondary-default</code></td><td>#FFFFFF</td></tr>
+<tr><td><code>secondary</code></td><td>borde (<code>box-shadow: inset</code>)</td><td><code>--border-action-secondary-default</code> · ancho <code>--border-action-secondary-width</code></td><td>#4059FD · 1 px</td></tr>
+<tr><td><code>secondary</code></td><td>color (label)</td><td><code>--text-action-secondary-default</code></td><td>#4059FD</td></tr>
+</table>
+<h3>Tipografía, spacing, bordes y sombras</h3>
+<table>
+<tr><th>Categoría</th><th>Token</th><th>Valor</th></tr>
+<tr><td>Tipografía (label de cada botón)</td><td><code>Button/Label MD</code>: <code>--font-family-base</code>, <code>--font-size-button-label</code>, <code>--font-weight-button-label</code></td><td>Inter 14 / 1,2 · 600</td></tr>
+<tr><td>Spacing del grupo</td><td><code>--spacing-sm</code></td><td>8 px</td></tr>
+<tr><td>Bordes</td><td>Los define <code>Button</code></td><td>—</td></tr>
+<tr><td>Sombra / elevación</td><td>No aplica</td><td>Sin sombras</td></tr>
+</table>
+</section>
+
+<!-- 04 -->
+<section>
+<h2><span class="n">04</span>Estados</h2>
+<p class="lead">El grupo <strong>no tiene estados propios</strong>: cada botón resuelve los suyos (tokens del handoff de <code>Button</code>). Solo se listan los tokens que cambian respecto a Default.</p>
+<table>
+<tr><th>Estado</th><th>Selector</th><th>Botón</th><th>Propiedad</th><th>Token</th></tr>
+<tr><td class="k">Hover</td><td><code>:hover</code></td><td><code>primary</code></td><td>background</td><td><code>--surface-action-hover</code> #364CD7</td></tr>
+<tr><td></td><td></td><td><code>secondary</code></td><td>background / borde / label</td><td><code>--surface-action-secondary-hover</code> #F5F7FF / <code>--border-action-secondary-hover</code> #364CD7 / <code>--text-action-secondary-hover</code></td></tr>
+<tr><td class="k">Pressed</td><td><code>:active</code></td><td><code>primary</code></td><td>background</td><td><code>--surface-action-pressed</code> #2D3EB1</td></tr>
+<tr><td></td><td></td><td><code>secondary</code></td><td>background / borde / label</td><td><code>--surface-action-secondary-pressed</code> #ECEEFF / <code>--border-action-secondary-pressed</code> #2D3EB1 / <code>--text-action-secondary-pressed</code></td></tr>
+<tr><td class="k">Focus</td><td><code>:focus-visible</code></td><td>ambos</td><td>anillo</td><td><code>--border-width-focus</code> (2 px) con <code>--color-border-focus</code> #667AFD (interno en <code>Solid</code>; externo en <code>Outline</code>)</td></tr>
+<tr><td class="k">Disabled</td><td><code>:disabled</code></td><td><code>primary</code></td><td>background</td><td><code>--surface-action-disabled</code> #D9DEFF</td></tr>
+<tr><td></td><td></td><td><code>secondary</code></td><td>background / borde</td><td><code>--surface-action-secondary-disabled</code> / <code>--border-action-secondary-disabled</code> #D9DEFF</td></tr>
+<tr><td></td><td></td><td>ambos</td><td>label</td><td><code>--color-text-disabled</code> #A3A3A3</td></tr>
+<tr><td class="k">Loading / Error / Selected</td><td>—</td><td>—</td><td>—</td><td>No aplica — ni el grupo ni <code>Button</code> los tienen</td></tr>
+</table>
+<div class="note"><p><strong>Combinaciones:</strong> cada botón se deshabilita por separado (por ejemplo, primario deshabilitado y secundarios activos); el orden y el gap no cambian. No hay <code>disabled</code> a nivel grupo, para no contradecir el de cada acción (Preguntas abiertas #7). Los anillos de foco (2 px) no se pisan entre botones: el gap es de 8 px. <strong>Transiciones:</strong> las de <code>Button</code> (120 ms ease-out, desactivadas con <code>prefers-reduced-motion</code>); el grupo no agrega ninguna.</p></div>
+</section>
+
+<!-- 05 -->
+<section>
+<h2><span class="n">05</span>Comportamiento</h2>
+<ul class="l">
+<li><strong>Click / tap / Enter / Espacio:</strong> cada botón dispara el <code>onClick</code> de <em>su</em> acción. El grupo no intercepta ni coordina eventos.</li>
+<li><strong>Sin estado propio:</strong> no hay selección, apertura ni valor. Es puramente presentacional (no es un <em>toolbar</em> ni un grupo de radio).</li>
+<li><strong>Orden:</strong> el orden del DOM y el visual son el mismo: <code>primary</code> primero, luego <code>secondary</code> en el orden de la lista. No se reordena por CSS (<code>order</code>, <code>row-reverse</code>).</li>
+<li><strong>Acciones paralelas vs. secuenciales:</strong> el componente no distingue las dos; solo cambia lo que hace cada <code>onClick</code>. En una secuencia, el primario es el paso "principal" (por ejemplo, Guardar) y los secundarios las alternativas (Guardar y continuar, Cancelar).</li>
+<li><strong>Dentro de un <code>&lt;form&gt;</code>:</strong> para que Enter envíe el formulario, el primario debe llevar <code>type: 'submit'</code>; por defecto los botones son <code>type="button"</code> (comportamiento de <code>Button</code>).</li>
+<li><strong>Carga / asincronía:</strong> el grupo no tiene <code>loading</code> (<code>Button</code> tampoco). La pantalla deshabilita las acciones mientras dura la operación.</li>
+<li><strong>Validación del contrato:</strong> en desarrollo, si falta <code>primary</code> o si <code>secondary</code> tiene 0 o más de 4 ítems, se hace <code>console.warn</code>. <strong>[Supuesto — validar]</strong></li>
+<li><strong>Eventos que expone:</strong> solo los <code>onClick</code> de cada acción. Sin <code>onChange</code>, sin callbacks del grupo.</li>
+</ul>
+</section>
+
+<!-- 06 -->
+<section>
+<h2><span class="n">06</span>Accesibilidad</h2>
+<p><strong>Rol y elemento:</strong> <code>&lt;div role="group"&gt;</code> con <code>aria-label</code>; cada acción es un <code>&lt;button&gt;</code> nativo (o <code>&lt;a&gt;</code> si lleva <code>href</code>, igual que <code>Button</code>). No hay patrón APG dedicado; <em>Toolbar</em> no aplica.</p>
+<h3>ARIA</h3>
+<table>
+<tr><th>Atributo</th><th>Cuándo</th><th>Valor</th></tr>
+<tr><td><code>role="group"</code></td><td>Siempre, en el contenedor</td><td>—</td></tr>
+<tr><td><code>aria-label</code></td><td>Recomendado siempre</td><td>Texto corto que describe el contexto (“Acciones del formulario”). <span class="pend">⚠️ Pendiente #8</span></td></tr>
+<tr><td><code>disabled</code></td><td>Botón deshabilitado</td><td>Atributo nativo por botón (lo aplica <code>Button</code>)</td></tr>
+</table>
+<h3>Teclado</h3>
+<table>
+<tr><th>Tecla</th><th>Acción</th></tr>
+<tr><td><kbd>Tab</kbd></td><td>Mueve el foco al siguiente botón (izquierda → derecha). Entra por el primario. Un botón <code>disabled</code> se omite.</td></tr>
+<tr><td><kbd>Shift</kbd> + <kbd>Tab</kbd></td><td>Mueve el foco al botón anterior.</td></tr>
+<tr><td><kbd>Enter</kbd> / <kbd>Espacio</kbd></td><td>Activa el botón con foco (<kbd>Enter</kbd> también en un enlace).</td></tr>
+</table>
+<p><strong>Orden de foco:</strong> primario, secundario 1, 2…, igual al orden visual. Sin flechas (no hay roving tabindex) y sin focus trap. El grupo no mueve el foco; tras activar una acción, el foco lo decide la pantalla (por ejemplo, al cerrar un <code>Modal</code>).</p>
+<h3>Lector de pantalla</h3>
+<ul class="l">
+<li><strong>Entrada al grupo:</strong> “Acciones del formulario, grupo”.</li>
+<li><strong>Cada botón:</strong> “Guardar, botón”. Deshabilitado: “Guardar, botón, no disponible”.</li>
+<li>Sin regiones <code>aria-live</code>: el grupo no cambia de contenido por sí mismo.</li>
+</ul>
+<h3>Otros</h3>
+<table>
+<tr><th>Elemento</th><th>Ratio</th><th>Resultado</th></tr>
+<tr><td>Label blanco sobre primario #4059FD</td><td>5,2:1</td><td>Cumple AA (4,5:1)</td></tr>
+<tr><td>Label y borde #4059FD sobre blanco (secundario)</td><td>5,2:1</td><td>Cumple AA (texto 4,5:1 · borde 3:1)</td></tr>
+<tr><td>Anillo de foco #667AFD sobre blanco</td><td>3,6:1</td><td>Cumple AA (3:1)</td></tr>
+<tr><td>Botón <code>Disabled</code></td><td>—</td><td>Exento por WCAG (componente inactivo)</td></tr>
+</table>
+<ul class="l">
+<li><strong>Área táctil:</strong> cada botón mide 32,8 px de alto (cumple el mínimo AA de 24 × 24 px); el recomendado táctil es 44 px. El gap de 8 px evita toques cruzados. Ver Responsive.</li>
+<li><strong>No depender del color:</strong> el primario es sólido y va primero; los secundarios tienen borde y texto.</li>
+<li><strong>Movimiento:</strong> las transiciones de <code>Button</code> respetan <code>prefers-reduced-motion</code>; el grupo no anima.</li>
+</ul>
+</section>
+
+<!-- 07 -->
+<section>
+<h2><span class="n">07</span>Reglas responsive</h2>
+<p class="lead">El componente <strong>no cambia de patrón</strong>. Breakpoints supuestos: mobile &lt; 768, tablet 768–1023, desktop ≥ 1024. <span class="pend">⚠️ Pendiente</span> confirmar los del sistema (#9).</p>
+<table>
+<tr><th>Breakpoint</th><th>Cambios</th></tr>
+<tr><td class="k">Desktop</td><td>Una sola fila, ancho hug. Alineación (izquierda o derecha del contenedor) la decide quien lo usa. <span class="pend">⚠️ #2</span></td></tr>
+<tr><td class="k">Tablet</td><td>Igual que desktop. Si los botones no entran en una línea, deben pasar a la siguiente (<code>flex-wrap: wrap</code> con <code>row-gap: var(--spacing-sm)</code>). <strong>[Supuesto — validar]</strong></td></tr>
+<tr><td class="k">Mobile</td><td>Se mantiene el orden (primario primero) y se permite el wrap a varias líneas. Alto recomendado de 44 px por botón. Alternativa a evaluar: botones a ancho completo apilados, primario arriba. <strong>[Supuesto — validar con diseño]</strong></td></tr>
+</table>
+<p>No se oculta ni reordena ningún botón en ningún breakpoint. <code>ActionGroup</code> ya lleva <code>flex-wrap: wrap</code>, pero el contenedor de los templates (<code>.actionsRow</code>) tiene <code>flex-shrink: 0</code> y no limita el ancho: el wrap solo actúa si el padre restringe el ancho. Comprobar en pantallas angostas.</p>
+</section>
+
+<!-- 08 -->
+<section>
+<h2><span class="n">08</span>Edge cases</h2>
+<table>
+<tr><th>Caso</th><th>Comportamiento esperado</th></tr>
+<tr><td class="k">Label largo</td><td>El botón no se corta: una sola línea (<code>white-space: nowrap</code>) y el grupo crece (hug). Si el padre limita el ancho, <code>Button</code> aplica ellipsis solo cuando su contenedor lo restringe; con <code>flex-wrap</code> el botón pasa a la línea siguiente. Sin tooltip.</td></tr>
+<tr><td class="k">Solo <code>primary</code> (sin <code>secondary</code>)</td><td>No es un <code>Action Group</code>: usar <code>Button</code> suelto. Si se pasa igual, renderiza el primario y hace <code>console.warn</code> en desarrollo.</td></tr>
+<tr><td class="k">Más de 4 <code>secondary</code></td><td>Renderiza los primeros 4 y advierte en desarrollo. El resto debería ir a un menú de acciones (no existe todavía; #5). <strong>[Supuesto — validar]</strong></td></tr>
+<tr><td class="k">Sin <code>primary</code></td><td>No permitido: no renderiza nada y advierte en desarrollo. Nunca se promueve un secundario a primario automáticamente.</td></tr>
+<tr><td class="k">Primario deshabilitado</td><td>Sigue primero y sigue siendo <code>Solid</code> (en su estilo deshabilitado). Los secundarios activos siguen funcionando.</td></tr>
+<tr><td class="k">Todas las acciones deshabilitadas</td><td>Válido: cada una se muestra deshabilitada. Recomendado explicar cerca qué falta para habilitarlas.</td></tr>
+<tr><td class="k">Íconos en los botones</td><td>Se permiten por acción (<code>iconStart</code> / <code>iconEnd</code>): los templates actuales ya los usan (Nuevo, Recargar, Exportar, Guardar), pero el grupo de Figma no los incluye. ⚠️ Pendiente (#4)</td></tr>
+<tr><td class="k">Labels repetidos</td><td>No se valida; es un error de contenido (Reglas de uso: no repetir acciones).</td></tr>
+<tr><td class="k">i18n / RTL</td><td>Con <code>dir="rtl"</code> la fila se invierte sola (el primario queda a la derecha, que es el inicio de lectura). Usar <code>gap</code>, no márgenes. Labels más largos en otros idiomas hacen crecer el grupo.</td></tr>
+<tr><td class="k">Overflow, listas, estado vacío</td><td>No aplican.</td></tr>
+</table>
+</section>
+
+<!-- 09 -->
+<section>
+<h2><span class="n">09</span>Composición y componentes átomo</h2>
+<table>
+<tr><th>Componente</th><th>Usado en parte</th><th>Props / variante usada</th><th>Para qué</th></tr>
+<tr><td><code>Button</code></td><td><code>primary</code></td><td><code>variant="solid"</code> + props de la acción</td><td>Acción principal (Figma: <code>Variant=Solid</code>, <code>State=Default</code>).</td></tr>
+<tr><td><code>Button</code></td><td><code>secondary</code> (× 1 a 4)</td><td><code>variant="outline"</code> + props de la acción</td><td>Acciones alternativas (Figma: <code>Variant=Outline</code>, <code>State=Default</code>).</td></tr>
+</table>
+<p><strong>Props que se pasan hacia abajo:</strong> de cada acción a su <code>Button</code>: <code>label</code> (como <code>children</code>), <code>onClick</code>, <code>disabled</code>, <code>type</code>, <code>href</code>, <code>iconStart</code>, <code>iconEnd</code>, <code>aria-*</code>. <code>variant</code> nunca se pasa: lo fija la posición. Reusar <code>Button</code> tal cual; no reimplementar estilos.</p>
+<p><strong>Dónde se usa hoy:</strong></p>
+<ul class="l">
+<li><code>LayoutMaestroDataGrid</code> — cabecera: <strong>Nuevo</strong> (primario) + <strong>Recargar</strong> y <strong>Exportar</strong> (secundarios), con <code>aria-label="Acciones del listado"</code>. Con <strong>Nuevo</strong> solo, o sin <strong>Nuevo</strong>, van <code>Button</code> sueltos.</li>
+<li><code>LayoutMaestroBasico</code> — cabecera: <strong>Guardar</strong> (primario) + <strong>Cancelar</strong>, con <code>aria-label="Acciones del formulario"</code>. Con una sola acción (por ejemplo, solo <strong>Volver</strong> en modo Visualizar) va un <code>Button</code> suelto.</li>
+<li><code>Modal</code> — footer de “Agregar concesionario” (<code>PerfilFormulario</code>): <strong>Agregar</strong> (primario) + <strong>Cancelar</strong>, con <code>aria-label="Acciones del diálogo"</code>. Antes Cancelar iba a la izquierda y el primario a la derecha; se movió para cumplir la regla.</li>
+<li><code>TourPopup</code> (Anterior / Siguiente) <strong>no</strong> lo usa a propósito: es navegación entre slides, no un grupo de acciones (Preguntas abiertas #3).</li>
+</ul>
+</section>
+
+<section class="warn">
+<h2>Preguntas abiertas</h2>
+<ol class="q">
+<li><strong>Forma de la API (resuelto):</strong> se eligió la opción A, <code>primary</code> + <code>secondary[]</code> (hace imposible tener 0 o 2 primarios), y ya está implementada.</li>
+<li><strong>Alineación y wrap:</strong> ¿el grupo se alinea a la izquierda o a la derecha en cada contexto? El componente ya incluye <code>flex-wrap</code> (supuesto a validar). Hoy los templates lo alinean a la derecha de la cabecera.</li>
+<li><strong>Conflicto con patrones existentes:</strong> El footer del <code>Modal</code> de <code>PerfilFormulario</code> ya se migró (primario a la izquierda del grupo). Falta confirmar con diseño ese cambio de orden. <code>TourPopup</code> (Anterior / Siguiente) queda como excepción: es navegación entre slides.</li>
+<li><strong>Íconos:</strong> los templates usan íconos en los botones y el grupo de Figma no los incluye. ¿Se permiten?</li>
+<li><strong>Más de 5 acciones:</strong> ¿se crea un menú de acciones (overflow)? Hoy no existe.</li>
+<li><strong>Otras variantes de botón:</strong> ¿se admiten <code>Text</code> e <code>Icon Only</code> dentro del grupo? ¿Hace falta una acción destructiva?</li>
+<li><strong>Deshabilitar el grupo:</strong> ¿hace falta una prop <code>disabled</code> a nivel grupo, o alcanza con la de cada acción?</li>
+<li><strong>Etiqueta del grupo:</strong> ¿<code>aria-label</code> obligatorio u opcional? ¿Con un valor por defecto (“Acciones”)?</li>
+<li><strong>Breakpoints:</strong> confirmar los del sistema y el comportamiento en mobile (wrap vs. apilado a ancho completo).</li>
+<li><strong>Figma — textos:</strong> hoy el texto de cada botón se cambia entrando a la instancia. ¿Se exponen como propiedades del componente?</li>
+<li><strong>Figma — alto:</strong> 33 px (<code>Solid</code>) y 35 px (<code>Outline</code>) en Figma vs 32,8 px en código; alinear con el borde inset de <code>Button</code>.</li>
+</ol>
+</section>
+
+</main>
+</body>
+</html>

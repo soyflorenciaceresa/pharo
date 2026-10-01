@@ -5,30 +5,6 @@
   width: 100%;
 }
 
-.sectionHeader {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.sectionTitle {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-text-default);
-}
-
-.sectionSubtitle {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--color-text-secondary);
-}
-
 .quickAccessRow {
   display: flex;
   align-items: center;
@@ -57,9 +33,18 @@
   gap: var(--spacing-md);
 }
 
+/* Ancho de card fijo — 174px, el mismo `min-width` que ya tenía CardModule
+   (ver esa nota), que es el tamaño real que se veía antes con el sidebar
+   expandido — nunca se estira ni se achica con el viewport. `auto-fill`
+   agrega más columnas cuando entran (sidebar colapsado, pantalla más
+   grande) y las quita cuando no, dejando el espacio sobrante sin usar en vez
+   de estirar las cards existentes (por eso `auto-fill`, no `auto-fit`, que
+   sí las estiraría). El JS de Home.jsx mide este mismo ancho + gap para
+   calcular cuántas columnas entran realmente y armar la paginación de 3
+   filas — ver MODULE_CARD_WIDTH/MODULE_GRID_GAP. */
 .modulesGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, 174px);
   gap: var(--spacing-md);
   width: 100%;
 }

@@ -1,0 +1,89 @@
+/* Button — Figma 591:1937 (spec 595:17, handoff 605:91). Tamaño único (md). */
+.btn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-gap-button);
+  max-width: 100%;
+  padding: var(--spacing-padding-button-y) var(--spacing-padding-button-x);
+  border-radius: var(--radius-button);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-button-label);
+  font-weight: var(--font-weight-button-label);
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease-out, color 120ms ease-out, box-shadow 120ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
+
+/* Solid — acción principal (incluye ícono leading/trailing e Icon Only). */
+.solid { background: var(--surface-action-default); color: var(--text-on-action); }
+.solid:hover { background: var(--surface-action-hover); }
+.solid:active { background: var(--surface-action-pressed); }
+.solid:focus-visible { box-shadow: inset 0 0 0 var(--border-width-focus) var(--color-border-focus); }
+
+/* Outline — acción secundaria. El borde va con box-shadow inset (recomendación
+   del handoff) para que mida lo mismo que Solid/Text y se alineen en fila. */
+.outline {
+  background: var(--surface-action-secondary-default);
+  color: var(--text-action-secondary-default);
+  box-shadow: inset 0 0 0 var(--border-action-secondary-width) var(--border-action-secondary-default);
+}
+.outline:hover {
+  background: var(--surface-action-secondary-hover);
+  color: var(--text-action-secondary-hover);
+  box-shadow: inset 0 0 0 var(--border-action-secondary-width) var(--border-action-secondary-hover);
+}
+.outline:active {
+  background: var(--surface-action-secondary-pressed);
+  color: var(--text-action-secondary-pressed);
+  box-shadow: inset 0 0 0 var(--border-action-secondary-width) var(--border-action-secondary-pressed);
+}
+/* Figma: borde 1px default + anillo externo de 2px. */
+.outline:focus-visible {
+  box-shadow:
+    inset 0 0 0 var(--border-action-secondary-width) var(--border-action-secondary-default),
+    0 0 0 var(--border-width-focus) var(--color-border-focus);
+}
+
+/* Text — acción terciaria / baja jerarquía. */
+.text { background: transparent; color: var(--text-action-secondary-default); }
+.text:hover { background: var(--surface-action-secondary-hover); color: var(--text-action-secondary-hover); }
+.text:active { background: var(--surface-action-secondary-pressed); color: var(--text-action-secondary-pressed); }
+.text:focus-visible { box-shadow: inset 0 0 0 var(--border-width-focus) var(--color-border-focus); }
+
+/* Disabled gana sobre todo: no recibe hover, active ni foco. */
+.btn:disabled { cursor: not-allowed; color: var(--color-text-disabled); }
+.solid:disabled { background: var(--surface-action-disabled); box-shadow: none; }
+.outline:disabled {
+  background: var(--surface-action-secondary-disabled);
+  box-shadow: inset 0 0 0 var(--border-action-secondary-width) var(--border-action-secondary-disabled);
+}
+.text:disabled { background: transparent; box-shadow: none; }
+
+/* Icon Only — cuadrado, padding-y en los 4 lados. */
+.iconOnly { padding: var(--spacing-padding-button-y); }
+
+.icon {
+  display: flex;
+  flex: none;
+  width: var(--size-icon-sm);
+  height: var(--size-icon-sm);
+}
+.icon > svg { width: 100%; height: 100%; }
+
+/* Una sola línea; si el padre limita el ancho, ellipsis en el label. */
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (forced-colors: active) {
+  .btn { border: 1px solid ButtonText; }
+}

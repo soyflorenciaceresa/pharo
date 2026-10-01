@@ -7,7 +7,6 @@ function cx(...classes) {
 }
 
 export default function Accordion({
-  icon = 'app-window',
   title,
   defaultExpanded = true,
   onToggle,
@@ -30,9 +29,6 @@ export default function Accordion({
         onClick={toggle}
         aria-expanded={expanded}
       >
-        <span className={styles.iconBadge}>
-          <Icon name={icon} size={16} />
-        </span>
         <span className={styles.title}>{title}</span>
         <span className={cx(styles.chevron, expanded && styles.open)}>
           <Icon name="bi-chevron-right" size={16} />

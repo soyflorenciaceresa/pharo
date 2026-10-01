@@ -83,6 +83,8 @@
   line-height: 20px;
   color: var(--color-text-secondary);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cellText {
@@ -151,26 +153,6 @@
   outline: 2px solid var(--sidebar-accent);
   outline-offset: 2px;
 }
-
-/* Status chip */
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px var(--spacing-sm);
-  border-radius: var(--radius-full);
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-  white-space: nowrap;
-}
-
-.chip[data-tone='success'] { background: var(--color-success-subtle); color: var(--color-success-default); }
-.chip[data-tone='warning'] { background: var(--color-warning-subtle); color: var(--color-warning-default); }
-.chip[data-tone='danger'] { background: var(--color-danger-subtle); color: var(--color-danger-default); }
-.chip[data-tone='primary'] { background: var(--color-primary-subtle); color: var(--color-primary-default); }
-.chip[data-tone='neutral'] { background: var(--color-surface-selected); color: var(--color-text-secondary); }
 
 /* Actions */
 

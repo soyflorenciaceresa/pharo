@@ -21,6 +21,10 @@ export const ICONS = {
   'bi-box-arrow-up-right': '<path d="M3 6L3 13L10 13L10 9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 2L13 2L13 8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 9.5L13 3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
   'bi-chevron-right': '<path d="M5 3L10.5 8L5 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
   'bi-chevron-left': '<path d="M11 3L5.5 8L11 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+  // Sin equivalente en ningún frame de Figma todavía — aproximación dibujada
+  // a mano, mismo stroke-width que bi-chevron-left/right para consistencia
+  // visual. Usado como indicador de despliegue en Select.
+  'bi-chevron-down': '<path d="M3 5.5L8 11L13 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
   'bi-box-arrow-right': '<path d="M8 2.5L4 2.5L4 13.5L8 13.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 8L14 8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M11 5L14 8L11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>',
   'bi-person-badge': '<rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/><ellipse cx="8" cy="6.2" rx="1.7" ry="1.7" fill="currentColor"/><path d="M4.5 12C4.5 9.5 6 8.5 8 8.5C10 8.5 11.5 9.5 11.5 12Z" fill="currentColor"/>',
   // Sin trazo de Figma disponible (no forma parte del Data Grid 304:388) —
@@ -87,9 +91,33 @@ export const ICONS = {
   'icon-plus': '<path fill-rule="evenodd" clip-rule="evenodd" d="M8 2C8.13261 2 8.25979 2.05268 8.35355 2.14645C8.44732 2.24021 8.5 2.36739 8.5 2.5V7.5H13.5C13.6326 7.5 13.7598 7.55268 13.8536 7.64645C13.9473 7.74021 14 7.86739 14 8C14 8.13261 13.9473 8.25979 13.8536 8.35355C13.7598 8.44732 13.6326 8.5 13.5 8.5H8.5V13.5C8.5 13.6326 8.44732 13.7598 8.35355 13.8536C8.25979 13.9473 8.13261 14 8 14C7.86739 14 7.74021 13.9473 7.64645 13.8536C7.55268 13.7598 7.5 13.6326 7.5 13.5V8.5H2.5C2.36739 8.5 2.24021 8.44732 2.14645 8.35355C2.05268 8.25979 2 8.13261 2 8C2 7.86739 2.05268 7.74021 2.14645 7.64645C2.24021 7.55268 2.36739 7.5 2.5 7.5H7.5V2.5C7.5 2.36739 7.55268 2.24021 7.64645 2.14645C7.74021 2.05268 7.86739 2 8 2Z" fill="currentColor"/>',
   'icon-refresh': '<path fill-rule="evenodd" clip-rule="evenodd" d="M8 3C6.91936 3.00042 5.86793 3.35093 5.00321 3.99904C4.13848 4.64715 3.50701 5.55797 3.20336 6.59508C2.89972 7.63219 2.94025 8.73976 3.31889 9.7519C3.69752 10.764 4.39388 11.6263 5.30366 12.2094C6.21344 12.7926 7.28768 13.0653 8.36546 12.9868C9.44325 12.9082 10.4666 12.4826 11.2822 11.7736C12.0977 11.0647 12.6617 10.1105 12.8895 9.0542C13.1174 7.99784 12.9968 6.89611 12.546 5.914C12.4969 5.7946 12.4959 5.66084 12.5432 5.54072C12.5906 5.42061 12.6825 5.32344 12.7998 5.26957C12.9171 5.21569 13.0507 5.20927 13.1727 5.25167C13.2946 5.29406 13.3954 5.38197 13.454 5.497C13.995 6.67559 14.1396 7.99773 13.8661 9.26538C13.5926 10.533 12.9157 11.678 11.9369 12.5286C10.9581 13.3793 9.73004 13.89 8.43664 13.9842C7.14325 14.0783 5.85416 13.7509 4.76247 13.0509C3.67078 12.3509 2.83526 11.3161 2.38106 10.1014C1.92686 8.88676 1.87844 7.55762 2.24303 6.31311C2.60763 5.0686 3.36563 3.97571 4.40348 3.19815C5.44134 2.42059 6.70318 2.00022 8 2V3Z" fill="currentColor"/><path d="M8 4.466V0.534C8.00002 0.486496 8.01357 0.439981 8.03907 0.399901C8.06457 0.359821 8.10096 0.327835 8.14398 0.307689C8.187 0.287543 8.23487 0.280071 8.28198 0.286148C8.32909 0.292224 8.3735 0.311598 8.41 0.342L10.77 2.308C10.89 2.408 10.89 2.592 10.77 2.692L8.41 4.658C8.3735 4.6884 8.32909 4.70778 8.28198 4.71385C8.23487 4.71993 8.187 4.71246 8.14398 4.69231C8.10096 4.67217 8.06457 4.64018 8.03907 4.6001C8.01357 4.56002 8.00002 4.5135 8 4.466Z" fill="currentColor"/>',
   'icon-export': '<path fill-rule="evenodd" clip-rule="evenodd" d="M10 12.5C10 12.6326 9.94732 12.7598 9.85355 12.8536C9.75979 12.9473 9.63261 13 9.5 13H1.5C1.36739 13 1.24021 12.9473 1.14645 12.8536C1.05268 12.7598 1 12.6326 1 12.5V3.5C1 3.36739 1.05268 3.24021 1.14645 3.14645C1.24021 3.05268 1.36739 3 1.5 3H9.5C9.63261 3 9.75979 3.05268 9.85355 3.14645C9.94732 3.24021 10 3.36739 10 3.5V5.5C10 5.63261 10.0527 5.75979 10.1464 5.85355C10.2402 5.94732 10.3674 6 10.5 6C10.6326 6 10.7598 5.94732 10.8536 5.85355C10.9473 5.75979 11 5.63261 11 5.5V3.5C11 3.10218 10.842 2.72064 10.5607 2.43934C10.2794 2.15804 9.89782 2 9.5 2H1.5C1.10218 2 0.720644 2.15804 0.43934 2.43934C0.158035 2.72064 0 3.10218 0 3.5L0 12.5C0 12.8978 0.158035 13.2794 0.43934 13.5607C0.720644 13.842 1.10218 14 1.5 14H9.5C9.89782 14 10.2794 13.842 10.5607 13.5607C10.842 13.2794 11 12.8978 11 12.5V10.5C11 10.3674 10.9473 10.2402 10.8536 10.1464C10.7598 10.0527 10.6326 10 10.5 10C10.3674 10 10.2402 10.0527 10.1464 10.1464C10.0527 10.2402 10 10.3674 10 10.5V12.5Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M15.854 8.354C15.9006 8.30755 15.9375 8.25238 15.9627 8.19163C15.9879 8.13089 16.0009 8.06577 16.0009 8C16.0009 7.93423 15.9879 7.86911 15.9627 7.80837C15.9375 7.74762 15.9006 7.69245 15.854 7.646L12.854 4.646C12.7601 4.55211 12.6328 4.49937 12.5 4.49937C12.3672 4.49937 12.2399 4.55211 12.146 4.646C12.0521 4.73989 11.9994 4.86722 11.9994 5C11.9994 5.13278 12.0521 5.26011 12.146 5.354L14.293 7.5H5.5C5.36739 7.5 5.24021 7.55268 5.14645 7.64645C5.05268 7.74022 5 7.86739 5 8C5 8.13261 5.05268 8.25979 5.14645 8.35355C5.24021 8.44732 5.36739 8.5 5.5 8.5H14.293L12.146 10.646C12.0521 10.7399 11.9994 10.8672 11.9994 11C11.9994 11.1328 12.0521 11.2601 12.146 11.354C12.2399 11.4479 12.3672 11.5006 12.5 11.5006C12.6328 11.5006 12.7601 11.4479 12.854 11.354L15.854 8.354Z" fill="currentColor"/>',
+
+  // Sin frame de Figma equivalente todavía (Buscador de la TopBar) —
+  // aproximación dibujada a mano (lupa), mismo criterio que el resto de bi-*.
+  'bi-search': '<circle cx="6.8" cy="6.8" r="4.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.4 10.4L14.2 14.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>',
+
+  // Set de íconos del Buscador de IA / Chatbox (Pharo IA) — sin frame de
+  // Figma equivalente todavía, aproximaciones dibujadas a mano mismo criterio
+  // que el resto de bi-*.
+  'bi-chat': '<path d="M3.5 2C2.67157 2 2 2.67157 2 3.5V8.5C2 9.32843 2.67157 10 3.5 10H3.5V12.5L6 10H12.5C13.3284 10 14 9.32843 14 8.5V3.5C14 2.67157 13.3284 2 12.5 2H3.5Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>',
+  'bi-paperclip': '<path d="M9.5 4L5 8.5C4.17157 9.32843 4.17157 10.6716 5 11.5C5.82843 12.3284 7.17157 12.3284 8 11.5L12.5 7C13.6046 5.89543 13.6046 4.10457 12.5 3C11.3954 1.89543 9.60457 1.89543 8.5 3L4 7.5C2.34315 9.15685 2.34315 11.8431 4 13.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>',
+  'bi-mic': '<rect x="6" y="1.5" width="4" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 7.5C3.5 10.5376 5.51472 13 8 13C10.4853 13 12.5 10.5376 12.5 7.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 13V15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5.5 15H10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
+  'bi-send': '<path d="M2 8L14 2L9 14L7 9L2 8Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M14 2L7 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
+  'bi-download': '<path d="M8 2V10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4.5 6.5L8 10L11.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 12.5H13.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
+  // Sin equivalente en ningún frame de Figma todavía — aproximación dibujada
+  // a mano, mismo trazo que bi-download pero con la flecha invertida (sube
+  // en vez de bajar). Usado en FileUpload.
+  'bi-upload': '<path d="M8 10V2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4.5 5.5L8 2L11.5 5.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 12.5H13.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
+  'bi-bar-chart': '<rect x="2" y="9" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="6.5" y="5" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="11" y="2" width="3" height="12" rx="0.5" fill="currentColor"/>',
+  // Favoritos, ver `ToggleIcon` (Figma: `Toggle Icon`, 657:39 — ahí la
+  // estrella es un vector propio, no una instancia del set de íconos; no hay
+  // estrellas en la página Icon todavía). Trazo estándar de Bootstrap Icons
+  // (bi-star/bi-star-fill), mismo criterio que el resto de bi-* del kit.
+  'bi-star': '<path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" fill="currentColor"/>',
+  'bi-star-fill': '<path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" fill="currentColor"/>',
 };
 
-export function Icon({ name, size = 16, className }) {
+export function Icon({ name, size = 16, className, ...rest }) {
   const markup = ICONS[name] || '';
   return (
     <svg
@@ -97,6 +125,7 @@ export function Icon({ name, size = 16, className }) {
       width={size}
       height={size}
       className={className}
+      {...rest}
       dangerouslySetInnerHTML={{ __html: markup }}
     />
   );

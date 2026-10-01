@@ -2,6 +2,7 @@
   --bg: var(--color-surface-inverse, #061e30);
   --bg-hover: var(--sidebar-bg-hover, #0d2c44);
   --border: var(--color-border-default, #e3e5ea);
+  --divider: rgba(255, 255, 255, 0.07);
   --text: var(--color-text-inverse, #fff);
   --text-muted: var(--color-ink-300, #c8ced1);
   --text-subtle: var(--color-ink-500, #8f9aa2);
@@ -36,7 +37,7 @@
 }
 .sidebar.expanded { width: var(--w-expanded); }
 
-.divider { height: 1px; flex-shrink: 0; background: var(--border); }
+.divider { height: 1px; flex-shrink: 0; margin: 0 var(--sp-3); background: var(--divider); }
 
 .header {
   height: 60px;
@@ -46,7 +47,6 @@
   align-items: center;
   justify-content: center;
   padding: 0 var(--sp-2);
-  border-bottom: 1px solid var(--border);
 }
 .expanded .header { justify-content: space-between; padding: 0 var(--sp-4); }
 
@@ -60,6 +60,12 @@
 .brandIconBox[data-accent="cyan"] { background: var(--color-accent-cyan-subtle); color: var(--color-accent-cyan); }
 .brandIconBox[data-accent="pink"] { background: var(--color-accent-pink-subtle); color: var(--color-accent-pink); }
 .brandIconBox[data-accent="indigo"] { background: var(--color-accent-indigo-subtle); color: var(--color-accent-indigo); }
+/* "neutral" no es uno de los 8 accents con nombre propio — mismo caso ya
+   documentado en CardModule.module.css (iconBadge[data-accent='neutral']):
+   reusa --color-surface-selected/--color-text-secondary en vez de un color de marca.
+   Hacía falta acá porque 3 de los módulos nuevos (Access Control, DevOps,
+   Stock — ver config/modules.js) usan accent:'neutral' como brandAccent. */
+.brandIconBox[data-accent="neutral"] { background: var(--color-surface-selected); color: var(--color-text-secondary); }
 .brandLabel { font-weight: 700; font-size: 16px; white-space: nowrap; display: none; }
 .expanded .brandLabel { display: inline; }
 
@@ -123,6 +129,14 @@
 .groupBody > div { overflow: hidden; }
 .group.open .groupBody { grid-template-rows: 1fr; }
 .sidebar:not(.expanded) .groupBody { display: none; }
+
+/* Solo visible mientras el grupo anterior (el que la precede, hermano
+   directo vía +) está abierto — no es un separador fijo de la lista, marca
+   el cierre del acordeón expandido. Se anima con el mismo timing que
+   .groupBody en vez de un display:none/block abrupto. */
+.groupDivider { height: 0; margin: 0 var(--sp-3); background: var(--divider); opacity: 0; overflow: hidden; transition: height 0.25s ease, opacity 0.15s ease; }
+.group.open + .groupDivider { height: 1px; opacity: 1; }
+.sidebar:not(.expanded) .groupDivider { display: none; }
 
 .item { display: flex; align-items: center; gap: var(--sp-2); margin: 0 var(--sp-2); padding: var(--sp-3) var(--sp-2); border-radius: var(--r-3); color: var(--text); text-decoration: none; font-size: 13px; cursor: pointer; }
 .item:hover { background: var(--bg-hover); }

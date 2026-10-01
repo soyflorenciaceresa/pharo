@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page header — Handoff para developers</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#4059fd; --spacing-xs:4px; --spacing-sm:8px; --spacing-md:16px; --yellow:#eab308;
+  --ink:#061e30; --mut:#6a7883; --code:#2d3eb1; --line:#e3e5ea; --page:#f7f8fa; --red:#dc2626;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.4 Inter,system-ui,sans-serif}
+main{max-width:1200px;margin:0 auto;padding:64px 64px 96px}
+header.top{margin-bottom:24px}
+.eyebrow{font-size:12px;font-weight:500;color:var(--mut)}
+h1.pt{font-size:24px;line-height:1.2;margin:8px 0}
+.desc{color:var(--mut);margin:0 0 8px}
+.meta{display:flex;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--mut)}
+section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px;margin:0 0 24px}
+section.warn{background:#fef3c7}
+h2{display:flex;align-items:center;gap:12px;font-size:20px;line-height:1.2;margin:0 0 16px}
+h2 .n{font:400 11px 'JetBrains Mono',monospace;color:var(--code)}
+h3{font-size:16px;font-weight:600;margin:24px 0 12px;line-height:1.2}
+p{margin:0 0 12px}
+.lead{color:var(--mut);margin:0 0 16px}
+code{font:400 13px 'JetBrains Mono',monospace;color:var(--code)}
+pre{background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:16px;overflow:auto;margin:0 0 16px}
+pre code{color:var(--ink);font-size:12.5px;line-height:1.55}
+table{width:100%;border-collapse:collapse;margin:0 0 16px}
+th{background:#f7f8fa;color:var(--mut);font-size:12px;font-weight:500;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+td.k{font-weight:600;white-space:nowrap}
+.note{background:#fef3c7;border-radius:10px;padding:16px;margin:16px 0 0}
+.note p:last-child{margin:0}
+.pend{font-weight:600}
+ol.q{margin:0;padding-left:22px} ol.q li{margin:8px 0}
+ul.l{margin:0 0 12px;padding-left:20px} ul.l li{margin:6px 0}
+kbd{font:400 12px 'JetBrains Mono',monospace;border:1px solid #c9ced8;border-radius:4px;padding:1px 5px;background:#fff}
+.matrix{background:#f7f8fa;border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:24px}
+.matrix figcaption{font-size:12px;color:var(--mut);margin-bottom:8px;text-transform:uppercase;letter-spacing:.02em}
+.matrix figure{margin:0}
+.panel{background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:24px;position:relative;margin-bottom:24px}
+.panel small{display:block;text-align:center;color:var(--mut);font-size:12px;margin-top:16px}
+.pin{position:relative}
+.mk{position:absolute;width:20px;height:20px;border-radius:10px;background:var(--ink);color:#fff;font:600 12px/20px Inter;text-align:center}
+.ln{position:absolute;background:var(--ink)}
+.ol{position:absolute;border:1px dashed var(--ink);border-radius:4px;pointer-events:none}
+
+/* Organismo (réplica del CSS de los templates) */
+.ph{display:flex;flex-direction:column;width:100%}
+.ph.home{gap:var(--spacing-xs)}
+.ph.row{flex-direction:row;align-items:flex-end;justify-content:space-between;gap:var(--spacing-md)}
+.ph .col{display:flex;flex-direction:column;gap:var(--spacing-xs);flex:1 0 0;min-width:0}
+.ph .ttl{margin:0;font-size:24px;font-weight:700;line-height:1.2;color:var(--ink)}
+.ph .sub{margin:0;font-size:14px;line-height:1.4;color:var(--mut)}
+.ph .trow{display:flex;align-items:center;gap:var(--spacing-xs)}
+.ph .bc{display:flex;align-items:center;gap:var(--spacing-sm);font-size:14px;line-height:1.4;color:var(--mut)}
+.ph .bc .cur{color:var(--ink)}
+.star{display:inline-flex;color:var(--yellow)}
+.ag{display:flex;align-items:center;gap:var(--spacing-sm);flex-shrink:0}
+.btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;padding:8px 16px;border-radius:8px;font:600 14px/1.2 Inter,sans-serif;white-space:nowrap}
+.btn.solid{background:var(--primary);color:#fff}
+.btn.outline{background:#fff;color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary)}
+.g{position:absolute;border:1px dashed var(--red);background:rgba(220,38,38,.12)}
+.t{position:absolute;font:400 11px 'JetBrains Mono',monospace;color:var(--red);white-space:nowrap}
+@media(max-width:900px){main{padding:24px 16px}}
+</style>
+</head>
+<body>
+<main>
+
+<header class="top">
+  <div class="eyebrow">PHARO DESIGN SYSTEM · HANDOFF DEV</div>
+  <h1 class="pt">Page header — Handoff para developers</h1>
+  <p class="desc">Spec de implementación del component set Page header (680:39): partes, sizing, tokens, estados, comportamiento, accesibilidad, responsive, edge cases y composición. Complementa a "Page header - Spec" (uso y reglas de diseño). Es un organismo compuesto por <code>Breadcrumb</code>, <code>Toggle Icon</code> y <code>Action Group</code>. <strong>En código</strong> es <code>PageHeader</code> (<code>app/src/components/PageHeader/</code>); lo usan <code>LayoutMaestroDataGrid</code>, <code>LayoutMaestroBasico</code>, <code>LayoutHomeModule</code> y <code>Main/Home</code>.</p>
+  <div class="meta"><span>Component set 680:39</span><span>3 variantes de Type</span><span>Organismo · usa Breadcrumb, Toggle Icon y Action Group</span><span>Actualizado 29/09/2026</span><span>Estado: borrador para revisión</span></div>
+</header>
+
+<!-- 00 -->
+<section>
+<h2><span class="n">00</span>Resumen y API</h2>
+<p class="lead">Encabezado de pantalla con tres tipos (<code>Type</code> en Figma): <code>Home</code> (título + subtítulo de sección), <code>Maestro</code> (título + favorito + acciones) y <code>Form</code> (ruta + título + acciones). En código es un único componente <code>PageHeader</code> con una prop <code>type</code> explícita (<code>'home' | 'maestro' | 'form'</code>), igual a <code>Type</code> de Figma (opción B). Cada tipo admite solo algunas props y el componente avisa en desarrollo si se pasa otra. Hover, Focus y Pressed los resuelven los componentes que contiene. Ver Preguntas abiertas #1.</p>
+<pre><code>&lt;PageHeader
+  type="maestro"
+  title="Buque"
+  favorite={isFavorite}
+  onToggleFavorite={handleToggleFavorite}
+  actions={{
+    primary: { label: 'Nuevo', onClick: handleNew },
+    secondary: [{ label: 'Recargar', onClick: handleReload }],
+  }}
+/&gt;
+
+&lt;PageHeader
+  type="form"
+  breadcrumb={[{ label: 'Buque' }, { label: 'Crear Buque' }]}
+  title="Crear Buque"
+  actions={{ primary: { label: 'Guardar', onClick: save }, secondary: [{ label: 'Cancelar', onClick: cancel }] }}
+/&gt;
+
+&lt;PageHeader type="home" title="Acceso rápido" subtitle="Tus maestros y procesos favoritos" /&gt;</code></pre>
+<table>
+<tr><th>Prop</th><th>Tipo</th><th>Default</th><th>Mapea a Figma</th></tr>
+<tr><td><code>type</code></td><td><code>'home' | 'maestro' | 'form'</code></td><td>— (obligatoria)</td><td>Propiedad <code>Type</code> (<code>Home</code> / <code>Maestro</code> / <code>Form</code>)</td></tr>
+<tr><td><code>title</code></td><td><code>string</code></td><td>— (obligatoria)</td><td>Capa <code>Title</code> (texto)</td></tr>
+<tr><td><code>subtitle</code></td><td><code>string</code></td><td>—</td><td>Capa <code>Subtitle</code> (<code>Type=Home</code>)</td></tr>
+<tr><td><code>breadcrumb</code></td><td><code>{ label, href? }[]</code></td><td><code>[]</code></td><td>Instancias de <code>Breadcrumb</code> (<code>Type=Form</code>); el último ítem es <code>State=Active</code></td></tr>
+<tr><td><code>favorite</code> / <code>onToggleFavorite</code></td><td><code>boolean</code> / <code>() ⇒ void</code></td><td>— / —</td><td>Instancia de <code>Toggle Icon</code> (<code>Type=Maestro</code>); <code>State=Active</code> si <code>favorite</code>. Solo se renderiza si hay <code>onToggleFavorite</code></td></tr>
+<tr><td><code>actions</code></td><td><code>{ label, primary?, secondary? }</code> (<code>label</code> = <code>aria-label</code> del grupo)</td><td>—</td><td>Instancia de <code>Action Group</code> (<code>Buttons=2</code> o <code>3</code>)</td></tr>
+<tr><td><code>className</code></td><td><code>string</code></td><td>—</td><td>— (solo código)</td></tr>
+</table>
+<h3>Matriz de variantes (referencia de implementación)</h3>
+<div class="matrix" id="matrix"></div>
+</section>
+
+<!-- 01 -->
+<section>
+<h2><span class="n">01</span>Partes (anatomía)</h2>
+<div class="panel"><div class="pin" id="anat-m" style="width:820px;margin:40px auto 0"></div><small>Type=Maestro · composición ilustrativa</small></div>
+<div class="panel"><div class="pin" id="anat-f" style="width:820px;margin:40px auto 0"></div><small>Type=Form · composición ilustrativa</small></div>
+<table>
+<tr><th>#</th><th>Parte</th><th>Elemento / slot</th><th>Obligatoria</th><th>Descripción</th></tr>
+<tr><td>1</td><td><code>root</code></td><td><code>&lt;div&gt;</code></td><td>Sí</td><td>Contenedor. <code>Home</code>: columna. <code>Maestro</code> / <code>Form</code>: fila con acciones a la derecha. Capa Figma: el propio <code>Type=…</code>.</td></tr>
+<tr><td>2</td><td><code>breadcrumb</code></td><td><code>&lt;nav aria-label&gt;</code> + <code>&lt;ol&gt;</code></td><td>No (solo <code>Form</code>)</td><td>Ruta de navegación. Prop <code>breadcrumb</code>; no se renderiza si está vacía. Capa Figma: <code>Breadcrumb</code>.</td></tr>
+<tr><td>3</td><td><code>title</code></td><td><code>&lt;h1&gt;</code> / <code>&lt;h2&gt;</code></td><td>Sí</td><td>Título de la pantalla o sección. Prop <code>title</code>; el nivel lo define <code>type</code>: <code>home</code> → <code>h2</code>, <code>maestro</code>/<code>form</code> → <code>h1</code>. Capa Figma: <code>Title</code>.</td></tr>
+<tr><td>4</td><td><code>subtitle</code></td><td><code>&lt;p&gt;</code></td><td>No (solo <code>Home</code>)</td><td>Texto de apoyo bajo el título. Prop <code>subtitle</code>. Capa Figma: <code>Subtitle</code>.</td></tr>
+<tr><td>5</td><td><code>favorite</code></td><td><code>&lt;ToggleIcon&gt;</code></td><td>No (solo <code>Maestro</code>)</td><td>Marcador de favorito a la derecha del título. Props <code>favorite</code> / <code>onToggleFavorite</code>. Capa Figma: <code>Toggle Icon</code>.</td></tr>
+<tr><td>6</td><td><code>actions</code></td><td><code>&lt;ActionGroup&gt;</code></td><td>No (<code>Maestro</code> y <code>Form</code>)</td><td>Acciones de la pantalla. Prop <code>actions</code>. Capa Figma: <code>Action Group</code>.</td></tr>
+</table>
+</section>
+
+<!-- 02 -->
+<section>
+<h2><span class="n">02</span>Sizing</h2>
+<p class="lead">Ancho <strong>fill</strong> (<code>width: 100%</code> del contenedor; en Figma 1000 px) y alto <strong>hug</strong> (lo define el contenido; sin min/max). Cotas ampliadas 3×, valores en px reales.</p>
+<div class="panel" style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;padding:24px" id="size-panels"></div>
+<table>
+<tr><th>Propiedad</th><th>Valor</th><th>Token / nota</th></tr>
+<tr><td>Width</td><td>fill (Figma: 1000 px)</td><td>Sin min/max</td></tr>
+<tr><td>Height <code>Home</code></td><td>hug → 52,4 px (28,8 + 4 + 19,6)</td><td>Figma: 53 px</td></tr>
+<tr><td>Height <code>Maestro</code></td><td>hug → 32,8 px (el alto del grupo de acciones)</td><td>Figma: 35 px (por el borde externo de Outline)</td></tr>
+<tr><td>Height <code>Form</code></td><td>hug → 52,4 px (19,6 + 4 + 28,8)</td><td>Figma: 53 px</td></tr>
+<tr><td>Layout <code>Home</code></td><td>columna, gap 4 px</td><td><code>--spacing-xs</code></td></tr>
+<tr><td>Layout <code>Maestro</code> / <code>Form</code></td><td>fila, <code>align-items: flex-end</code>, <code>justify-content: space-between</code>, gap 16 px</td><td><code>--spacing-md</code></td></tr>
+<tr><td>Columna de título</td><td><code>flex: 1 0 0; min-width: 0</code>, columna, gap 4 px</td><td><code>--spacing-xs</code></td></tr>
+<tr><td>Fila de título</td><td>fila, <code>align-items: center</code>, gap 4 px (título → favorito)</td><td><code>--spacing-xs</code></td></tr>
+<tr><td>Ruta de navegación</td><td>fila, <code>align-items: center</code>, gap 8 px entre ítems</td><td><code>--spacing-sm</code></td></tr>
+<tr><td>Acciones</td><td><code>flex-shrink: 0</code>; ancho hug</td><td>Ver <code>Action Group</code></td></tr>
+<tr><td>Padding / Radius / Borde / Fondo</td><td>No aplica</td><td>Transparente sobre el fondo de la pantalla</td></tr>
+</table>
+</section>
+
+<!-- 03 -->
+<section>
+<h2><span class="n">03</span>Tokens</h2>
+<p class="lead">Nombres en formato CSS variable. Los estilos de texto de los templates hoy usan valores fijos (24 px, 14 px) y no tokens: ver Preguntas abiertas #9. Solo existe el tema claro.</p>
+<h3>Color</h3>
+<table>
+<tr><th>Parte</th><th>Propiedad</th><th>Token</th><th>Valor</th></tr>
+<tr><td><code>title</code></td><td>color</td><td><code>--color-text-default</code></td><td>#061E30</td></tr>
+<tr><td><code>subtitle</code></td><td>color</td><td><code>--color-text-secondary</code></td><td>#6A7883</td></tr>
+<tr><td><code>breadcrumb</code> (ítems y separador)</td><td>color</td><td><code>--color-text-secondary</code></td><td>#6A7883</td></tr>
+<tr><td><code>breadcrumb</code> (ítem actual)</td><td>color</td><td><code>--color-text-default</code></td><td>#061E30</td></tr>
+<tr><td><code>favorite</code></td><td>color</td><td><code>--color-yellow</code> (definido en <code>Toggle Icon</code>)</td><td>#EAB308</td></tr>
+<tr><td><code>actions</code></td><td>—</td><td>Tokens de <code>Button</code> (ver <code>Action Group</code>)</td><td>—</td></tr>
+</table>
+<h3>Tipografía, spacing, bordes y sombras</h3>
+<table>
+<tr><th>Categoría</th><th>Token / estilo</th><th>Valor</th></tr>
+<tr><td>Tipografía del título</td><td><code>Heading/H1</code> (Figma)</td><td>Inter 24 / 1,2 · 700</td></tr>
+<tr><td>Tipografía de subtítulo y ruta</td><td><code>Body/Base</code> (Figma)</td><td>Inter 14 / 1,4 · 400</td></tr>
+<tr><td>Spacing</td><td><code>--spacing-xs</code> · <code>--spacing-sm</code> · <code>--spacing-md</code></td><td>4 px · 8 px · 16 px</td></tr>
+<tr><td>Bordes</td><td>No aplica</td><td>—</td></tr>
+<tr><td>Sombra / elevación</td><td>No aplica</td><td>—</td></tr>
+</table>
+</section>
+
+<!-- 04 -->
+<section>
+<h2><span class="n">04</span>Estados</h2>
+<p class="lead">El organismo <strong>no tiene estados propios</strong>. Los estados viven en los componentes que contiene; aquí solo se indica cuál se usa en cada variante.</p>
+<table>
+<tr><th>Estado</th><th>Parte</th><th>Estado del componente</th><th>Nota</th></tr>
+<tr><td class="k">Default</td><td><code>favorite</code></td><td><code>Toggle Icon</code> <code>State=Inactive</code></td><td>Estrella de contorno, <code>--color-yellow</code></td></tr>
+<tr><td class="k">Favorito marcado</td><td><code>favorite</code></td><td><code>Toggle Icon</code> <code>State=Active</code></td><td>Estrella rellena; <code>aria-pressed="true"</code></td></tr>
+<tr><td class="k">Ítem actual</td><td><code>breadcrumb</code></td><td><code>Breadcrumb</code> <code>State=Active</code></td><td>Texto oscuro, sin separador; <code>aria-current="page"</code></td></tr>
+<tr><td class="k">Ítem con enlace</td><td><code>breadcrumb</code></td><td><code>Breadcrumb</code> <code>State=Default</code></td><td>Texto gris con separador</td></tr>
+<tr><td class="k">Hover / Pressed / Focus / Disabled</td><td><code>favorite</code>, <code>actions</code></td><td>Los de <code>Toggle Icon</code> y <code>Button</code></td><td>El organismo no agrega tokens</td></tr>
+<tr><td class="k">Loading / Error / Selected</td><td>—</td><td>—</td><td>No aplica</td></tr>
+</table>
+<div class="note"><p><strong>Combinaciones:</strong> el favorito y los botones se pueden interactuar a la vez sin conflicto (cada uno tiene su propio foco). No hay estados excluyentes. <strong>Transiciones:</strong> las de cada componente hijo; el organismo no agrega ninguna.</p></div>
+</section>
+
+<!-- 05 -->
+<section>
+<h2><span class="n">05</span>Comportamiento</h2>
+<ul class="l">
+<li><strong>Sin estado propio:</strong> es presentacional. Todo lo que cambia (favorito, acciones habilitadas) lo controla la pantalla por props.</li>
+<li><strong>Favorito:</strong> controlado. Al hacer clic se llama a <code>onToggleFavorite()</code>; la pantalla actualiza <code>favorite</code>. Sin <code>onToggleFavorite</code> no se renderiza (ni ocupa espacio).</li>
+<li><strong>Acciones:</strong> cada botón llama al <code>onClick</code> de su acción (ver <code>Action Group</code>). El encabezado no intercepta eventos.</li>
+<li><strong>Ruta de navegación:</strong> un ítem con <code>href</code> (y que no sea el último) es un enlace (<code>State=Default</code>); el último ítem es texto con <code>aria-current="page"</code> (<code>State=Active</code>). Hoy ninguna pantalla pasa <code>href</code>, así que todos los ítems se muestran como texto. <strong>[Supuesto — validar]</strong></li>
+<li><strong>Título y subtítulo:</strong> texto estático, no interactivo, no editable.</li>
+<li><strong>Partes opcionales:</strong> si no se pasa <code>breadcrumb</code> (vacío), <code>subtitle</code>, <code>onToggleFavorite</code> o <code>actions</code>, la parte no se renderiza y el resto no se reacomoda.</li>
+<li><strong>Eventos que expone:</strong> solo los de sus hijos (<code>onToggleFavorite</code> y los <code>onClick</code> de las acciones).</li>
+<li><strong>Validación del contrato:</strong> en desarrollo, <code>console.warn</code> si <code>type</code> es inválido (no renderiza nada), si falta <code>title</code> o si se pasa una prop que el tipo no admite (se ignora).</li>
+<li><strong>Timings:</strong> no hay animaciones ni delays.</li>
+</ul>
+</section>
+
+<!-- 06 -->
+<section>
+<h2><span class="n">06</span>Accesibilidad</h2>
+<p><strong>Rol y elemento:</strong> el título es un encabezado (<code>&lt;h1&gt;</code> o <code>&lt;h2&gt;</code> según <code>level</code>); el resto son elementos nativos de sus componentes. Patrón APG: <em>Breadcrumb</em> para la ruta.</p>
+<h3>ARIA</h3>
+<table>
+<tr><th>Elemento</th><th>Atributo</th><th>Valor</th></tr>
+<tr><td>Ruta de navegación</td><td><code>&lt;nav aria-label="Ruta de navegación"&gt;</code> con <code>&lt;ol&gt;</code></td><td>Implementado en <code>PageHeader</code> (antes era un <code>&lt;div&gt;</code> sin semántica)</td></tr>
+<tr><td>Ítem actual</td><td><code>aria-current="page"</code></td><td>En el último ítem</td></tr>
+<tr><td>Separador</td><td><code>aria-hidden="true"</code></td><td>Decorativo (chevron)</td></tr>
+<tr><td>Favorito</td><td><code>aria-pressed</code>, <code>aria-label</code></td><td>Los define <code>Toggle Icon</code></td></tr>
+<tr><td>Acciones</td><td><code>role="group"</code> + <code>aria-label</code></td><td>Los define <code>Action Group</code></td></tr>
+</table>
+<h3>Teclado</h3>
+<table>
+<tr><th>Tecla</th><th>Acción</th></tr>
+<tr><td><kbd>Tab</kbd></td><td>Recorre en orden visual: ítems con enlace de la ruta → favorito → botones de acción. El título y el subtítulo no son focusables.</td></tr>
+<tr><td><kbd>Shift</kbd> + <kbd>Tab</kbd></td><td>Mueve el foco al elemento anterior.</td></tr>
+<tr><td><kbd>Enter</kbd> / <kbd>Espacio</kbd></td><td>Activa el favorito o el botón; <kbd>Enter</kbd> también sigue un enlace.</td></tr>
+</table>
+<p><strong>Orden de foco:</strong> igual al orden del DOM y al visual; el favorito va antes que los botones. Sin focus trap; el encabezado no mueve el foco.</p>
+<h3>Lector de pantalla</h3>
+<ul class="l">
+<li><strong>Título:</strong> “Buque, encabezado, nivel 1”. En Home: “Acceso rápido, encabezado, nivel 2”.</li>
+<li><strong>Ruta:</strong> “Ruta de navegación, navegación; Buque, enlace; Crear Buque, página actual”.</li>
+<li><strong>Un solo <code>&lt;h1&gt;</code> por pantalla:</strong> las secciones de Home (<code>type="home"</code>) usan <code>&lt;h2&gt;</code>.</li>
+</ul>
+<h3>Otros</h3>
+<table>
+<tr><th>Elemento</th><th>Ratio</th><th>Resultado</th></tr>
+<tr><td>Título #061E30 sobre #F7F8FA</td><td>16,0:1</td><td>Cumple AA (4,5:1)</td></tr>
+<tr><td>Subtítulo y ruta #6A7883 sobre #FFFFFF</td><td>4,5:1</td><td>Cumple AA (justo)</td></tr>
+<tr><td>Subtítulo y ruta #6A7883 sobre #F7F8FA (fondo de pantalla)</td><td>4,3:1</td><td><strong>No cumple</strong> 4,5:1 <span class="pend">⚠️ #4</span></td></tr>
+</table>
+<ul class="l">
+<li><strong>Área táctil:</strong> botones de 32,8 px de alto (cumple AA 24 × 24 px); el favorito mide 20 × 20 px (ver <code>Toggle Icon</code>).</li>
+<li><strong>Movimiento:</strong> sin animación propia; los hijos respetan <code>prefers-reduced-motion</code>.</li>
+</ul>
+</section>
+
+<!-- 07 -->
+<section>
+<h2><span class="n">07</span>Reglas responsive</h2>
+<p class="lead">Breakpoints supuestos: mobile &lt; 768, tablet 768–1023, desktop ≥ 1024. <span class="pend">⚠️ Pendiente</span> confirmar los del sistema (#7).</p>
+<table>
+<tr><th>Breakpoint</th><th>Cambios</th></tr>
+<tr><td class="k">Desktop</td><td>Layout tal como en Figma: título a la izquierda, acciones a la derecha, alineadas a la base.</td></tr>
+<tr><td class="k">Tablet</td><td>Igual. La columna del título se contrae (<code>min-width: 0</code>) antes de que las acciones (<code>flex-shrink: 0</code>) cambien de tamaño; un título largo hace wrap a varias líneas.</td></tr>
+<tr><td class="k">Mobile</td><td>Propuesta: pasar a columna (título arriba, acciones debajo y alineadas a la izquierda) cuando el ancho no alcanza. <strong>[Supuesto — validar con diseño]</strong></td></tr>
+</table>
+<p>No se oculta ninguna parte en ningún breakpoint. <code>Home</code> no cambia: es una columna de dos textos.</p>
+</section>
+
+<!-- 08 -->
+<section>
+<h2><span class="n">08</span>Edge cases</h2>
+<table>
+<tr><th>Caso</th><th>Comportamiento esperado</th></tr>
+<tr><td class="k">Título largo</td><td>Hace wrap en la columna de título (que tiene <code>flex: 1 0 0; min-width: 0</code>); las acciones mantienen su ancho y se alinean a la base del bloque. El favorito queda a la derecha de la última línea. <strong>[Supuesto — validar]</strong></td></tr>
+<tr><td class="k">Ruta larga (3 o más niveles)</td><td>Los ítems no hacen wrap (<code>white-space: nowrap</code>) y pueden desbordar. ⚠️ Pendiente: ellipsis o colapso de niveles intermedios (#7).</td></tr>
+<tr><td class="k">Sin subtítulo (Home)</td><td>Solo se muestra el título; no queda hueco.</td></tr>
+<tr><td class="k">Sin acciones</td><td>La fila queda solo con el título (y favorito); no se reserva espacio para las acciones.</td></tr>
+<tr><td class="k">Una sola acción (por ejemplo, “Volver” en modo Visualizar)</td><td>Va un <code>Button</code> suelto, no un <code>Action Group</code> (el grupo es de 2 a 5 botones).</td></tr>
+<tr><td class="k">Sin favorito</td><td>No se renderiza ni ocupa los 4 px de separación.</td></tr>
+<tr><td class="k">Ruta vacía</td><td>No se renderiza; el título queda solo en la columna.</td></tr>
+<tr><td class="k">Sin título</td><td>No permitido: el título es obligatorio. Advertir en desarrollo (<code>console.warn</code>).</td></tr>
+<tr><td class="k">Favorito en un formulario</td><td>No permitido (Spec: el favorito solo va en la pantalla principal de un maestro).</td></tr>
+<tr><td class="k">i18n / RTL</td><td>Con <code>dir="rtl"</code> la fila se invierte sola (acciones a la izquierda). Usar propiedades lógicas y <code>gap</code>. El chevron del separador debería espejarse. ⚠️ Pendiente</td></tr>
+<tr><td class="k">Overflow, listas, estado vacío</td><td>No aplican.</td></tr>
+</table>
+</section>
+
+<!-- 09 -->
+<section>
+<h2><span class="n">09</span>Composición y componentes átomo</h2>
+<table>
+<tr><th>Componente</th><th>Usado en parte</th><th>Props / variante usada</th><th>Para qué</th></tr>
+<tr><td><code>Breadcrumb</code></td><td><code>breadcrumb</code> (<code>Type=Form</code>)</td><td><code>State=Default</code> (con separador) y <code>State=Active</code> (último), prop <code>Label</code></td><td>Ruta de navegación. En código es un <code>&lt;nav&gt;</code> propio dentro de <code>PageHeader</code> (no hay un componente <code>Breadcrumb</code> aparte) (#2).</td></tr>
+<tr><td><code>ToggleIcon</code></td><td><code>favorite</code> (<code>Type=Maestro</code>)</td><td><code>favorite</code>, <code>onToggle</code></td><td>Marcador de favorito.</td></tr>
+<tr><td><code>ActionGroup</code></td><td><code>actions</code> (<code>Maestro</code> y <code>Form</code>)</td><td><code>primary</code>, <code>secondary</code>, <code>aria-label</code></td><td>Acciones de la pantalla (primario a la izquierda).</td></tr>
+<tr><td><code>Icon</code></td><td><code>breadcrumb</code></td><td><code>bi-chevron-right</code>, 16 px, <code>aria-hidden</code></td><td>Separador de la ruta.</td></tr>
+</table>
+<p><strong>Props que se pasan hacia abajo:</strong> <code>actions</code> se pasa tal cual a <code>ActionGroup</code>; <code>favorite</code> / <code>onToggleFavorite</code> a <code>ToggleIcon</code> (<code>onToggle</code>); cada ítem de <code>breadcrumb</code> a una instancia de <code>Breadcrumb</code>. No reimplementar los hijos.</p>
+<p><strong>Dónde se usa hoy:</strong></p>
+<ul class="l">
+<li><code>LayoutMaestroDataGrid</code> — <code>type="maestro"</code> (título + <code>ToggleIcon</code> + <code>ActionGroup</code>).</li>
+<li><code>LayoutMaestroBasico</code> — <code>type="form"</code> (ruta + título + <code>ActionGroup</code>).</li>
+<li><code>LayoutHomeModule</code> y <code>Main/Home</code> — <code>type="home"</code> (título de sección <code>h2</code> + subtítulo: Acceso rápido, Módulos, Actividad reciente).</li>
+<li><code>Main/Modulos</code> <strong>no</strong> lo usa: tiene ruta + título + subtítulo + un solo botón, una combinación que no existe en ningún <code>Type</code> (Preguntas abiertas #6). Tampoco <code>LayoutChat</code> (su header de panel es otro patrón).</li>
+</ul>
+</section>
+
+<section class="warn">
+<h2>Preguntas abiertas</h2>
+<ol class="q">
+<li><strong>Forma de la API (resuelto):</strong> se eligió la opción B, una prop <code>type</code> explícita (<code>'home' | 'maestro' | 'form'</code>) que valida qué props admite cada tipo, y ya está implementada.</li>
+<li><strong>Ruta de navegación:</strong> el código ya tiene semántica (<code>nav</code>, <code>aria-current</code>) y admite <code>href</code>, pero ninguna pantalla lo pasa todavía, y no existe un componente <code>Breadcrumb</code> aparte como en Figma. ¿Se agregan los enlaces y se extrae el componente?</li>
+<li><strong>Íconos en los botones:</strong> los templates usan íconos en los botones y el <code>Action Group</code> de Figma no los incluye.</li>
+<li><strong>Contraste:</strong> el gris secundario (#6A7883) sobre el fondo de pantalla da 4,3:1 y no cumple AA. ¿Se oscurece o el encabezado va sobre blanco?</li>
+<li><strong>Ancho:</strong> fill en código vs 1000 px en Figma. ¿Se define un ancho máximo del contenido?</li>
+<li><strong>Combinaciones sin variante:</strong> <code>Maestro</code> admite ruta opcional pero no hay variante en Figma; <code>Main/Modulos</code> usa ruta + título + subtítulo + un botón. ¿Se agregan tipos o se dejan como excepción? ¿Puede <code>Home</code> llevar acciones?</li>
+<li><strong>Responsive:</strong> confirmar breakpoints y qué pasa cuando el título o la ruta no entran (wrap, ellipsis o columna).</li>
+<li><strong>Nivel de encabezado (resuelto):</strong> lo define <code>type</code> (<code>home</code> → <code>h2</code>, <code>maestro</code>/<code>form</code> → <code>h1</code>); no hay prop <code>level</code>.</li>
+<li><strong>Tokens tipográficos:</strong> los templates usan 24 px / 14 px fijos; ¿se crean tokens para los estilos <code>Heading/H1</code> y <code>Body/Base</code>?</li>
+<li><strong>Figma — textos:</strong> hoy el título, el subtítulo y las etiquetas se cambian entrando a la instancia. ¿Se exponen como propiedades del componente?</li>
+</ol>
+</section>
+
+</main>
+<script>
+const STAR='M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z';
+const star=`<span class="star"><svg viewBox="0 0 16 16" width="20" height="20"><path fill="currentColor" d="${STAR}"/></svg></span>`;
+const chev=`<svg width="16" height="16" viewBox="0 0 16 16"><path d="M5.5 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const ag=(l)=>`<div class="ag">${l.map((t,i)=>`<span class="btn ${i?'outline':'solid'}">${t}</span>`).join('')}</div>`;
+const home=`<div class="ph home"><h2 class="ttl">Acceso rápido</h2><p class="sub">Tus maestros y procesos favoritos</p></div>`;
+const maestro=`<div class="ph row"><div class="col"><div class="trow"><h1 class="ttl">Buque</h1>${star}</div></div>${ag(['Nuevo','Recargar','Exportar'])}</div>`;
+const form=`<div class="ph row"><div class="col"><div class="bc"><span>Buque</span>${chev}<span class="cur">Crear Buque</span></div><h1 class="ttl">Crear Buque</h1></div>${ag(['Guardar','Cancelar'])}</div>`;
+const lbl=t=>`<figcaption>${t}</figcaption>`;
+document.getElementById('matrix').innerHTML=`<figure>${lbl('Type=Home')}${home}</figure><figure>${lbl('Type=Maestro')}${maestro}</figure><figure>${lbl('Type=Form')}${form}</figure>`;
+document.getElementById('anat-m').innerHTML=maestro
+ +`<div class="ol" style="left:-8px;top:-8px;right:-8px;bottom:-8px"></div><div class="mk" style="right:-26px;top:-18px">1</div>`
+ +`<div class="mk" style="left:8px;top:-44px">3</div><div class="ln" style="left:18px;top:-24px;width:1px;height:18px"></div>`
+ +`<div class="mk" style="left:98px;top:-44px">5</div><div class="ln" style="left:108px;top:-24px;width:1px;height:20px"></div>`
+ +`<div class="mk" style="right:120px;top:-44px">6</div><div class="ln" style="right:130px;top:-24px;width:1px;height:20px"></div>`;
+document.getElementById('anat-f').innerHTML=form
+ +`<div class="ol" style="left:-8px;top:-8px;right:-8px;bottom:-8px"></div><div class="mk" style="right:-26px;top:-18px">1</div>`
+ +`<div class="mk" style="left:8px;top:-44px">2</div><div class="ln" style="left:18px;top:-24px;width:1px;height:18px"></div>`
+ +`<div class="mk" style="left:50px;top:74px">3</div><div class="ln" style="left:60px;top:54px;width:1px;height:20px"></div>`
+ +`<div class="mk" style="right:80px;top:-44px">6</div><div class="ln" style="right:90px;top:-24px;width:1px;height:20px"></div>`;
+// Sizing panels (3x, explícitos)
+const gapV=`<div style="position:relative;height:12px;width:100%;background:rgba(220,38,38,.12);border:1px dashed var(--red)"><span class="t" style="left:150px;top:-1px">gap 4</span></div>`;
+document.getElementById('size-panels').innerHTML=`
+<div style="width:520px;white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:24px">
+  <div style="display:flex;align-items:center;gap:24px;font-size:42px;line-height:1.4;color:var(--mut)"><span>Buque</span><svg width="48" height="48" viewBox="0 0 16 16"><path d="M5.5 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="color:var(--ink)">Crear Buque</span></div>
+  ${gapV}
+  <div style="font-size:72px;font-weight:700;line-height:1.2;color:var(--ink)">Crear Buque</div>
+</div>
+<div style="width:340px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:24px;display:flex;align-items:center;justify-content:center">
+  <div style="display:flex;align-items:center"><span style="font-size:72px;font-weight:700;line-height:1.2;color:var(--ink)">Buque</span><span style="position:relative;display:block;width:12px;height:72px;background:rgba(220,38,38,.12);border:1px dashed var(--red)"><span class="t" style="left:-6px;top:-18px">gap 4</span></span><span class="star" style="display:inline-flex"><svg viewBox="0 0 16 16" width="60" height="60"><path fill="currentColor" d="${STAR}"/></svg></span></div>
+</div>`;
+</script>
+</body>
+</html>

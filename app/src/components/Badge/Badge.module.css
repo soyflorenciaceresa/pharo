@@ -1,0 +1,44 @@
+/* Badge (component set 619:47, handoff 630:44) — un solo tamaño, todos los
+   valores salen de los tokens --*-badge-* de tokens.css. Sin height fija: la
+   altura resulta de padding-block + line-height (18.4px). */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-gap-badge);
+  padding-block: var(--spacing-padding-badge-y);
+  padding-inline: var(--spacing-padding-badge-x);
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: var(--radius-badge);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.2;
+  white-space: nowrap;
+  vertical-align: middle;
+  /* forced-colors: los fondos desaparecen, el sistema dibuja este contorno. */
+  outline: 1px solid transparent;
+}
+
+/* Dot — usa currentColor, comparte el token del Label (text/badge/*). */
+.dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.badge[data-type='success'] { background: var(--surface-badge-success); color: var(--text-badge-success); }
+.badge[data-type='warning'] { background: var(--surface-badge-warning); color: var(--text-badge-warning); }
+.badge[data-type='error'] { background: var(--surface-badge-error); color: var(--text-badge-error); }
+.badge[data-type='info'] { background: var(--surface-badge-info); color: var(--text-badge-info); }
+.badge[data-type='neutral'] { background: var(--surface-badge-neutral); color: var(--text-badge-neutral); }

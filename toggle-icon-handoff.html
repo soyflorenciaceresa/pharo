@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toggle Icon — Handoff para developers</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-yellow:#eab308; --spacing-xs:4px; --color-border-focus:#667afd;
+  --ink:#061e30; --mut:#6a7883; --code:#2d3eb1; --line:#e3e5ea; --page:#f7f8fa; --red:#dc2626;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.4 Inter,system-ui,sans-serif}
+main{max-width:1200px;margin:0 auto;padding:64px 64px 96px}
+header{margin-bottom:24px}
+.eyebrow{font-size:12px;font-weight:500;color:var(--mut)}
+h1{font-size:24px;line-height:1.2;margin:8px 0}
+.desc{color:var(--mut);margin:0 0 8px}
+.meta{display:flex;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--mut)}
+section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px;margin:0 0 24px}
+section.warn{background:#fef3c7}
+h2{display:flex;align-items:center;gap:12px;font-size:20px;line-height:1.2;margin:0 0 16px}
+h2 .n{font:400 11px 'JetBrains Mono',monospace;color:var(--code)}
+h3{font-size:16px;font-weight:600;margin:24px 0 12px;line-height:1.2}
+p{margin:0 0 12px}
+.lead{color:var(--mut);margin:0 0 16px}
+code{font:400 13px 'JetBrains Mono',monospace;color:var(--code)}
+table{width:100%;border-collapse:collapse;margin:0 0 16px}
+th{background:#f7f8fa;color:var(--mut);font-size:12px;font-weight:500;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+td.k{font-weight:600;white-space:nowrap}
+.note{background:#fef3c7;border-radius:10px;padding:16px;margin:16px 0 0}
+.note p:last-child{margin:0}
+.pend{font-weight:600}
+ol.q{margin:0;padding-left:22px} ol.q li{margin:8px 0}
+ul.l{margin:0 0 12px;padding-left:20px} ul.l li{margin:6px 0}
+kbd{font:400 12px 'JetBrains Mono',monospace;border:1px solid #c9ced8;border-radius:4px;padding:1px 5px;background:#fff}
+.matrix{background:#f7f8fa;border-radius:10px;padding:24px;display:flex;gap:64px}
+.matrix figure{margin:0}.matrix figcaption{font-size:12px;color:var(--mut);margin-bottom:8px;text-transform:uppercase;letter-spacing:.02em}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.panel{background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:24px;position:relative;min-height:220px;display:flex;align-items:center;justify-content:center}
+.panel small{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:var(--mut);font-size:12px}
+
+/* Componente, tal cual ToggleIcon.module.css */
+.tgl{all:unset;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--color-yellow);cursor:pointer}
+.tgl svg{display:block}
+.tgl.fv:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:2px}
+.row{display:flex;align-items:center;gap:var(--spacing-xs)}
+.row h4{margin:0;font-size:24px;line-height:1.2;font-weight:700}
+
+/* Diagramas */
+.d{position:relative}
+.b{position:absolute;border:1px dashed var(--red);background:rgba(220,38,38,.1)}
+.t{position:absolute;font:400 11px 'JetBrains Mono',monospace;color:var(--red);white-space:nowrap}
+.mk{position:absolute;width:20px;height:20px;border-radius:10px;background:var(--ink);color:#fff;font:600 12px/20px Inter;text-align:center}
+.ln{position:absolute;background:var(--ink)}
+@media(max-width:900px){main{padding:24px 16px}.panels{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="eyebrow">PHARO DESIGN SYSTEM · HANDOFF DEV</div>
+  <h1>Toggle Icon — Handoff para developers</h1>
+  <p class="desc">Spec de implementación del component set Toggle Icon (657:39): partes, sizing, tokens, estados, comportamiento, accesibilidad, responsive, edge cases y composición. Complementa a "Toggle Icon - Spec" (uso y reglas de diseño). En código es <code>ToggleIcon</code> (<code>app/src/components/ToggleIcon/</code>), antes <code>FavoriteButton</code>.</p>
+  <div class="meta"><span>Component set 657:39</span><span>2 variantes de State</span><span>Tamaño: único (20 × 20)</span><span>Actualizado 29/09/2026</span><span>Estado: borrador para revisión</span></div>
+</header>
+
+<!-- 00 -->
+<section>
+<h2><span class="n">00</span>Resumen y API</h2>
+<p class="lead">Botón de estrella de dos estados que marca o desmarca un maestro o proceso como favorito. En Figma hay una única propiedad de variante (<code>State</code>: <code>Inactive</code> | <code>Active</code>). En código es un componente <strong>controlado</strong>: no guarda estado propio. Hover, Focus y Pressed <strong>no son props</strong>: se resuelven con <code>:hover</code>, <code>:focus-visible</code> y <code>:active</code>.</p>
+<table>
+<tr><th>Prop</th><th>Tipo</th><th>Default</th><th>Mapea a Figma</th></tr>
+<tr><td><code>favorite</code></td><td><code>boolean</code></td><td><code>false</code></td><td>State = Active (<code>true</code>) / Inactive (<code>false</code>)</td></tr>
+<tr><td><code>onToggle</code></td><td><code>(e) ⇒ void</code></td><td>—</td><td>— (solo código). Sin este handler el botón no hace nada</td></tr>
+<tr><td><code>type</code></td><td><code>'button'</code> (fijo)</td><td><code>'button'</code></td><td>— (evita submits accidentales; no es prop)</td></tr>
+<tr><td><code>aria-label</code></td><td><code>string</code></td><td>auto: “Agregar a favoritos” / “Quitar de favoritos”</td><td>— <span class="pend">⚠️ hoy no es overrideable (#4)</span></td></tr>
+</table>
+<h3>Matriz de variantes (referencia de implementación)</h3>
+<div class="matrix">
+  <figure><figcaption>State=Inactive</figcaption><button class="tgl fv" type="button" aria-pressed="false" aria-label="Agregar a favoritos" data-star="off"></button></figure>
+  <figure><figcaption>State=Active</figcaption><button class="tgl fv" type="button" aria-pressed="true" aria-label="Quitar de favoritos" data-star="on"></button></figure>
+  <figure><figcaption>En contexto (clic para alternar)</figcaption><div class="row"><h4>Buque</h4><button class="tgl fv" id="live" type="button" aria-pressed="false" aria-label="Agregar a favoritos" data-star="off"></button></div></figure>
+</div>
+</section>
+
+<!-- 01 -->
+<section>
+<h2><span class="n">01</span>Partes (anatomía)</h2>
+<div class="panels" style="grid-template-columns:1fr">
+  <div class="panel">
+    <div class="d" style="width:80px;height:80px">
+      <button class="tgl" type="button" tabindex="-1" aria-hidden="true" data-star="on" style="position:absolute;left:0;top:0;transform:scale(4);transform-origin:top left"></button>
+      <div class="b" style="left:-6px;top:-6px;width:92px;height:92px;background:none;border-color:var(--ink)"></div>
+      <div class="mk" style="left:-56px;top:30px">1</div><div class="ln" style="left:-36px;top:40px;width:30px;height:1px"></div>
+      <div class="mk" style="left:116px;top:30px">2</div><div class="ln" style="left:86px;top:40px;width:30px;height:1px"></div>
+    </div>
+    <small>Composición ilustrativa a escala 4×. El contenedor (1) y el ícono (2) miden lo mismo: 20 × 20 px.</small>
+  </div>
+</div>
+<table>
+<tr><th>#</th><th>Parte</th><th>Elemento / slot</th><th>Obligatoria</th><th>Descripción</th></tr>
+<tr><td>1</td><td><code>root</code></td><td><code>&lt;button type="button"&gt;</code></td><td>Sí</td><td>Contenedor raíz y único elemento focusable. Sin fondo, borde ni padding. Capa Figma: el propio <code>State=…</code>.</td></tr>
+<tr><td>2</td><td><code>icon</code></td><td><code>&lt;Icon name size={20}&gt;</code> (svg)</td><td>Sí</td><td>Estrella. <code>bi-star</code> (contorno) si <code>favorite</code> es <code>false</code>, <code>bi-star-fill</code> (relleno) si es <code>true</code>. Capa Figma: <code>Icon</code>.</td></tr>
+</table>
+<p style="color:var(--mut);font-size:12px">No hay label visible, contador, badge ni tooltip. Ninguna parte es opcional.</p>
+</section>
+
+<!-- 02 -->
+<section>
+<h2><span class="n">02</span>Sizing</h2>
+<p class="lead">Un único tamaño. Layout de <code>root</code>: <code>display: inline-flex</code>, <code>align-items: center</code>, <code>justify-content: center</code>, <code>flex-shrink: 0</code>. Ancho y alto <strong>fijos</strong> por el ícono (20 × 20 px); no hay padding ni min/max. Cotas a escala 4×, valores en px reales.</p>
+<div class="panels">
+  <div class="panel">
+    <div class="d" style="width:80px;height:80px">
+      <button class="tgl" type="button" tabindex="-1" aria-hidden="true" data-star="off" style="position:absolute;left:0;top:0;transform:scale(4);transform-origin:top left"></button>
+      <div class="b" style="left:0;top:0;width:80px;height:80px"></div>
+      <div class="t" style="left:0;top:90px">w 20 × h 20</div>
+      <div class="t" style="left:90px;top:34px">icono 20</div>
+    </div>
+    <small>Contenedor = ícono</small>
+  </div>
+  <div class="panel">
+    <div class="d" style="display:flex;align-items:center;margin-top:-16px">
+      <span style="font-size:96px;line-height:1.2;font-weight:700">Buque</span>
+      <div class="b" style="position:relative;width:16px;height:80px;flex:none"></div>
+      <div style="position:relative;width:80px;height:80px;flex:none"><button class="tgl" type="button" tabindex="-1" aria-hidden="true" data-star="on" style="position:absolute;left:0;top:0;transform:scale(4);transform-origin:top left"></button></div>
+      <div class="t" style="left:262px;top:-8px">gap 4</div>
+    </div>
+    <small>Fila de título (<code>LayoutMaestroDataGrid</code>) · escala 4×</small>
+  </div>
+</div>
+<table>
+<tr><th>Propiedad</th><th>Valor</th><th>Token / nota</th></tr>
+<tr><td>Width</td><td>20 px fijo</td><td>= <code>size</code> del <code>Icon</code>; no hay min/max</td></tr>
+<tr><td>Height</td><td>20 px fijo</td><td>Sin line-height propio: el alto es el del svg (<code>display: block</code>)</td></tr>
+<tr><td>Padding</td><td>No aplica</td><td>⚠️ Pendiente: agregar área clicable extra (ver nota, #5)</td></tr>
+<tr><td>Gap ícono–label</td><td>No aplica</td><td>No hay label</td></tr>
+<tr><td>Gap con el título</td><td>4 px</td><td><code>--spacing-xs</code>, definido por el padre (<code>.titleRow</code>), no por el componente</td></tr>
+<tr><td>Radius / Borde</td><td>No aplica</td><td>Sin borde ni fondo</td></tr>
+<tr><td>Ícono</td><td>20 × 20 px, <code>viewBox 0 0 16 16</code></td><td>Escala de 1,25× sobre el trazo de 16 px</td></tr>
+</table>
+<div class="note"><p><strong>Nota — área clicable:</strong> el elemento clicable mide 20 × 20 px, menos que el mínimo AA de 24 × 24 px (y que los 44 × 44 recomendados en táctil). Para no cambiar el tamaño visual, ampliar el área con un pseudo-elemento: <code>.button::after { content: ''; position: absolute; inset: -12px; }</code> con <code>position: relative</code> en el botón. ⚠️ Validar con diseño para no pisar el título vecino.</p></div>
+</section>
+
+<!-- 03 -->
+<section>
+<h2><span class="n">03</span>Tokens</h2>
+<p class="lead">Nombres en formato CSS variable (en Figma: <code>color/yellow/500</code> ↔ <code>--color-yellow</code>). Solo existe el tema claro; el color no cambia entre estados.</p>
+<h3>Color</h3>
+<table>
+<tr><th>Parte</th><th>Propiedad</th><th>Token</th><th>Valor</th></tr>
+<tr><td><code>root</code></td><td>color (el ícono usa <code>fill: currentColor</code>)</td><td><code>--color-yellow</code></td><td>#EAB308</td></tr>
+<tr><td><code>icon</code></td><td>fill</td><td><code>currentColor</code> (hereda de <code>root</code>)</td><td>#EAB308</td></tr>
+</table>
+<h3>Tipografía, spacing, bordes y sombras</h3>
+<table>
+<tr><th>Categoría</th><th>Token</th><th>Valor</th></tr>
+<tr><td>Tipografía</td><td>No aplica</td><td>El componente no tiene texto</td></tr>
+<tr><td>Spacing</td><td><code>--spacing-xs</code> (solo en el padre, gap con el título)</td><td>4 px</td></tr>
+<tr><td>Bordes</td><td>No aplica</td><td>Sin borde (⚠️ el anillo de foco propuesto usaría <code>--color-border-focus</code> #667AFD y <code>--border-width-focus</code> 2 px)</td></tr>
+<tr><td>Sombra / elevación</td><td>No aplica</td><td>—</td></tr>
+</table>
+<p><strong>Token propio, no reutilizado:</strong> <code>--color-yellow</code> coincide en hex con <code>--color-warning-default</code>, pero son variables separadas a propósito: una es marcador de favorito, la otra estado de alerta. No reemplazar una por la otra.</p>
+</section>
+
+<!-- 04 -->
+<section>
+<h2><span class="n">04</span>Estados</h2>
+<p class="lead">Solo se listan los cambios respecto a Default. Default = <code>State=Inactive</code>.</p>
+<table>
+<tr><th>Estado</th><th>Selector</th><th>Parte</th><th>Propiedad</th><th>Token / regla</th></tr>
+<tr><td class="k">Default</td><td>—</td><td><code>icon</code></td><td>forma</td><td><code>bi-star</code> (contorno), <code>--color-yellow</code></td></tr>
+<tr><td class="k">Selected / Active</td><td><code>[aria-pressed="true"]</code></td><td><code>icon</code></td><td>forma</td><td><code>bi-star-fill</code> (relleno); mismo color</td></tr>
+<tr><td class="k">Hover</td><td><code>:hover</code></td><td>—</td><td>cursor</td><td>Hoy solo <code>cursor: pointer</code>. <span class="pend">⚠️ Pendiente de definir</span> cambio visual (#2)</td></tr>
+<tr><td class="k">Focus</td><td><code>:focus-visible</code></td><td><code>root</code></td><td>outline</td><td><span class="pend">⚠️ Pendiente de definir</span> — hoy <code>all: unset</code> elimina el anillo del navegador y el foco no se ve. Sugerido: <code>outline: var(--border-width-focus) solid var(--color-border-focus); outline-offset: 2px</code></td></tr>
+<tr><td class="k">Pressed</td><td><code>:active</code></td><td>—</td><td>—</td><td><span class="pend">⚠️ Pendiente de definir</span> (#2)</td></tr>
+<tr><td class="k">Disabled</td><td><code>:disabled</code></td><td>—</td><td>—</td><td>No aplica — el componente no tiene la prop</td></tr>
+<tr><td class="k">Loading / Error</td><td>—</td><td>—</td><td>—</td><td>No aplica</td></tr>
+</table>
+<div class="note"><p><strong>Combinaciones:</strong> Hover y Focus se pueden dar a la vez sobre cualquier valor de <code>favorite</code>; ninguno cambia la forma de la estrella. No hay estados excluyentes. <strong>Transiciones:</strong> ninguna hoy; si se agrega una para el hover, usar <code>color 120ms ease-out</code> (mismo criterio sugerido en Button/Text field, sin tokens de motion) y desactivarla con <code>prefers-reduced-motion: reduce</code>.</p></div>
+</section>
+
+<!-- 05 -->
+<section>
+<h2><span class="n">05</span>Comportamiento</h2>
+<ul class="l">
+<li><strong>Click / tap:</strong> llama a <code>onToggle(e)</code>. El componente <strong>no cambia por sí solo</strong>: la pantalla actualiza <code>favorite</code> y recién ahí cambia la estrella.</li>
+<li><strong>Teclado:</strong> <kbd>Enter</kbd> y <kbd>Espacio</kbd> activan el botón (nativo, sin código extra).</li>
+<li><strong>Controlado:</strong> siempre. No hay <code>defaultFavorite</code>; el estado vive en <code>App.jsx</code> (<code>favoriteHrefs</code> + <code>toggleFavorite(href)</code>), porque la Home de cada módulo lee el mismo estado para armar “Acceso rápido”.</li>
+<li><strong>Efecto en otras pantallas:</strong> marcar o desmarcar agrega o quita el <code>href</code> del maestro en <code>favoriteHrefs</code>; la Home del módulo lo refleja vía <code>favoriteQuickAccess(sidebar, favoriteHrefs)</code>.</li>
+<li><strong>Persistencia:</strong> ninguna. Se pierde al recargar o al navegar por URL directa (los links de Acceso rápido son <code>&lt;a href&gt;</code> reales). <span class="pend">⚠️ Pendiente (#7)</span></li>
+<li><strong>Sin <code>onToggle</code>:</strong> el botón se dibuja pero no hace nada. <code>LayoutMaestroDataGrid</code> evita el caso: solo lo renderiza si recibe <code>onToggleFavorite</code>.</li>
+<li><strong>Eventos que expone:</strong> solo <code>onToggle(e)</code>.</li>
+<li><strong>Timings:</strong> no hay debounce ni animación. Dos clics rápidos alternan dos veces.</li>
+</ul>
+</section>
+
+<!-- 06 -->
+<section>
+<h2><span class="n">06</span>Accesibilidad</h2>
+<p><strong>Rol y elemento:</strong> <code>&lt;button type="button"&gt;</code> nativo. Patrón WAI-ARIA APG: <em>Button (toggle button)</em>.</p>
+<h3>ARIA</h3>
+<table>
+<tr><th>Atributo</th><th>Cuándo</th><th>Valor</th></tr>
+<tr><td><code>aria-pressed</code></td><td>Siempre</td><td><code>true</code> si <code>favorite</code>; <code>false</code> si no</td></tr>
+<tr><td><code>aria-label</code></td><td>Siempre (no hay texto visible)</td><td>Hoy: “Quitar de favoritos” / “Agregar a favoritos”</td></tr>
+<tr><td><code>aria-hidden="true"</code></td><td>En el svg del ícono</td><td><span class="pend">⚠️ Hoy <code>Icon</code> no lo agrega</span>; sumarlo en el botón o en <code>Icon</code> cuando es decorativo (#4)</td></tr>
+</table>
+<div class="note"><p><strong>Etiqueta + <code>aria-pressed</code>:</strong> hoy se combinan una etiqueta que cambia y <code>aria-pressed</code>. El lector anuncia una acción y un estado a la vez (“Quitar de favoritos, botón, presionado”), lo que confunde. Recomendado: una etiqueta fija (“Favorito”) con <code>aria-pressed</code>, o cambiar la etiqueta y omitir <code>aria-pressed</code>. ⚠️ Validar con el equipo (#4).</p></div>
+<h3>Teclado</h3>
+<table>
+<tr><th>Tecla</th><th>Acción</th></tr>
+<tr><td><kbd>Tab</kbd></td><td>Mueve el foco al botón (después del título, antes de los botones de acción de la pantalla).</td></tr>
+<tr><td><kbd>Shift</kbd> + <kbd>Tab</kbd></td><td>Mueve el foco al elemento anterior.</td></tr>
+<tr><td><kbd>Enter</kbd> / <kbd>Espacio</kbd></td><td>Alterna favorito. El foco se queda en el botón.</td></tr>
+</table>
+<p><strong>Orden de foco:</strong> un solo punto de foco, sin focus trap. Al alternar no se mueve el foco.</p>
+<h3>Lector de pantalla</h3>
+<ul class="l">
+<li><strong>Inactive:</strong> “Agregar a favoritos, botón, no presionado”.</li>
+<li><strong>Active:</strong> “Quitar de favoritos, botón, presionado”.</li>
+<li>Al alternar no hay región <code>aria-live</code>: el cambio de <code>aria-pressed</code> se anuncia solo cuando el foco está en el botón. <strong>[Supuesto — validar]</strong></li>
+</ul>
+<h3>Otros</h3>
+<table>
+<tr><th>Elemento</th><th>Ratio</th><th>Resultado</th></tr>
+<tr><td>Estrella #EAB308 sobre #FFFFFF</td><td>1,9:1</td><td><strong>No cumple</strong> 3:1 (UI) <span class="pend">⚠️ #3</span></td></tr>
+<tr><td>Estrella #EAB308 sobre #F7F8FA (<code>--color-surface-hover</code>, fondo de pantalla)</td><td>1,8:1</td><td><strong>No cumple</strong> 3:1</td></tr>
+<tr><td>Anillo de foco</td><td>—</td><td><strong>No existe</strong> (<code>all: unset</code>)</td></tr>
+</table>
+<ul class="l">
+<li><strong>Área táctil:</strong> 20 × 20 px, por debajo de 24 × 24 (AA) y de 44 × 44 (recomendado). Ver nota en Sizing.</li>
+<li><strong>No depender del color:</strong> se cumple; los estados se distinguen por la forma (contorno vs relleno).</li>
+<li><strong><code>forced-colors</code>:</strong> el ícono usa <code>currentColor</code>, así que debería tomar el color del sistema. <strong>[Supuesto — validar]</strong> Probar en modo alto contraste.</li>
+<li><strong>Movimiento:</strong> sin animación hoy; respetar <code>prefers-reduced-motion</code> si se agrega.</li>
+</ul>
+</section>
+
+<!-- 07 -->
+<section>
+<h2><span class="n">07</span>Reglas responsive</h2>
+<p class="lead">El componente <strong>no cambia de patrón</strong> entre breakpoints. Breakpoints supuestos: mobile &lt; 768, tablet 768–1023, desktop ≥ 1024. <span class="pend">⚠️ Pendiente</span> confirmar los del sistema (#9).</p>
+<table>
+<tr><th>Breakpoint</th><th>Cambios</th></tr>
+<tr><td class="k">Mobile</td><td>Mismo tamaño visual (20 × 20). Recomendado: área táctil de 44 × 44 con el pseudo-elemento de la nota de Sizing. <strong>[Supuesto — validar con diseño]</strong></td></tr>
+<tr><td class="k">Tablet</td><td>Sin cambios.</td></tr>
+<tr><td class="k">Desktop</td><td>Sin cambios.</td></tr>
+</table>
+<p>No se oculta ni reordena nada. El botón siempre va a la derecha del título, en la misma fila.</p>
+</section>
+
+<!-- 08 -->
+<section>
+<h2><span class="n">08</span>Edge cases</h2>
+<table>
+<tr><th>Caso</th><th>Comportamiento esperado</th></tr>
+<tr><td class="k">Título largo</td><td>El título hace wrap en varias líneas; el botón mantiene 20 × 20 (<code>flex-shrink: 0</code>) y se centra verticalmente (<code>align-items: center</code>) respecto del bloque. <strong>[Supuesto — validar]</strong></td></tr>
+<tr><td class="k">Sin <code>onToggle</code></td><td>El template no lo renderiza. Si se usa suelto, se dibuja pero no responde.</td></tr>
+<tr><td class="k">Sin <code>favorite</code></td><td>Se trata como <code>false</code> (default): estrella de contorno, <code>aria-pressed="false"</code>.</td></tr>
+<tr><td class="k">Varios en una pantalla</td><td>No está diseñado: es un solo marcador por pantalla, junto al título.</td></tr>
+<tr><td class="k">Doble clic rápido</td><td>Alterna dos veces (vuelve al valor original); no hay debounce.</td></tr>
+<tr><td class="k">Recarga o URL directa</td><td>El favorito se pierde (sin persistencia). <span class="pend">⚠️ #7</span></td></tr>
+<tr><td class="k">Identidad del favorito</td><td>Se identifica por <code>href</code> del maestro (único en toda la app); no hay ids separados por módulo.</td></tr>
+<tr><td class="k">Sin ícono (nombre inválido)</td><td><code>Icon</code> renderiza un svg vacío y el botón queda invisible pero focusable. Solo pasa si se cambia <code>bi-star</code>/<code>bi-star-fill</code> en <code>icons.jsx</code>.</td></tr>
+<tr><td class="k">i18n / RTL</td><td>La estrella es simétrica; no cambia en RTL. La etiqueta accesible (“Agregar a favoritos”) está fija en español, sin i18n. <span class="pend">⚠️ Pendiente</span></td></tr>
+<tr><td class="k">Overflow, listas, estado vacío</td><td>No aplican.</td></tr>
+</table>
+</section>
+
+<!-- 09 -->
+<section>
+<h2><span class="n">09</span>Composición y componentes átomo</h2>
+<table>
+<tr><th>Componente</th><th>Usado en parte</th><th>Props / variante usada</th><th>Para qué</th></tr>
+<tr><td><code>Icon</code></td><td><code>icon</code></td><td><code>name="bi-star"</code> o <code>"bi-star-fill"</code>, <code>size={20}</code></td><td>Dibuja la estrella. En Figma es un vector propio (no hay estrellas en la página Icon); reemplazar por instancia cuando existan (#6).</td></tr>
+</table>
+<p><strong>Dónde se usa:</strong> en <code>LayoutMaestroDataGrid</code>, a la derecha del título (<code>.titleRow</code>, gap 4 px), <strong>solo si</strong> la pantalla pasa <code>onToggleFavorite</code>. Hoy solo lo usa <code>Buque</code> (<code>/buques</code>). No va en Usuarios, Perfiles ni Empresas (Main).</p>
+<p><strong>Props que se pasan hacia abajo:</strong> <code>favorite</code> (boolean) y <code>onToggle</code>. La pantalla traduce los genéricos <code>favoriteHrefs</code> / <code>onToggleFavorite(href)</code> de <code>App.jsx</code> a esa firma, fijando su href (por ejemplo <code>favorite={favoriteHrefs.includes('/buques')}</code>).</p>
+</section>
+
+<section class="warn">
+<h2>Preguntas abiertas</h2>
+<ol class="q">
+<li><strong>Nombre (resuelto):</strong> el código se renombró a <code>ToggleIcon</code> (antes <code>FavoriteButton</code>) para coincidir con Toggle Icon en Figma.</li>
+<li><strong>Hover, Focus y Pressed:</strong> no tienen diseño en Figma. El foco es lo más urgente (hoy es invisible).</li>
+<li><strong>Contraste:</strong> la estrella (1,9:1) no cumple 3:1. ¿Se oscurece el tono, se agrega contorno o se acepta?</li>
+<li><strong>Etiqueta accesible:</strong> ¿fija con <code>aria-pressed</code>, o cambiante sin él? ¿Se permite pasar <code>aria-label</code> por prop? ¿<code>aria-hidden</code> en el ícono?</li>
+<li><strong>Área táctil:</strong> 20 px actual vs mínimo AA 24 px y recomendado 44 px.</li>
+<li><strong>Ícono:</strong> ¿se suma la estrella a la página Icon y se usa una instancia en vez del vector propio?</li>
+<li><strong>Persistencia:</strong> ¿los favoritos se guardan (localStorage o backend)? Hoy se pierden al recargar.</li>
+<li><strong>Tooltip:</strong> ¿se muestra un <code>title</code> o tooltip con el texto de la acción?</li>
+<li><strong>Breakpoints:</strong> confirmar los del sistema y si el área táctil de 44 px aplica solo en mobile.</li>
+<li><strong>Disabled:</strong> ¿algún caso lo necesita (por ejemplo mientras se guarda)? Hoy no existe.</li>
+</ol>
+</section>
+
+</main>
+<script>
+const P={off:'M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z',
+on:'M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z'};
+function draw(b){b.innerHTML='<svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="'+P[b.dataset.star]+'"/></svg>';}
+document.querySelectorAll('.tgl').forEach(draw);
+const live=document.getElementById('live');
+live.addEventListener('click',()=>{const on=live.dataset.star==='off';live.dataset.star=on?'on':'off';live.setAttribute('aria-pressed',on);live.setAttribute('aria-label',on?'Quitar de favoritos':'Agregar a favoritos');draw(live);});
+</script>
+</body>
+</html>

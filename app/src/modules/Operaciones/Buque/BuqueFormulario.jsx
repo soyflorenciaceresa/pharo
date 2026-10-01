@@ -11,7 +11,7 @@ const TITLES = {
   edit: 'Editar Buque',
 };
 
-export default function BuqueFormulario({ onNavigate, rows = [], onCreate, onUpdate, params = {}, mode = 'create' }) {
+export default function BuqueFormulario({ onNavigate, onSearch, rows = [], onCreate, onUpdate, params = {}, mode = 'create' }) {
   const isView = mode === 'view';
   const isEdit = mode === 'edit';
   const existing = mode !== 'create' ? rows.find((r) => String(r.id) === String(params.id)) : null;
@@ -36,6 +36,7 @@ export default function BuqueFormulario({ onNavigate, rows = [], onCreate, onUpd
         sidebar={OPERACIONES_SIDEBAR_PROPS}
         activeHref="/buques"
         onNavigate={navigate}
+        onSearch={onSearch}
         onCompanyChange={(c) => console.log('company change', c)}
         onLogout={() => console.log('logout')}
         onToggle={(d) => console.log('toggle', d)}
@@ -43,7 +44,6 @@ export default function BuqueFormulario({ onNavigate, rows = [], onCreate, onUpd
         title="Buque no encontrado"
         onCancel={handleCancel}
         cancelLabel="Volver"
-        formIcon="icon-pencil-square"
         formTitle="Datos del buque"
       >
         <p className={styles.notFound}>No se encontró el buque solicitado.</p>
@@ -70,7 +70,7 @@ export default function BuqueFormulario({ onNavigate, rows = [], onCreate, onUpd
       codigo: codigo.trim(),
       denominacion: denominacion.trim(),
       tipo: tipo.trim(),
-      estado: inactivo ? { label: 'Inactivo', tone: 'neutral' } : { label: 'Activo', tone: 'success' },
+      estado: inactivo ? { label: 'Inactivo', type: 'neutral' } : { label: 'Activo', type: 'success' },
     };
 
     if (isEdit) onUpdate?.(buque);
@@ -82,6 +82,7 @@ export default function BuqueFormulario({ onNavigate, rows = [], onCreate, onUpd
       sidebar={OPERACIONES_SIDEBAR_PROPS}
       activeHref="/buques"
       onNavigate={navigate}
+      onSearch={onSearch}
       onCompanyChange={(c) => console.log('company change', c)}
       onLogout={() => console.log('logout')}
       onToggle={(d) => console.log('toggle', d)}
@@ -90,7 +91,6 @@ export default function BuqueFormulario({ onNavigate, rows = [], onCreate, onUpd
       onSave={isView ? undefined : handleSave}
       onCancel={handleCancel}
       cancelLabel={isView ? 'Volver' : 'Cancelar'}
-      formIcon="icon-pencil-square"
       formTitle="Datos del buque"
     >
       <div className={styles.fieldsRow}>

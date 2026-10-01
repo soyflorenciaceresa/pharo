@@ -3,7 +3,6 @@
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  padding-top: var(--spacing-md);
 }
 
 .row {

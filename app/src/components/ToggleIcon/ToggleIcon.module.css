@@ -1,0 +1,37 @@
+.button {
+  all: unset;
+  /* `all: unset` también borra `position`; se declara después para poder
+     anclar el pseudo-elemento del área clicable (handoff, Sizing). */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-yellow);
+  cursor: pointer;
+}
+
+/* Área clicable: el ícono mide 20×20 px (menos que el mínimo AA de 24×24),
+   así que se amplía SIN cambiar el tamaño visual. Base: 24×24 (inset -2px).
+   En puntero táctil se sube a 44×44 (recomendado, handoff Responsive — supuesto
+   pendiente de validar con diseño, Pregunta abierta #5/#9). */
+.button::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+}
+
+@media (pointer: coarse) {
+  .button::after {
+    inset: -12px;
+  }
+}
+
+/* Foco visible: `all: unset` eliminaba el anillo del navegador y el foco no se
+   veía (handoff, Estados → Focus). Propuesta del handoff, sin diseño en Figma
+   todavía (Pregunta abierta #2). */
+.button:focus-visible {
+  outline: var(--border-width-focus) solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}

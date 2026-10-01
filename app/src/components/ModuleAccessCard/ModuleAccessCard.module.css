@@ -1,0 +1,67 @@
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  min-width: 174px;
+  padding: var(--spacing-md);
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-card);
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.iconBadge {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  width: fit-content;
+  border-radius: var(--radius-md);
+}
+
+/* Misma paleta de acento que CardModule/ChatSuggestionCard/TourPopup. */
+.iconBadge[data-accent='blue'] { background: var(--color-primary-disabled); color: var(--color-primary-default); }
+.iconBadge[data-accent='violet'] { background: var(--color-accent-violet-subtle); color: var(--color-accent-violet); }
+.iconBadge[data-accent='green'] { background: var(--color-accent-green-subtle); color: var(--color-accent-green); }
+.iconBadge[data-accent='amber'] { background: var(--color-accent-amber-subtle); color: var(--color-accent-amber); }
+.iconBadge[data-accent='red'] { background: var(--color-accent-red-subtle); color: var(--color-accent-red); }
+.iconBadge[data-accent='cyan'] { background: var(--color-accent-cyan-subtle); color: var(--color-accent-cyan); }
+.iconBadge[data-accent='pink'] { background: var(--color-accent-pink-subtle); color: var(--color-accent-pink); }
+.iconBadge[data-accent='indigo'] { background: var(--color-accent-indigo-subtle); color: var(--color-accent-indigo); }
+.iconBadge[data-accent='neutral'] { background: var(--color-surface-selected); color: var(--color-text-secondary); }
+
+.textCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+  width: 100%;
+}
+
+.title {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-default);
+  width: 100%;
+}
+
+.description {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  width: 100%;
+}

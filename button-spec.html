@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec Button</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Documento */
+  --bg:#f7f8fa; --paper:#ffffff; --ink:#061e30; --ink-2:#6a7883; --line:#e3e5ea; --code-bg:#f1f2f4;
+  --ok:#1f8a4c; --warn:#a15c00; --warn-bg:#fff6e5; --no:#c0362c;
+  /* Tokens Pharo (valores resueltos) */
+  --action:#4059fd; --action-hover:#364cd7; --action-pressed:#2d3eb1; --action-disabled:#d9deff;
+  --on-action:#ffffff; --text-disabled:#a3a3a3;
+  --sec-bg:#ffffff; --sec-hover:#f5f7ff; --sec-pressed:#eceeff;
+  --focus:#667afd; --canvas:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1620; --paper:#101f2b; --ink:#e8edf2; --ink-2:#9aa8b4; --line:#223443; --code-bg:#182a38;
+    --ok:#4cc98a; --warn:#f0b35a; --warn-bg:#2b2213; --no:#ff7a70;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1620; --paper:#101f2b; --ink:#e8edf2; --ink-2:#9aa8b4; --line:#223443; --code-bg:#182a38;
+  --ok:#4cc98a; --warn:#f0b35a; --warn-bg:#2b2213; --no:#ff7a70;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+code{font:13px/1.4 "JetBrains Mono",ui-monospace,monospace;background:var(--code-bg);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:48px;max-width:1180px;margin:0 auto;padding:48px 32px}
+nav{position:sticky;top:32px;align-self:start;font-size:13px}
+nav .eyebrow{margin-bottom:12px}
+nav ol{list-style:none;margin:0;padding:0;counter-reset:n}
+nav li{counter-increment:n}
+nav a{display:block;padding:5px 10px;border-radius:6px;color:var(--ink-2);text-decoration:none}
+nav a::before{content:counter(n) ". ";color:var(--ink-2);opacity:.6}
+nav li.p a::before{content:"· "}
+nav a:hover{background:var(--paper);color:var(--ink)}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+header h1{font-size:40px;line-height:1.1;margin:8px 0 12px;letter-spacing:-.02em}
+header p{margin:0;color:var(--ink-2);max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{font-size:12px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 10px;color:var(--ink-2)}
+.chip a{color:inherit}
+section{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:28px 32px;margin-top:24px;scroll-margin-top:24px}
+section h2{font-size:22px;margin:0 0 16px;letter-spacing:-.01em;display:flex;gap:12px;align-items:baseline}
+section h2 .n{font-size:13px;color:var(--ink-2);font-weight:500;font-family:"JetBrains Mono",monospace}
+section h3{font-size:15px;margin:24px 0 8px}
+.lead{font-size:18px;line-height:1.5;margin:0;max-width:65ch}
+ul,ol{padding-left:20px;margin:8px 0}
+li{margin:6px 0}
+.table-wrap{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}
+.dont li::marker{content:"→ "}
+.assume{display:inline-block;font-size:11px;font-weight:600;color:var(--warn);background:var(--warn-bg);border-radius:4px;padding:1px 6px;margin-left:4px;white-space:nowrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.card{border:1px solid var(--line);border-radius:10px;padding:16px 20px}
+.card h3{margin-top:0}
+.do h3{color:var(--ok)} .no h3{color:var(--no)}
+.pass{color:var(--ok);font-weight:600} .fail{color:var(--no);font-weight:600} .na{color:var(--ink-2)}
+.stage{background:var(--canvas);border:1px solid var(--line);border-radius:10px;padding:24px;margin:12px 0;overflow-x:auto}
+.matrix{border-collapse:separate;border-spacing:0;width:auto;min-width:100%}
+.matrix th,.matrix td{border:0;padding:10px 14px;text-align:center;color:#6a7883}
+.matrix th:first-child,.matrix td:first-child{text-align:left;font-size:12px;font-weight:600;text-transform:none;letter-spacing:0;white-space:nowrap}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px}
+
+/* ===== Réplica del componente Button (tokens Pharo) ===== */
+.btn{--bg:var(--action);--fg:var(--on-action);--bd:transparent;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:8px 16px;border-radius:8px;
+  font:600 14px/1.2 Inter,sans-serif;background:var(--bg);color:var(--fg);border:0;box-shadow:inset 0 0 0 1px var(--bd);white-space:nowrap;cursor:pointer}
+.btn svg{width:16px;height:16px;flex:none;fill:currentColor}
+.btn.only{padding:8px}
+.btn.solid.hover{--bg:var(--action-hover)} .btn.solid.pressed{--bg:var(--action-pressed)}
+.btn.solid.disabled{--bg:var(--action-disabled);--fg:var(--text-disabled);cursor:not-allowed}
+.btn.solid.focus{outline:2px solid var(--focus);outline-offset:0}
+.btn.outline{--bg:var(--sec-bg);--fg:var(--action);--bd:var(--action);padding:9px 17px}
+.btn.outline.hover{--bg:var(--sec-hover);--fg:var(--action-hover);--bd:var(--action-hover)}
+.btn.outline.pressed{--bg:var(--sec-pressed);--fg:var(--action-pressed);--bd:var(--action-pressed)}
+.btn.outline.focus{box-shadow:inset 0 0 0 1px var(--bd),0 0 0 2px var(--focus)}
+.btn.outline.disabled{--fg:var(--text-disabled);--bd:var(--action-disabled);cursor:not-allowed}
+.btn.text{--bg:transparent;--fg:var(--action)}
+.btn.text.hover{--bg:var(--sec-hover);--fg:var(--action-hover)}
+.btn.text.pressed{--bg:var(--sec-pressed);--fg:var(--action-pressed)}
+.btn.text.focus{outline:2px solid var(--focus)}
+.btn.text.disabled{--fg:var(--text-disabled);cursor:not-allowed}
+
+/* Anatomía */
+.stage.anat{display:flex;gap:64px 48px;flex-wrap:wrap;align-items:center;justify-content:center;padding:80px 24px;overflow:visible}
+.pin-wrap{position:relative;display:inline-block}
+.pin{position:absolute;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--paper);font:600 11px/22px Inter;text-align:center}
+.pin::after{content:"";position:absolute;left:50%;width:1px;background:var(--ink);opacity:.5}
+.pin.t{top:-34px}.pin.t::after{top:22px;height:12px}
+.pin.b{bottom:-34px}.pin.b::after{bottom:22px;height:12px}
+.big{transform:scale(1.6);transform-origin:center;margin:0 30px}
+
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr;padding:24px 16px;gap:0}
+  nav{display:none}
+  section{padding:20px 16px}
+  .two{grid-template-columns:1fr}
+  header h1{font-size:32px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.65 1.65a.5.5 0 0 1 .7 0l6 6a.5.5 0 0 1 0 .7l-6 6a.5.5 0 0 1-.7-.7L10.29 8 4.65 2.35a.5.5 0 0 1 0-.7Z"/></symbol>
+</svg>
+
+<div class="layout">
+<nav aria-label="Secciones">
+  <div class="eyebrow">Contenido</div>
+  <ol>
+    <li><a href="#que-es">Qué es</a></li>
+    <li><a href="#cuando">Cuándo usarlo</a></li>
+    <li><a href="#cuando-no">Cuándo no usarlo</a></li>
+    <li><a href="#variantes">Variantes</a></li>
+    <li><a href="#estados">Estados</a></li>
+    <li><a href="#anatomia">Anatomía</a></li>
+    <li><a href="#propiedades">Propiedades</a></li>
+    <li><a href="#reglas">Reglas de uso</a></li>
+    <li><a href="#a11y">Accesibilidad</a></li>
+    <li><a href="#relacionados">Relacionados</a></li>
+    <li class="p"><a href="#pendientes">Pendientes</a></li>
+  </ol>
+</nav>
+
+<main>
+<header>
+  <div class="eyebrow">Pharo Design System · Componentes</div>
+  <h1>Button</h1>
+  <p>Spec del component set <code>Button</code> de la página <strong>Button</strong>: 6 variantes × 5 estados, con colores, espaciado y tipografía ligados a tokens.</p>
+  <div class="meta">
+    <span class="chip">Figma · <a href="https://www.figma.com/design/bFoFYecHLZcuMroxIg8ZJI/Pharo-Design-System?node-id=591-1937">node 591:1937</a></span>
+    <span class="chip">30 variantes</span>
+    <span class="chip">Tamaño: Medium</span>
+    <span class="chip">Actualizado 25/09/2026</span>
+  </div>
+</header>
+
+<section id="que-es">
+  <h2><span class="n">01</span>Qué es</h2>
+  <p class="lead"><code>Button</code> es un control que ejecuta una acción inmediata —guardar, crear, confirmar o avanzar un paso— cuando la persona lo activa con clic, toque o teclado.</p>
+</section>
+
+<section id="cuando">
+  <h2><span class="n">02</span>Cuándo usarlo</h2>
+  <ul>
+    <li>Para enviar o guardar un formulario, por ejemplo <strong>Guardar operación</strong> al pie de un <code>Form Container</code> → <code>Solid</code>.</li>
+    <li>Para la acción principal de un listado de Maestros, por ejemplo <strong>+ Nuevo cliente</strong> en la cabecera de la página → <code>Left Icon</code>.</li>
+    <li>Para la acción secundaria que acompaña a la principal: <strong>Cancelar</strong> junto a <strong>Guardar</strong>, o <strong>Exportar</strong> junto a <strong>Nueva operación</strong> → <code>Outline</code>.</li>
+    <li>Para acciones de baja jerarquía dentro de una card, un panel o una fila de <code>Data grid</code>: <strong>Ver detalle</strong>, <strong>Limpiar filtros</strong> → <code>Text</code>.</li>
+    <li>Para avanzar en un flujo de varios pasos: <strong>Siguiente &gt;</strong>, <strong>Continuar &gt;</strong> → <code>Right Icon</code>.</li>
+    <li>Para acciones compactas en toolbars o filas de tabla cuyo ícono se entiende sin texto (agregar, editar, cerrar), siempre con tooltip → <code>Icon Only</code>.</li>
+  </ul>
+</section>
+
+<section id="cuando-no">
+  <h2><span class="n">03</span>Cuándo no usarlo</h2>
+  <ul class="dont">
+    <li>No usar para navegar a otra página o URL → usar un <strong>Link</strong>, un ítem de <code>Sidebar</code> o <code>Breadcrumb</code>.</li>
+    <li>No usar para activar o desactivar una opción → usar <strong>Switch</strong> o <strong>Checkbox</strong>.</li>
+    <li>No usar para elegir entre vistas u opciones excluyentes → usar <code>Tabs</code>, Radio o Select.</li>
+    <li>No usar dos <code>Solid</code> en la misma vista → dejar un solo <code>Solid</code> y pasar el resto a <code>Outline</code> o <code>Text</code>.</li>
+    <li>No usar <code>Icon Only</code> con íconos que no son universales (p. ej. <em>Procesos</em>, <em>Tipos de turnos</em>) → usar <code>Left Icon</code> con label.</li>
+    <li>No usar para moverse entre páginas de resultados → usar <code>Pagination</code>.</li>
+    <li>No usar <code>Solid</code> azul para acciones destructivas (Eliminar, Anular) → por ahora, <code>Outline</code> + modal de confirmación; falta una variante Danger. <span class="assume">Supuesto — validar</span></li>
+  </ul>
+</section>
+
+<section id="variantes">
+  <h2><span class="n">04</span>Variantes</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Variante</th><th>Vista</th><th>Para qué sirve</th><th>Ejemplo de uso</th></tr></thead>
+    <tbody>
+      <tr><td><code>Solid</code></td><td><span class="btn solid">Guardar</span></td><td>Acción principal (primary). Máximo una por vista o sección.</td><td>“Guardar” en un formulario de alta.</td></tr>
+      <tr><td><code>Outline</code></td><td><span class="btn outline">Cancelar</span></td><td>Acción secundaria (secondary), convive con la principal.</td><td>“Cancelar” junto a “Guardar”.</td></tr>
+      <tr><td><code>Text</code></td><td><span class="btn text">Ver detalle</span></td><td>Acción terciaria o de baja jerarquía, sin contenedor visible en reposo.</td><td>“Limpiar filtros” en la barra de filtros.</td></tr>
+      <tr><td><code>Right Icon</code></td><td><span class="btn solid">Siguiente<svg><use href="#i-chev"/></svg></span></td><td>Acción principal que indica avance o continuidad. Estilo Solid.</td><td>“Siguiente &gt;” en un wizard.</td></tr>
+      <tr><td><code>Left Icon</code></td><td><span class="btn solid"><svg><use href="#i-plus"/></svg>Nuevo</span></td><td>Acción principal cuyo ícono refuerza el significado. Estilo Solid.</td><td>“+ Nuevo buque” en Maestros.</td></tr>
+      <tr><td><code>Icon Only</code></td><td><span class="btn solid only" aria-label="Agregar"><svg><use href="#i-plus"/></svg></span></td><td>Acción compacta con ícono universal. Estilo Solid. Requiere tooltip y <code>aria-label</code>.</td><td>“+” para agregar una fila en una tabla.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Tamaños:</strong> solo existe <code>Medium</code> (alto 33 px). <strong>Nota:</strong> las variantes con ícono solo existen en estilo Solid; no hay Outline + ícono ni Text + ícono.</p>
+</section>
+
+<section id="estados">
+  <h2><span class="n">05</span>Estados</h2>
+  <div class="stage">
+    <table class="matrix">
+      <thead><tr><th></th><th>Default</th><th>Hover</th><th>Pressed</th><th>Focus</th><th>Disabled</th></tr></thead>
+      <tbody id="matrix"></tbody>
+    </table>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Estado</th><th>Cómo se ve</th><th>Comportamiento</th></tr></thead>
+    <tbody>
+      <tr><td><code>Default</code></td><td>Solid: fondo <code>surface/action/default</code> (#4059FD), texto <code>text/on-action</code>. Outline: fondo blanco, borde y texto <code>…/action-secondary/default</code>. Text: sin fondo, texto azul.</td><td>En reposo, listo para interactuar.</td></tr>
+      <tr><td><code>Hover</code></td><td>Solid: <code>surface/action/hover</code> (#364CD7). Outline y Text: fondo <code>surface/action-secondary/hover</code> (#F5F7FF), texto y borde un tono más oscuro.</td><td>Puntero sobre el botón. Cursor <code>pointer</code>. No aplica en touch.</td></tr>
+      <tr><td><code>Pressed</code></td><td>Solid: <code>surface/action/pressed</code> (#2D3EB1). Outline y Text: fondo <code>surface/action-secondary/pressed</code> (#ECEEFF).</td><td>Mientras se mantiene el clic, el toque o la tecla.</td></tr>
+      <tr><td><code>Focus</code></td><td>Anillo de 2 px con <code>color/border/focus</code> (#667AFD) por fuera del contenedor. En Outline se conserva el borde de 1 px y el anillo va por fuera.</td><td>Solo con navegación por teclado (<code>:focus-visible</code>). No se muestra al hacer clic.</td></tr>
+      <tr><td><code>Disabled</code></td><td>Solid: fondo <code>surface/action/disabled</code> (#D9DEFF). Outline: borde <code>border/action-secondary/disabled</code>. Texto e ícono <code>color/text/disabled</code> (#A3A3A3) en todas.</td><td>No responde a clic ni teclado. Cursor <code>not-allowed</code>.</td></tr>
+    </tbody>
+  </table></div>
+  <p><span class="dot"></span>Las 30 combinaciones <strong>Variante × Estado</strong> existen en Figma. Falta <code>Loading</code> (el componente anterior lo tenía) — ver Pendientes.</p>
+</section>
+
+<section id="anatomia">
+  <h2><span class="n">06</span>Anatomía</h2>
+  <div class="stage anat">
+    <span class="pin-wrap big">
+      <span class="btn outline"><svg><use href="#i-plus"/></svg>Label<svg><use href="#i-chev"/></svg></span>
+      <span class="pin t" style="left:-12px">1</span>
+      <span class="pin b" style="left:10px">2</span>
+      <span class="pin t" style="left:40px">3</span>
+      <span class="pin b" style="left:76px">4</span>
+      <span class="pin t" style="right:-12px">5</span>
+    </span>
+    <span class="pin-wrap big">
+      <span class="btn solid focus">Label</span>
+      <span class="pin b" style="right:-14px">6</span>
+    </span>
+  </div>
+  <p style="font-size:13px;color:var(--ink-2)">Composición ilustrativa: en Figma ninguna variante tiene ambos íconos a la vez.</p>
+  <ol>
+    <li><strong>Contenedor</strong> — obligatorio. Capa: el propio componente (<code>Variant=…, State=…</code>). Auto layout horizontal, padding <code>spacing/padding-button-x</code> (16) × <code>spacing/padding-button-y</code> (8), gap <code>spacing/gap-button</code> (4), radio <code>radius/button</code> (8). En <code>Icon Only</code> el padding es 8 en los cuatro lados.</li>
+    <li><strong>Ícono leading</strong> — opcional (solo <code>Left Icon</code> e <code>Icon Only</code>). Capa: <code>Leading Icon</code>. Instancia 16×16 de la página Icon; color igual al del texto.</li>
+    <li><strong>Label</strong> — obligatorio, salvo en <code>Icon Only</code>. Capa: <code>Label</code>. Estilo de texto <code>Button/Label MD</code> (Inter Semi Bold 14 / 120%).</li>
+    <li><strong>Ícono trailing</strong> — opcional (solo <code>Right Icon</code>). Capa: <code>Trailing Icon</code>. Instancia 16×16.</li>
+    <li><strong>Borde</strong> — opcional (solo <code>Outline</code>). Stroke interior de <code>border/action-secondary-width</code> (1 px).</li>
+    <li><strong>Anillo de foco</strong> — solo en <code>State=Focus</code>. Stroke exterior de <code>border/width/focus</code> (2 px) con <code>color/border/focus</code>; en <code>Outline</code> es una sombra spread 2 px del mismo color.</li>
+  </ol>
+</section>
+
+<section id="propiedades">
+  <h2><span class="n">07</span>Propiedades (Figma)</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Propiedad</th><th>Tipo</th><th>Valores</th><th>Default</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td><code>Variant</code></td><td>Variant</td><td><code>Solid</code>, <code>Outline</code>, <code>Text</code>, <code>Right Icon</code>, <code>Left Icon</code>, <code>Icon Only</code></td><td><code>Solid</code></td><td>Define jerarquía y posición del ícono.</td></tr>
+      <tr><td><code>State</code></td><td>Variant</td><td><code>Default</code>, <code>Hover</code>, <code>Pressed</code>, <code>Focus</code>, <code>Disabled</code></td><td><code>Default</code></td><td>En código solo <code>Disabled</code> es una prop; el resto son estados de interacción.</td></tr>
+      <tr><td><code>Label</code></td><td>Text</td><td>Texto libre</td><td>“Button”</td><td>No tiene efecto en <code>Icon Only</code> (no hay capa <code>Label</code>).</td></tr>
+      <tr><td><code>Icon</code></td><td>Instance swap</td><td>Cualquier ícono 16×16 de la página Icon</td><td><code>PlusLg</code></td><td>Controla <code>Leading Icon</code> en <code>Left Icon</code> e <code>Icon Only</code>.</td></tr>
+      <tr><td><code>Trailing Icon</code></td><td>Instance swap</td><td>Cualquier ícono 16×16 de la página Icon</td><td><code>ChevronRight</code></td><td>Controla <code>Trailing Icon</code> solo en <code>Right Icon</code>.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Combinaciones inválidas o sin efecto</h3>
+  <ul>
+    <li><code>Icon</code> y <code>Trailing Icon</code> no hacen nada en <code>Solid</code>, <code>Outline</code> y <code>Text</code>.</li>
+    <li><code>Variant=Icon Only</code> sin nombre accesible definido en el handoff (tooltip + <code>aria-label</code>).</li>
+    <li><code>Label</code> vacío en cualquier variante que no sea <code>Icon Only</code>.</li>
+    <li>Íconos de otro tamaño que 16×16 en <code>Icon</code> / <code>Trailing Icon</code>: rompen el alto del botón.</li>
+  </ul>
+</section>
+
+<section id="reglas">
+  <h2><span class="n">08</span>Reglas de uso</h2>
+  <div class="two">
+    <div class="card do">
+      <h3>✅ Hacer</h3>
+      <ul>
+        <li>Escribir el label con verbo en infinitivo + objeto: “Guardar cambios”, “Crear cliente”.</li>
+        <li>Usar entre 1 y 3 palabras, en una sola línea.</li>
+        <li>Usar mayúscula solo en la primera letra (“Nueva operación”).</li>
+        <li>Máximo un <code>Solid</code> por vista o por sección independiente.</li>
+        <li>En formularios, alinear el grupo a la derecha con la acción principal a la derecha de la secundaria. <span class="assume">Supuesto — validar</span></li>
+        <li>Separar botones de un mismo grupo con un token de spacing, no con un valor fijo.</li>
+        <li>Acompañar todo <code>Icon Only</code> con un tooltip que repita la acción.</li>
+        <li>Cambiar íconos con la propiedad <code>Icon</code> / <code>Trailing Icon</code>, usando la librería Icon.</li>
+      </ul>
+    </div>
+    <div class="card no">
+      <h3>❌ No hacer</h3>
+      <ul>
+        <li>Escribir labels en MAYÚSCULAS o con puntos finales.</li>
+        <li>Usar labels genéricos como “Aceptar” u “OK” cuando se puede nombrar la acción.</li>
+        <li>Poner dos <code>Solid</code> uno al lado del otro.</li>
+        <li>Usar un <code>Text</code> como único CTA de un formulario.</li>
+        <li>Desacoplar la instancia para cambiar colores o padding.</li>
+        <li>Dejar un botón en <code>Disabled</code> sin explicar qué falta para habilitarlo.</li>
+        <li>Dibujar botones sueltos (frames) en lugar de usar instancias de <code>Button</code>.</li>
+        <li>Agregar un ícono solo como decoración, sin relación con la acción.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="a11y">
+  <h2><span class="n">09</span>Notas de accesibilidad</h2>
+  <p>Patrón WAI-ARIA APG: <strong>Button</strong>. Implementar con el elemento nativo <code>&lt;button type="button"&gt;</code> (o <code>type="submit"</code> en formularios).</p>
+  <h3>Teclado</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Tecla</th><th>Acción</th></tr></thead>
+    <tbody>
+      <tr><td><code>Tab</code> / <code>Shift+Tab</code></td><td>Mueve el foco al botón siguiente / anterior según el orden del DOM.</td></tr>
+      <tr><td><code>Enter</code></td><td>Activa el botón.</td></tr>
+      <tr><td><code>Espacio</code></td><td>Activa el botón al soltar la tecla.</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li>El orden de foco sigue el orden visual (izquierda → derecha, arriba → abajo).</li>
+    <li>El botón no mueve el foco por sí mismo. Si abre un modal, el foco va al modal y vuelve al botón al cerrarlo.</li>
+    <li>Con <code>disabled</code> nativo el botón sale del orden de tabulación. Si tiene que seguir siendo descubrible (p. ej. para leer un tooltip que explica por qué), usar <code>aria-disabled="true"</code> e ignorar la activación.</li>
+  </ul>
+  <h3>Lector de pantalla</h3>
+  <ul>
+    <li><strong>Rol:</strong> <code>button</code> (nativo).</li>
+    <li><strong>Nombre accesible:</strong> el texto del <code>Label</code>. En <code>Icon Only</code>, <code>aria-label</code> obligatorio (“Agregar fila”).</li>
+    <li><strong>Íconos:</strong> <code>aria-hidden="true"</code> en <code>Leading Icon</code> y <code>Trailing Icon</code>: son decorativos cuando hay label.</li>
+    <li><strong>Anuncios:</strong> Default → “Guardar, botón”. Disabled → “Guardar, botón, no disponible”. Si abre un menú: <code>aria-haspopup="menu"</code> + <code>aria-expanded</code> → “Acciones, botón, contraído”.</li>
+  </ul>
+  <h3>Visual (WCAG 2.2 AA)</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Par</th><th>Contraste</th><th>Mínimo</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr><td>Texto blanco / Solid Default #4059FD</td><td>5,17:1</td><td>4,5:1</td><td class="pass">Cumple</td></tr>
+      <tr><td>Texto blanco / Solid Hover #364CD7</td><td>6,62:1</td><td>4,5:1</td><td class="pass">Cumple</td></tr>
+      <tr><td>Texto blanco / Solid Pressed #2D3EB1</td><td>8,62:1</td><td>4,5:1</td><td class="pass">Cumple</td></tr>
+      <tr><td>Texto #4059FD / blanco (Outline, Text)</td><td>5,17:1</td><td>4,5:1</td><td class="pass">Cumple</td></tr>
+      <tr><td>Texto #364CD7 / #F5F7FF (Hover)</td><td>6,19:1</td><td>4,5:1</td><td class="pass">Cumple</td></tr>
+      <tr><td>Texto #2D3EB1 / #ECEEFF (Pressed)</td><td>7,49:1</td><td>4,5:1</td><td class="pass">Cumple</td></tr>
+      <tr><td>Anillo de foco #667AFD / fondo blanco</td><td>3,64:1</td><td>3:1</td><td class="pass">Cumple</td></tr>
+      <tr><td>Anillo de foco #667AFD / fondo Solid #4059FD</td><td>1,42:1</td><td>—</td><td class="na">Se apoya en el contraste contra la página; ver Pendientes</td></tr>
+      <tr><td>Texto disabled #A3A3A3 / #D9DEFF</td><td>1,90:1</td><td>Exento</td><td class="na">Exento (1.4.3)</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><strong>Área táctil:</strong> 33 px de alto (32×32 en <code>Icon Only</code>) supera el mínimo AA de 24×24. En mobile, ampliar el área activa a 44×44 sin cambiar el tamaño visual.</li>
+    <li><strong>No depender solo del color:</strong> el foco agrega un anillo (no solo un cambio de tono); el estado Disabled se refuerza con cursor y, si aplica, un texto que explique el motivo.</li>
+    <li><strong>Movimiento:</strong> las transiciones de color deben ser ≤150 ms y desactivarse con <code>prefers-reduced-motion</code>. <span class="assume">Supuesto — validar</span></li>
+  </ul>
+</section>
+
+<section id="relacionados">
+  <h2><span class="n">10</span>Componentes átomo relacionados</h2>
+  <h3>Usa internamente</h3>
+  <ul>
+    <li><strong>Íconos</strong> de la página Icon: <code>PlusLg</code> y <code>ChevronRight</code> por defecto; admite cualquier ícono 16×16.</li>
+    <li><strong>Estilo de texto</strong> <code>Button/Label MD</code>.</li>
+  </ul>
+  <h3>Hermanos / alternativos</h3>
+  <ul>
+    <li><strong>Link</strong>: para navegar; el botón ejecuta acciones.</li>
+    <li><code>Pagination</code>: para moverse entre páginas de resultados.</li>
+    <li><code>Tabs</code>: para cambiar de vista dentro de la misma página.</li>
+    <li><code>Sidebar</code> / <code>Breadcrumb</code>: para la navegación global.</li>
+  </ul>
+</section>
+
+<section id="pendientes">
+  <h2>Pendientes</h2>
+  <ul>
+    <li><strong>Tamaños:</strong> solo existe Medium. Hay tokens <code>…/lg</code> (<code>spacing/padding-button-x/lg</code>, <code>Button/Label LG</code>): ¿agregamos <code>Size=Large</code>?</li>
+    <li><strong>Loading:</strong> el componente anterior lo tenía y este no.</li>
+    <li><strong>Danger:</strong> no hay variante para acciones destructivas; existe el token <code>color/danger/default</code>.</li>
+    <li><strong>Íconos + jerarquía:</strong> las variantes con ícono solo existen en Solid. Propuesta: separar en <code>Style</code> (Solid/Outline/Text) × <code>Icon</code> (None/Left/Right/Only).</li>
+    <li><strong>Altos distintos:</strong> Outline mide 35 px (el borde suma al layout), Icon Only 32 px y el resto 33 px. Conviene unificar.</li>
+    <li><strong>Foco sobre Solid:</strong> el anillo tiene 1,42:1 contra el fondo del botón. Evaluar un gap blanco de 2 px entre botón y anillo.</li>
+    <li><strong>Spread del foco en Outline:</strong> el color está ligado a token, pero el spread de 2 px no.</li>
+    <li><strong>Instance swap:</strong> <code>Icon</code> y <code>Trailing Icon</code> no tienen valores preferidos configurados.</li>
+    <li><strong>Migración:</strong> la página del Button anterior se eliminó; revisar si quedan instancias rotas en otras páginas (TopBar, Form Container, layouts).</li>
+    <li><strong>Orden en formularios:</strong> confirmar si la primaria va a la derecha.</li>
+  </ul>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+  var rows=[['Solid','solid',''],['Outline','outline',''],['Text','text',''],['Right Icon','solid','r'],['Left Icon','solid','l'],['Icon Only','solid','o']];
+  var states=['','hover','pressed','focus','disabled'];
+  var plus='<svg><use href="#i-plus"/></svg>', chev='<svg><use href="#i-chev"/></svg>';
+  var html='';
+  rows.forEach(function(r){
+    html+='<tr><td>'+r[0]+'</td>';
+    states.forEach(function(s){
+      var inner=r[2]==='l'?plus+'Button':r[2]==='r'?'Button'+chev:r[2]==='o'?plus:'Button';
+      var cls='btn '+r[1]+(s?' '+s:'')+(r[2]==='o'?' only':'');
+      html+='<td><span class="'+cls+'">'+inner+'</span></td>';
+    });
+    html+='</tr>';
+  });
+  document.getElementById('matrix').innerHTML=html;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text field — Spec de componente</title>
+<style>
+:root{
+  --color-text-default:#061e30; --font-size-label:12px; --font-size-body:14px;
+  --font-family-base:Inter,system-ui,sans-serif; --font-weight-medium:500; --font-weight-regular:400;
+  --text-input-placeholder:#afb7bd; --text-input-value:#061e30;
+  --spacing-padding-input-x:12px; --spacing-padding-input-y:8px; --spacing-xs:4px; --radius-input:4px;
+  --border-width-default:1px; --border-width-focus:2px;
+  --surface-input-default:#fff; --border-input-default:#e3e5ea; --border-input-focus:#667afd;
+  --color-text-disabled:#a3a3a3; --surface-input-disabled:#f5f5f5; --border-input-disabled:#e5e5e5;
+  --border-input-error:#dc2626; --color-danger-default:#dc2626;
+  --page:#f7f7f9; --card:#fff; --line:#e3e5ea; --muted:#5b6b78; --accent:#667afd;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--color-text-default);font:15px/1.55 var(--font-family-base)}
+main{max-width:980px;margin:0 auto;padding:40px 16px 80px}
+h1{font-size:32px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 32px}
+section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:24px;margin:0 0 16px}
+h2{font-size:18px;margin:0 0 12px;display:flex;gap:10px;align-items:center}
+h2 .n{background:var(--accent);color:#fff;border-radius:50%;width:26px;height:26px;display:inline-grid;place-items:center;font-size:13px}
+h3{font-size:14px;margin:16px 0 6px}
+ul,ol{margin:0;padding-left:20px} li{margin:3px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f0f1f5}
+code{background:#eef0f5;border-radius:3px;padding:1px 5px;font-size:13px}
+.sup{color:#b45309;font-weight:600}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.do{border-left:4px solid #16a34a;padding-left:12px}.dont{border-left:4px solid #dc2626;padding-left:12px}
+.stage{background:var(--page);border:1px dashed #a78bfa;border-radius:8px;padding:24px;display:flex;gap:24px;flex-wrap:wrap}
+.pin{position:relative}
+.pin b{position:absolute;background:#f97316;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;display:grid;place-items:center}
+.warn{background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:10px 12px;font-size:14px}
+@media(max-width:700px){.two{grid-template-columns:1fr}}
+
+/* Componente (tokens de Figma) */
+.tf{display:flex;flex-direction:column;gap:var(--spacing-xs);width:280px}
+.tf .label{font-size:var(--font-size-label);font-weight:var(--font-weight-medium);line-height:1.2;color:var(--color-text-default)}
+.tf .field{background:var(--surface-input-default);border:var(--border-width-default) solid var(--border-input-default);border-radius:var(--radius-input);padding:var(--spacing-padding-input-y) var(--spacing-padding-input-x);font:var(--font-weight-regular) var(--font-size-body)/1.4 var(--font-family-base);color:var(--text-input-value);width:100%;outline:0}
+.tf .field::placeholder{color:var(--text-input-placeholder)}
+.tf .field:focus,.tf.s-focus .field{border:var(--border-width-focus) solid var(--border-input-focus);padding:calc(var(--spacing-padding-input-y) - 1px) calc(var(--spacing-padding-input-x) - 1px)}
+.tf.s-error .field{border-color:var(--border-input-error)}
+.tf .help{font-size:var(--font-size-label);font-weight:var(--font-weight-medium);line-height:1.2;color:var(--color-danger-default)}
+.tf.s-disabled .label{color:var(--color-text-disabled)}
+.tf.s-disabled .field{background:var(--surface-input-disabled);border-color:var(--border-input-disabled);color:var(--color-text-disabled)}
+.tf.s-disabled .field::placeholder{color:var(--color-text-disabled)}
+kbd{border:1px solid #c9ced8;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:12px;background:#fff}
+</style>
+</head>
+<body>
+<main>
+<h1>Text field</h1>
+<p class="sub">Pharo Design System · Spec de componente · Fuente: Figma <code>327:22</code> (frame “Text field”, 4 variantes de <code>State</code>)</p>
+
+<section>
+<h2><span class="n">·</span>Vista general (interactiva)</h2>
+<div class="stage">
+  <div class="tf"><label class="label" for="a">Label</label><input class="field" id="a" placeholder="Placeholder text"></div>
+  <div class="tf s-focus"><label class="label" for="b">Label</label><input class="field" id="b" value="Placeholder text"></div>
+  <div class="tf s-disabled"><label class="label" for="c">Label</label><input class="field" id="c" placeholder="Placeholder text" disabled></div>
+  <div class="tf s-error"><label class="label" for="d">Label</label><input class="field" id="d" value="Placeholder text" aria-invalid="true" aria-describedby="d-h"><span class="help" id="d-h">Texto de ayuda</span></div>
+</div>
+<p class="sub" style="margin:8px 0 0">Render fiel a los tokens leídos de Figma. <code>State=Default</code>, <code>Focus</code>, <code>Disabled</code>, <code>Error</code> (izq. → der.).</p>
+</section>
+
+<section>
+<h2><span class="n">1</span>Qué es</h2>
+<p>El <code>Text field</code> es un campo de una línea donde la persona escribe o edita un texto corto, acompañado de una etiqueta y, en error, de un mensaje de ayuda.</p>
+</section>
+
+<section>
+<h2><span class="n">2</span>Cuándo usarlo</h2>
+<ul>
+<li>Para capturar datos cortos en un formulario: nombre, apellido, correo, teléfono, ciudad.</li>
+<li>Para ingresar un valor libre que no está en una lista predefinida (p. ej. nombre de un proyecto).</li>
+<li>Para editar un dato existente en una pantalla de ajustes o perfil.</li>
+<li>Para mostrar un error de validación asociado a un dato puntual, con un mensaje que explique cómo corregirlo.</li>
+</ul>
+</section>
+
+<section>
+<h2><span class="n">3</span>Cuándo no usarlo</h2>
+<ul>
+<li><em>No usar para textos largos o de varias líneas (comentarios, descripciones) → usar Text area en su lugar.</em></li>
+<li><em>No usar para elegir entre opciones conocidas (país, categoría) → usar Select o Radio group.</em></li>
+<li><em>No usar para activar o desactivar algo → usar Switch o Checkbox.</em></li>
+<li><em>No usar para buscar en la app → usar Search field.</em></li>
+<li><em>No usar para mostrar datos que la persona no puede editar → usar texto simple (o un campo de solo lectura, cuando exista).</em></li>
+<li><em>No usar para fechas u horas → usar Date picker / Time picker.</em></li>
+</ul>
+<p class="sup">[Supuesto — validar] Los componentes alternativos nombrados (Text area, Select, Search field, Date picker…) deben existir o estar planeados en Pharo.</p>
+</section>
+
+<section>
+<h2><span class="n">4</span>Variantes</h2>
+<p>En Figma existe una sola propiedad de variante (<code>State</code>). No hay variantes de jerarquía ni de tamaño: el ancho por defecto es 280 px y el alto es 54 px (72 px en <code>Error</code>, por el helper text).</p>
+<table>
+<tr><th>Variante</th><th>Para qué sirve</th><th>Ejemplo de uso</th></tr>
+<tr><td><code>State=Default</code></td><td>Campo vacío o en reposo; muestra el placeholder.</td><td>Formulario de registro recién abierto.</td></tr>
+<tr><td><code>State=Focus</code></td><td>Campo activo; la persona está escribiendo.</td><td>Al hacer clic o tabular al campo “Correo”.</td></tr>
+<tr><td><code>State=Disabled</code></td><td>Campo no disponible para editar.</td><td>“Correo” bloqueado mientras se procesa el envío.</td></tr>
+<tr><td><code>State=Error</code></td><td>El valor no pasó la validación; muestra helper text en rojo.</td><td>“Ingresá un correo válido, por ejemplo nombre@dominio.com”.</td></tr>
+</table>
+</section>
+
+<section>
+<h2><span class="n">5</span>Estados</h2>
+<table>
+<tr><th>Estado</th><th>Cómo se ve / comporta</th><th>Tokens (Figma)</th><th>En Figma</th></tr>
+<tr><td>Default</td><td>Fondo blanco, borde 1 px gris claro, texto de placeholder gris.</td><td><code>--border-input-default</code> #e3e5ea · <code>--text-input-placeholder</code> #afb7bd</td><td>✓</td></tr>
+<tr><td>Hover</td><td>Sin diseño definido.</td><td>—</td><td>✗</td></tr>
+<tr><td>Focus (focus-visible)</td><td>Borde de 2 px violeta-azulado; el texto pasa a color de valor.</td><td><code>--border-input-focus</code> #667afd · <code>--border-width-focus</code> 2</td><td>✓</td></tr>
+<tr><td>Filled (con valor)</td><td>Texto en color de valor. Se muestra hoy solo dentro de Focus y Error.</td><td><code>--text-input-value</code> #061e30</td><td>✗ (sin variante propia)</td></tr>
+<tr><td>Disabled</td><td>Fondo gris, borde y textos atenuados; no recibe foco ni entrada.</td><td><code>--surface-input-disabled</code> #f5f5f5 · <code>--color-text-disabled</code> #a3a3a3</td><td>✓</td></tr>
+<tr><td>Error</td><td>Borde 1 px rojo y helper text rojo debajo (12 px medium).</td><td><code>--border-input-error</code> / <code>--color-danger-default</code> #dc2626</td><td>✓</td></tr>
+<tr><td>Read-only, Loading, Success</td><td>No aplican por ahora.</td><td>—</td><td>✗</td></tr>
+</table>
+<p>Como hay una sola propiedad de variante, la matriz Variante × Estado es 1:1 (cada estado <em>es</em> una variante). Huecos detectados:</p>
+<ul>
+<li><strong>Hover</strong> no existe.</li>
+<li><strong>Filled en reposo</strong>, <strong>Focus + Error</strong> (campo con error que recibe foco) y <strong>Error + Disabled</strong> no existen.</li>
+<li>El helper text solo aparece en <code>Error</code>; no hay helper text informativo en los demás estados.</li>
+</ul>
+</section>
+
+<section>
+<h2><span class="n">6</span>Anatomía</h2>
+<div class="stage" style="justify-content:center">
+  <div class="pin">
+    <div class="tf s-error" style="width:320px"><span class="label">Label</span><div class="field" style="color:var(--text-input-value)">Placeholder text</div><span class="help">Texto de ayuda</span></div>
+    <b style="left:-24px;top:0">1</b><b style="left:-24px;top:28px">2</b><b style="left:-24px;top:34px;display:none"></b><b style="left:112px;top:32px;background:#7c3aed;display:none"></b><b style="left:-24px;top:76px">3</b>
+  </div>
+</div>
+<ol>
+<li><strong>Label</strong> — <em>Obligatoria</em>. Capa <code>Label</code> (327:3). Texto <code>Label/Small</code>: Inter Medium 12/1.2, <code>--color-text-default</code>. Gris en <code>Disabled</code>.</li>
+<li><strong>Campo (contenedor)</strong> — <em>Obligatoria</em>. Capa <code>field</code>. Padding 12×8, radio 4, borde 1 px (2 px en Focus), fondo <code>--surface-input-default</code>.</li>
+<li><strong>Valor / placeholder</strong> — <em>Obligatoria</em>. Texto <code>Body/Base</code>: Inter Regular 14/1.4. Dentro del campo (327:5 placeholder, 327:10 valor, 327:15 en disabled).</li>
+<li><strong>Helper text</strong> — <em>Opcional</em> (hoy solo visible en <code>Error</code>). Capa 327:21. Inter Medium 12, <code>--color-danger-default</code>.</li>
+</ol>
+<p>Separación vertical entre partes: <code>--spacing-xs</code> = 4 px. En la imagen, los números 1–3 marcan label, campo y helper; el valor (3 en la lista) vive dentro del campo.</p>
+<p class="sup">[Supuesto — validar] Numeración de la imagen simplificada; no hay íconos leading/trailing ni contador en el diseño actual.</p>
+</section>
+
+<section>
+<h2><span class="n">7</span>Propiedades (Figma)</h2>
+<table>
+<tr><th>Propiedad</th><th>Tipo</th><th>Valores</th><th>Default</th><th>Notas</th></tr>
+<tr><td><code>State</code></td><td>Variant</td><td><code>Default</code>, <code>Focus</code>, <code>Disabled</code>, <code>Error</code></td><td><code>Default</code></td><td>Una variante por estado. En código, <code>Focus</code> se activa por interacción, no por prop.</td></tr>
+<tr><td><code>Label</code></td><td>Text</td><td>Texto libre</td><td><code>Label</code></td><td>Siempre visible; corto.</td></tr>
+<tr><td><code>Value</code></td><td>Text</td><td>Texto libre</td><td><code>Placeholder text</code></td><td>En <code>Default</code> se pinta como placeholder (gris); en el resto, como valor.</td></tr>
+<tr><td><code>Helper text</code></td><td>Text</td><td>Texto libre</td><td><code>Texto de ayuda</code></td><td>Solo visible con <code>State=Error</code>.</td></tr>
+</table>
+<p><strong>Combinaciones inválidas / no soportadas:</strong></p>
+<ul>
+<li><code>Disabled</code> + mensaje de error: no existe la variante; deshabilitado no se valida.</li>
+<li><code>Helper text</code> con <code>State</code> distinto de <code>Error</code>: la propiedad no se muestra.</li>
+</ul>
+<p class="sup">[Supuesto — validar] Las propiedades se tomaron de la descripción del componente en Figma (“Label, Value, Helper text”) y del código de referencia; no se leyeron como propiedades de componente reales. Confirmar nombres exactos en el panel de Figma.</p>
+</section>
+
+<section>
+<h2><span class="n">8</span>Reglas de uso</h2>
+<div class="two">
+<div class="do"><h3>✅ Hacer</h3>
+<ul>
+<li>Usar siempre un label visible, en sentence case y de máximo 3 palabras (“Correo electrónico”).</li>
+<li>Escribir el mensaje de error con causa y solución (“Ingresá un correo válido, por ejemplo nombre@dominio.com”), máximo ~80 caracteres.</li>
+<li>Alinear campos en una sola columna, con separación consistente entre campos.</li>
+<li>Usar los tokens (<code>--border-input-*</code>, <code>--spacing-padding-input-*</code>) y no valores fijos.</li>
+<li>Validar al salir del campo (blur) o al enviar, no en cada tecla.</li>
+<li>Mantener el ancho acorde al dato esperado (mínimo 280 px por defecto).</li>
+</ul></div>
+<div class="dont"><h3>❌ No hacer</h3>
+<ul>
+<li>No usar el placeholder como reemplazo del label.</li>
+<li>No mostrar “Campo inválido” u otros mensajes genéricos.</li>
+<li>No indicar el error solo con el borde rojo.</li>
+<li>No usar <code>Disabled</code> para ocultar por qué no se puede editar; explicar la razón cerca del campo.</li>
+<li>No poner instrucciones críticas solo en el placeholder (desaparece al escribir).</li>
+<li>No tapar el texto del label con mayúsculas sostenidas.</li>
+</ul></div>
+</div>
+</section>
+
+<section>
+<h2><span class="n">9</span>Notas de accesibilidad</h2>
+<h3>Teclado</h3>
+<table>
+<tr><th>Tecla</th><th>Acción</th></tr>
+<tr><td><kbd>Tab</kbd></td><td>Mueve el foco al campo (queda en <code>Focus</code>). Disabled se omite.</td></tr>
+<tr><td><kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>Mueve el foco al elemento anterior.</td></tr>
+<tr><td>Caracteres</td><td>Escriben en el campo.</td></tr>
+<tr><td><kbd>←</kbd> <kbd>→</kbd> <kbd>Home</kbd> <kbd>End</kbd></td><td>Mueven el cursor dentro del texto.</td></tr>
+<tr><td><kbd>Enter</kbd></td><td>Envía el formulario si hay un botón de envío asociado.</td></tr>
+</table>
+<p>El componente no mueve el foco por sí mismo. Al aparecer un error tras enviar, mover el foco al primer campo con error.</p>
+<h3>Lector de pantalla</h3>
+<ul>
+<li>Elemento nativo <code>&lt;input type="text"&gt;</code> con <code>&lt;label for&gt;</code> asociado (nombre accesible = Label).</li>
+<li><code>Error</code>: <code>aria-invalid="true"</code> y helper text enlazado con <code>aria-describedby</code>. Se lee: “Correo, cuadro de edición, no válido, Ingresá un correo válido…”.</li>
+<li><code>Disabled</code>: atributo <code>disabled</code>. Se lee: “Correo, cuadro de edición, no disponible”.</li>
+<li>Para anunciar el error al aparecer, usar <code>role="alert"</code> o una región <code>aria-live="polite"</code> en el helper text.</li>
+</ul>
+<h3>Visual</h3>
+<table>
+<tr><th>Elemento</th><th>Ratio aprox.</th><th>Resultado</th></tr>
+<tr><td>Valor #061e30 sobre #ffffff</td><td>~17:1</td><td>✓ AA</td></tr>
+<tr><td>Borde Focus #667afd sobre #ffffff</td><td>~3.6:1</td><td>✓ AA (3:1 UI)</td></tr>
+<tr><td>Helper/borde Error #dc2626 sobre #ffffff</td><td>~4.8:1</td><td>✓ AA</td></tr>
+<tr><td>Borde Default #e3e5ea sobre #ffffff</td><td>~1.3:1</td><td>✗ Falla 3:1 para límite del control</td></tr>
+<tr><td>Placeholder #afb7bd sobre #ffffff</td><td>~2.1:1</td><td>✗ Falla 4.5:1 (informativo, no sustituye al label)</td></tr>
+<tr><td>Disabled #a3a3a3 sobre #f5f5f5</td><td>~2.3:1</td><td>Exento por WCAG (componente inactivo)</td></tr>
+</table>
+<ul>
+<li>Alto actual ≈ 38 px de campo + label: supera el mínimo AA de 24×24 px; se recomienda ampliar a 44 px de alto para toque.</li>
+<li>El estado de error no debe depender solo del color: el helper text ya aporta el texto; se recomienda sumar un ícono.</li>
+<li>Hover/Focus no tienen animación; si se agrega transición, respetar <code>prefers-reduced-motion</code>.</li>
+</ul>
+<p>Patrón APG: no hay un patrón dedicado; se aplica el de campo de texto nativo. Los ratios son estimados; validar con una herramienta de contraste.</p>
+</section>
+
+<section>
+<h2><span class="n">10</span>Componentes átomo relacionados</h2>
+<p><strong>Usa internamente:</strong> texto <code>Label/Small</code> y <code>Body/Base</code> (estilos de texto). No anida otros componentes hoy. Sin íconos anidados.</p>
+<p><strong>Hermanos / alternativos:</strong></p>
+<ul>
+<li>Text area: para varias líneas.</li>
+<li>Select: para elegir entre opciones conocidas.</li>
+<li>Search field: para búsqueda con ícono y botón de limpiar.</li>
+<li>Password / Number input: cuando el dato requiere enmascarado o formato numérico.</li>
+</ul>
+<p class="sup">[Supuesto — validar] Estos componentes hermanos aún no fueron verificados en el file de Figma.</p>
+</section>
+
+<section>
+<h2><span class="n">·</span>Pendientes</h2>
+<ul>
+<li>Definir estado <code>Hover</code> y estado con valor en reposo (<code>Filled</code>).</li>
+<li>Decidir si el helper text informativo aparece en todos los estados o solo en <code>Error</code>.</li>
+<li>Subir el contraste del borde Default y del placeholder para cumplir AA.</li>
+<li>Confirmar nombres reales de propiedades en Figma (Label, Value, Helper text).</li>
+<li>Definir <code>Read-only</code> y variantes de ancho / tamaño (¿alto de 44 px?).</li>
+<li>Confirmar la existencia de los componentes alternativos citados.</li>
+</ul>
+</section>
+</main>
+</body>
+</html>

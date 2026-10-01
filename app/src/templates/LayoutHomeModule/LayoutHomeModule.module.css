@@ -39,6 +39,16 @@
   width: 100%;
 }
 
+/* Mismo tratamiento que `.empty` de CheckboxList — el "Acceso rápido" ahora
+   refleja favoritos reales (ver ToggleIcon/utils/favorites.js), así que
+   puede empezar vacío hasta que se marque el primero. */
+.quickAccessEmpty {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
 .activityCol {
   flex-shrink: 0;
   width: 302px;
@@ -47,26 +57,3 @@
   gap: var(--spacing-md);
 }
 
-.sectionHeader {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.sectionTitle {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-text-default);
-}
-
-.sectionSubtitle {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--color-text-secondary);
-}

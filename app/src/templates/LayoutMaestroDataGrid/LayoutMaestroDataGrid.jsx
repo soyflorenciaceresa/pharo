@@ -1,8 +1,6 @@
 import LayoutBase from '../LayoutBase/LayoutBase.jsx';
 import DataGrid from '../../components/DataGrid/DataGrid.jsx';
-import ButtonPrimary from '../../components/ButtonPrimary/ButtonPrimary.jsx';
-import ButtonSecondary from '../../components/ButtonSecondary/ButtonSecondary.jsx';
-import { Icon } from '../../icons/icons.jsx';
+import PageHeader from '../../components/PageHeader/PageHeader.jsx';
 import styles from './LayoutMaestroDataGrid.module.css';
 
 export default function LayoutMaestroDataGrid({
@@ -12,8 +10,11 @@ export default function LayoutMaestroDataGrid({
   onCompanyChange,
   onLogout,
   onToggle,
+  onSearch,
   breadcrumb = [],
   title,
+  favorite,
+  onToggleFavorite,
   onNew,
   newLabel = 'Nuevo',
   onReload,
@@ -28,33 +29,25 @@ export default function LayoutMaestroDataGrid({
   searchPlaceholder,
   emptyMessage,
 }) {
+  const primary = onNew ? { label: newLabel, iconStart: 'icon-plus', onClick: onNew } : undefined;
+  const secondaryActions = [
+    onReload && { label: reloadLabel, iconStart: 'icon-refresh', onClick: onReload },
+    onExport && { label: exportLabel, iconStart: 'icon-export', onClick: onExport },
+  ].filter(Boolean);
+
   return (
-    <LayoutBase sidebarProps={{ ...sidebar, defaultActiveHref: activeHref, onNavigate, onCompanyChange, onLogout, onToggle }}>
+    <LayoutBase onSearch={onSearch} sidebarProps={{ ...sidebar, defaultActiveHref: activeHref, onNavigate, onCompanyChange, onLogout, onToggle }}>
       <div className={styles.root}>
-        <div className={styles.header}>
-          <div className={styles.titleCol}>
-            {breadcrumb.length > 0 && (
-              <div className={styles.breadcrumb}>
-                {breadcrumb.map((item, i) => (
-                  <span key={item.label} className={styles.breadcrumbItem}>
-                    {i > 0 && (
-                      <span className={styles.breadcrumbChevron}>
-                        <Icon name="bi-chevron-right" size={16} />
-                      </span>
-                    )}
-                    {item.label}
-                  </span>
-                ))}
-              </div>
-            )}
-            <h1 className={styles.title}>{title}</h1>
-          </div>
-          <div className={styles.actionsRow}>
-            {onNew && <ButtonPrimary label={newLabel} icon="leading" iconName="icon-plus" onClick={onNew} />}
-            {onReload && <ButtonSecondary label={reloadLabel} icon="leading" iconName="icon-refresh" onClick={onReload} />}
-            {onExport && <ButtonSecondary label={exportLabel} icon="leading" iconName="icon-export" onClick={onExport} />}
-          </div>
-        </div>
+        {/* Page header type="maestro": título + favorito + acciones (Action Group si hay
+            "Nuevo" + al menos un secundario; Buttons sueltos en cualquier otro caso). */}
+        <PageHeader
+          type="maestro"
+          title={title}
+          breadcrumb={breadcrumb}
+          favorite={favorite}
+          onToggleFavorite={onToggleFavorite}
+          actions={{ label: 'Acciones del listado', primary, secondary: secondaryActions }}
+        />
 
         <DataGrid
           columns={columns}

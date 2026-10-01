@@ -2,6 +2,7 @@ import LayoutBase from '../LayoutBase/LayoutBase.jsx';
 import CardMetric from '../../components/CardMetric/CardMetric.jsx';
 import CardQuickAccess from '../../components/CardQuickAccess/CardQuickAccess.jsx';
 import ActivityList from '../../components/ActivityList/ActivityList.jsx';
+import PageHeader from '../../components/PageHeader/PageHeader.jsx';
 import styles from './LayoutHomeModule.module.css';
 
 export default function LayoutHomeModule({
@@ -11,16 +12,18 @@ export default function LayoutHomeModule({
   onCompanyChange,
   onLogout,
   onToggle,
+  onSearch,
   metrics = [],
   quickAccessTitle = 'Acceso rápido',
   quickAccessSubtitle,
   quickAccess = [],
+  quickAccessEmptyMessage = 'Todavía no marcaste ningún maestro o proceso como favorito.',
   activityTitle = 'Actividad reciente',
   activitySubtitle,
   activity = [],
 }) {
   return (
-    <LayoutBase sidebarProps={{ ...sidebar, defaultActiveHref: activeHref, onNavigate, onCompanyChange, onLogout, onToggle }}>
+    <LayoutBase onSearch={onSearch} sidebarProps={{ ...sidebar, defaultActiveHref: activeHref, onNavigate, onCompanyChange, onLogout, onToggle }}>
       <div className={styles.root}>
         {metrics.length > 0 && (
           <div className={styles.metricsRow}>
@@ -34,22 +37,20 @@ export default function LayoutHomeModule({
 
         <div className={styles.bottomRow}>
           <section className={styles.quickAccessCol}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>{quickAccessTitle}</h2>
-              {quickAccessSubtitle && <p className={styles.sectionSubtitle}>{quickAccessSubtitle}</p>}
-            </div>
-            <div className={styles.quickAccessGrid}>
-              {quickAccess.map((qa, i) => (
-                <CardQuickAccess key={qa.id ?? i} {...qa} />
-              ))}
-            </div>
+            <PageHeader type="home" title={quickAccessTitle} subtitle={quickAccessSubtitle} />
+            {quickAccess.length > 0 ? (
+              <div className={styles.quickAccessGrid}>
+                {quickAccess.map((qa, i) => (
+                  <CardQuickAccess key={qa.id ?? i} {...qa} />
+                ))}
+              </div>
+            ) : (
+              <p className={styles.quickAccessEmpty}>{quickAccessEmptyMessage}</p>
+            )}
           </section>
 
           <section className={styles.activityCol}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>{activityTitle}</h2>
-              {activitySubtitle && <p className={styles.sectionSubtitle}>{activitySubtitle}</p>}
-            </div>
+            <PageHeader type="home" title={activityTitle} subtitle={activitySubtitle} />
             <ActivityList items={activity} />
           </section>
         </div>

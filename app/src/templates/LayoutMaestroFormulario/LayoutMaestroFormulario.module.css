@@ -1,0 +1,16 @@
+/* Mismo contenedor que LayoutMaestroBasico: 960px centrado (Figma: todas las
+   piezas a 960px con 16px entre sí). */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Figma: el frame `Tabs` lleva padding-top de 16px (spacing/md) propio, que
+   se suma al gap de 16px del stack. */
+.tabs {
+  padding-top: var(--spacing-md);
+}

@@ -1,0 +1,23 @@
+.fieldsRow {
+  display: flex;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.field {
+  flex: 1;
+  min-width: 0;
+}
+
+.checksRow {
+  display: flex;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+.notFound {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}

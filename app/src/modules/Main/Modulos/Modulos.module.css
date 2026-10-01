@@ -1,0 +1,62 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.titleCol {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.breadcrumbChevron {
+  display: inline-flex;
+  color: var(--color-text-secondary);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-default);
+}
+
+.subtitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* Mismo ancho de card fijo que Main/Home (174px, ver esa nota) — acá no hace
+   falta medir columnas por JS porque esta pantalla no pagina (se ven los 23
+   módulos siempre, sin importar cuántas filas resulten). */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 174px);
+  gap: var(--spacing-md);
+  width: 100%;
+}

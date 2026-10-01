@@ -18,19 +18,39 @@
   --color-surface-card: #ffffff;
   --color-primary-subtle: #f5f7ff;
 
-  /* Status Chip (Data Grid, página *Data Grid*, 304:388) — success/warning ya
-     existían como colores nombrados en Figma pero no como variable, así que se
-     agregan acá. El fondo "subtle" de cada chip no es una variable en Figma
-     (es el mismo color base con opacidad ~15% aplicada a la capa) — se
-     resuelve el blend sobre blanco para tener un color plano reutilizable.
-     No reusar --color-accent-*-subtle: son la paleta de acento de módulo,
-     semánticamente distinta de un estado (mismo criterio que color/accent/red
-     vs color/danger/default, ver nota de CardModule). */
-  --color-success-default: #16a34a;
-  --color-success-subtle: #dcf1e4;
-  --color-warning-default: #eab308;
-  --color-warning-subtle: #fcf4da;
+  /* Favoritos (maestro/proceso principal de un módulo, ver `ToggleIcon`)
+     — variable primitiva de Figma `color/yellow/500` (resuelta vía
+     `use_figma`/`importVariableByKeyAsync`, no adivinada: #eab308). Token
+     propio, no se reusa ningún color de estado (Badge warning): son
+     semánticamente distintos (uno es un estado de alerta, el otro un marcador
+     de favorito), mismo criterio ya documentado abajo para los tokens de
+     Badge vs --color-accent-*-subtle. */
+  --color-yellow: #eab308;
+
+  /* Fondo de estado de error (lo usa ChatInput, botón de grabación activo). */
   --color-danger-subtle: #fadede;
+
+  /* Badge (component set 619:47, handoff 630:44) — tokens de la colección
+     Maps de Figma, con el mismo nombre que allá. Colores: alias
+     color/<estado>/subtle y color/<estado>/on-subtle (error usa la familia
+     color/danger/*). No reusar --color-accent-*-subtle aunque algún hex
+     coincida: son la paleta de acento de módulo, no un estado. */
+  --surface-badge-success: #dcfce7;   /* color/success/subtle → green/100 */
+  --text-badge-success: #166534;      /* color/success/on-subtle → green/800 */
+  --surface-badge-warning: #fef3c7;   /* color/warning/subtle → amber/100 */
+  --text-badge-warning: #92400e;      /* color/warning/on-subtle → amber/800 */
+  --surface-badge-error: #fee2e2;     /* color/danger/subtle → red/100 */
+  --text-badge-error: #991b1b;        /* color/danger/on-subtle → red/800 */
+  --surface-badge-info: #eceeff;      /* color/info/subtle → blue/100 */
+  --text-badge-info: #2d3eb1;         /* color/info/on-subtle → blue/800 */
+  --surface-badge-neutral: #eeeff1;   /* color/neutral/subtle → ink/100 */
+  --text-badge-neutral: #445664;      /* color/neutral/on-subtle → ink/700 */
+  --spacing-padding-badge-x: var(--spacing-sm);  /* 8px */
+  --spacing-padding-badge-y: 2px;                /* spacing/1 */
+  --spacing-gap-badge: var(--spacing-xs);        /* 4px */
+  --radius-badge: var(--radius-full);
+  --font-size-label: 12px;
+  --font-weight-medium: 500;
 
   /* Paleta de acento por módulo (Card-Module en Figma, sección "Color accents"
      — 8 colores fijos, uno de ellos usado también en el brand icon del sidebar). */
@@ -59,13 +79,44 @@
   --color-avatar-5: #ec4899;
   --color-avatar-6: #22c55e;
 
-  /* Botones (Button/Primary 10:127, Button/Secondary 261:228) — el resto de
-     sus colores reusa --color-primary-*/--color-surface-*/--color-border-*. */
+  /* Acción (hover/pressed/disabled/focus) — originalmente de Button/Primary
+     y Button/Secondary (ya eliminados); los sigue usando ChatInput y son la
+     base de los alias de Button de abajo. */
   --color-action-hover: #364cd7;
   --color-action-secondary-hover-bg: #f5f7ff;
   --color-action-secondary-pressed-bg: #eceeff;
   --color-text-disabled: #a3a3a3;
   --color-border-focus: #667afd;
+
+  /* Button (component set 591:1937, handoff 605:91) — tokens semánticos de la
+     colección Maps/Alias de Figma, con el mismo nombre que allá. Son alias de
+     los valores de arriba, no valores nuevos. */
+  --surface-action-default: var(--color-primary-default);
+  --surface-action-hover: var(--color-action-hover);
+  --surface-action-pressed: var(--color-primary-pressed);
+  --surface-action-disabled: var(--color-primary-disabled);
+  --surface-action-secondary-default: var(--color-surface-default);
+  --surface-action-secondary-hover: var(--color-action-secondary-hover-bg);
+  --surface-action-secondary-pressed: var(--color-action-secondary-pressed-bg);
+  --surface-action-secondary-disabled: var(--color-surface-default);
+  --border-action-secondary-default: var(--color-primary-default);
+  --border-action-secondary-hover: var(--color-action-hover);
+  --border-action-secondary-pressed: var(--color-primary-pressed);
+  --border-action-secondary-disabled: var(--color-primary-disabled);
+  --border-action-secondary-width: 1px;
+  --border-width-focus: 2px;
+  --text-on-action: var(--color-text-inverse);
+  --text-action-secondary-default: var(--color-primary-default);
+  --text-action-secondary-hover: var(--color-action-hover);
+  --text-action-secondary-pressed: var(--color-primary-pressed);
+  --spacing-padding-button-x: var(--spacing-md);
+  --spacing-padding-button-y: var(--spacing-sm);
+  --spacing-gap-button: var(--spacing-xs);
+  --radius-button: var(--radius-md);
+  --size-icon-sm: 16px;
+  --font-family-base: var(--font-sans);
+  --font-size-button-label: 14px;
+  --font-weight-button-label: 600;
 
   /* Text Field (327:22) — el resto reusa --color-border-default/--color-danger-default/
      --color-text-default/--color-text-disabled/--radius-sm/--spacing-*. */

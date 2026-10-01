@@ -1,61 +1,34 @@
+/* max-width + margin auto — en pantallas grandes el formulario deja de
+   estirarse hasta el borde y queda centrado, en vez de estirar cada campo
+   (flex:1 en .fieldsRow de cada pantalla) a un ancho que no tiene relación
+   con lo que ese campo necesita mostrar (ver nota de Baymard "Form Field
+   Usability" en CLAUDE.md). Es a propósito que este límite viva acá y no en
+   LayoutBase: un DataGrid sí se beneficia de usar el ancho disponible (más
+   columnas visibles sin scroll), un formulario no. En pantallas chicas no
+   cambia nada — el padding de `.content` de LayoutBase ya lo achica antes
+   de llegar a este tope. */
 .root {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
   width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
 }
 
-.header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  width: 100%;
+/* Opt-in por pantalla (prop `fullWidth`) — a pedido, solo para
+   ContratoFormulario (módulo Grains): esa pantalla debe usar el mismo ancho
+   que la grilla de Contratos (LayoutMaestroDataGrid, sin tope), no el límite
+   de legibilidad de 960px que sigue aplicando por default a cualquier otro
+   formulario del kit (Buque/Usuarios/Perfiles/Empresas). */
+.rootFullWidth {
+  max-width: none;
+  margin: 0;
 }
 
-.titleCol {
-  flex: 1 0 0;
-  min-width: 0;
+.sections {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--color-text-secondary);
-}
-
-.breadcrumbItem {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  white-space: nowrap;
-}
-
-.breadcrumbChevron {
-  display: inline-flex;
-  color: var(--color-text-secondary);
-}
-
-.title {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-text-default);
-}
-
-.actionsRow {
-  flex-shrink: 0;
-  display: flex;
-  align-items: flex-end;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
+  width: 100%;
 }

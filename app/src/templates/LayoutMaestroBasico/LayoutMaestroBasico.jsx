@@ -1,10 +1,21 @@
 import LayoutBase from '../LayoutBase/LayoutBase.jsx';
 import FormContainer from '../../components/FormContainer/FormContainer.jsx';
-import ButtonPrimary from '../../components/ButtonPrimary/ButtonPrimary.jsx';
-import ButtonSecondary from '../../components/ButtonSecondary/ButtonSecondary.jsx';
-import { Icon } from '../../icons/icons.jsx';
+import PageHeader from '../../components/PageHeader/PageHeader.jsx';
 import styles from './LayoutMaestroBasico.module.css';
 
+function cx(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
+
+// Dos modos, según si se pasa `formTitle`: con `formTitle` (caso original,
+// ej. BuqueFormulario), `children` es el Content de un único FormContainer
+// armado acá mismo. Sin `formTitle` (ej. UsuarioFormulario, con más de una
+// sección), el template no impone ningún FormContainer — `children` se
+// renderiza tal cual, apilado con el mismo gap que ya usa `.root` entre
+// header y contenido, y la pantalla arma sus propias secciones
+// (FormContainer/Accordion/etc.) como bloques independientes. No rompe el
+// caso original: cualquier pantalla que ya pasaba formTitle sigue
+// exactamente igual.
 export default function LayoutMaestroBasico({
   sidebar,
   activeHref,
@@ -12,46 +23,39 @@ export default function LayoutMaestroBasico({
   onCompanyChange,
   onLogout,
   onToggle,
+  onSearch,
   breadcrumb = [],
   title,
   onSave,
   saveLabel = 'Guardar',
   onCancel,
   cancelLabel = 'Cancelar',
-  formIcon,
   formTitle,
+  fullWidth = false,
   children,
 }) {
   return (
-    <LayoutBase sidebarProps={{ ...sidebar, defaultActiveHref: activeHref, onNavigate, onCompanyChange, onLogout, onToggle }}>
-      <div className={styles.root}>
-        <div className={styles.header}>
-          <div className={styles.titleCol}>
-            {breadcrumb.length > 0 && (
-              <div className={styles.breadcrumb}>
-                {breadcrumb.map((item, i) => (
-                  <span key={item.label} className={styles.breadcrumbItem}>
-                    {i > 0 && (
-                      <span className={styles.breadcrumbChevron}>
-                        <Icon name="bi-chevron-right" size={16} />
-                      </span>
-                    )}
-                    {item.label}
-                  </span>
-                ))}
-              </div>
-            )}
-            <h1 className={styles.title}>{title}</h1>
-          </div>
-          <div className={styles.actionsRow}>
-            {onSave && <ButtonPrimary label={saveLabel} icon="leading" iconName="icon-check2" onClick={onSave} />}
-            {onCancel && <ButtonSecondary label={cancelLabel} icon="leading" iconName="icon-close" onClick={onCancel} />}
-          </div>
-        </div>
+    <LayoutBase onSearch={onSearch} sidebarProps={{ ...sidebar, defaultActiveHref: activeHref, onNavigate, onCompanyChange, onLogout, onToggle }}>
+      <div className={cx(styles.root, fullWidth && styles.rootFullWidth)}>
+        {/* Page header type="form": ruta + título + acciones (Guardar primario + Cancelar). */}
+        <PageHeader
+          type="form"
+          title={title}
+          breadcrumb={breadcrumb}
+          actions={{
+            label: 'Acciones del formulario',
+            primary: onSave ? { label: saveLabel, iconStart: 'icon-check2', onClick: onSave } : undefined,
+            secondary: onCancel ? [{ label: cancelLabel, iconStart: 'icon-close', onClick: onCancel }] : [],
+          }}
+        />
 
-        <FormContainer icon={formIcon} title={formTitle}>
-          {children}
-        </FormContainer>
+        {formTitle ? (
+          <FormContainer title={formTitle}>
+            {children}
+          </FormContainer>
+        ) : (
+          <div className={styles.sections}>{children}</div>
+        )}
       </div>
     </LayoutBase>
   );

@@ -1,0 +1,59 @@
+.root {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.search {
+  width: 100%;
+}
+
+.empty {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* Lista simple — sin borde de fila, sin hover, sin look de grilla/tabla,
+   mismo formato que "Inactivo"/"Bloqueado" (Checkbox liso apilado). */
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* `columns={2}` — para catálogos largos (ej. "Módulos" en Perfiles) donde
+   apilar todo en una columna deja un scroll innecesario en un contenedor que
+   ya tiene ancho de sobra sin usar. Se activa por prop, no automáticamente
+   por cantidad de ítems: es la pantalla la que sabe si tiene sentido (ver
+   nota en CLAUDE.md). */
+.itemsTwoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--spacing-lg);
+  row-gap: var(--spacing-sm);
+}
+
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rowLabel {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text-default);
+}
+
+.rowDescription {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}

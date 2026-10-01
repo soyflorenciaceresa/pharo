@@ -1,11 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import LayoutBase from '../../../templates/LayoutBase/LayoutBase.jsx';
 import CardQuickAccess from '../../../components/CardQuickAccess/CardQuickAccess.jsx';
 import CardModule from '../../../components/CardModule/CardModule.jsx';
 import ActivityList from '../../../components/ActivityList/ActivityList.jsx';
 import Pagination from '../../../components/Pagination/Pagination.jsx';
+import PageHeader from '../../../components/PageHeader/PageHeader.jsx';
+import TourPopup from '../../../components/TourPopup/TourPopup.jsx';
 import { MAIN_SIDEBAR_PROPS } from '../../../config/sidebars/main.js';
+import { PRODUCT_TOUR_SLIDES } from '../../../config/productTour.js';
+import { ALL_MODULES, DEFAULT_COMPANY_MODULES } from '../../../config/modules.js';
 import styles from './Home.module.css';
+
+// Se muestra una única vez, la primera vez que el usuario abre Main — no hay
+// backend/auth todavía, así que "primera vez" se resuelve con localStorage
+// (persiste entre sesiones en este navegador; envuelto en try/catch porque
+// puede tirar en navegación privada o con site data bloqueado). Si algún día
+// hay cuenta de usuario real, mover esta marca a esa cuenta en vez de acá.
+const PRODUCT_TOUR_SEEN_KEY = 'pharo-product-tour-seen';
 
 // Ejemplo — reemplazar por los ítems que el usuario haya marcado como favoritos
 // (hoy: un ejemplo de cada grupo del sidebar de Main).
@@ -16,29 +27,15 @@ const QUICK_ACCESS = [
   { icon: 'icon-paises', title: 'Países', subtitle: 'Datos maestros', href: '/datos-maestros/paises' },
 ];
 
-// Catálogo real de módulos (Figma, página *Cards*, sección "Card-Module —
-// Color accents", 446:14 — 14 cards). El texto de descripción en Figma
-// estaba repetido igual en las 14 ("Gestión de operaciones portuarias",
-// placeholder de diseño) salvo en "Ports", donde sí describe al módulo — se
-// completó una descripción propia por módulo, mismo criterio que el resto
-// del kit. `icon`/`accent` sí son 1:1 con Figma.
-const MODULES = [
-  { title: 'Ports', description: 'Gestión de operaciones portuarias', icon: 'icon-gear', accent: 'violet', href: '/operaciones' },
-  { title: 'Free Zone', description: 'Administración de zonas francas', icon: 'app-window', accent: 'green' },
-  { title: 'Human Resources', description: 'Gestión de personal y RR. HH.', icon: 'icon-administracion', accent: 'amber' },
-  { title: 'Tax', description: 'Cálculo y liquidación de impuestos', icon: 'app-window', accent: 'red' },
-  { title: 'Purchases', description: 'Órdenes de compra y proveedores', icon: 'bi-cart', accent: 'cyan' },
-  { title: 'Dashboard', description: 'Indicadores generales de la plataforma', icon: 'app-window', accent: 'pink' },
-  { title: 'Truckshift', description: 'Turnos y asignación de camiones', icon: 'icon-truckshift', accent: 'indigo' },
-  { title: 'Access Control', description: 'Control de accesos e ingresos', icon: 'icon-truckshift', accent: 'neutral' },
-  { title: 'Scales', description: 'Pesaje y control de cargas', icon: 'icon-truckshift', accent: 'violet' },
-  { title: 'Billing', description: 'Facturación y cobranzas', icon: 'icon-truckshift', accent: 'green' },
-  { title: 'Accounting', description: 'Contabilidad y balances', icon: 'icon-truckshift', accent: 'amber' },
-  { title: 'Agro', description: 'Gestión de cargas agroindustriales', icon: 'icon-truckshift', accent: 'red' },
-  { title: 'Servicios', description: 'Solicitud y seguimiento de servicios', icon: 'icon-check2circle', accent: 'cyan' },
-  { title: 'Stock', description: 'Control de inventario y existencias', icon: 'icon-box', accent: 'neutral' },
-];
-const MODULES_PER_PAGE = 12;
+// Las cards de módulo tienen ancho fijo (ver Home.module.css) — la cantidad
+// de columnas que entran depende del ancho disponible, así que la paginación
+// no puede ser un número fijo de cards. Estos dos valores tienen que
+// coincidir con `.modulesGrid` (grid-template-columns/gap) en el CSS: se
+// usan para replicar a mano el mismo cálculo que ya hace CSS Grid con
+// `auto-fill`, y así saber cuántas columnas entran realmente por fila.
+const MODULE_CARD_WIDTH = 174;
+const MODULE_GRID_GAP = 16;
+const MODULE_MAX_ROWS = 3;
 
 // Ejemplo — el diseño de Figma repetía la misma fila x6. Reemplazar por el feed real.
 const ACTIVITY = [
@@ -50,30 +47,87 @@ const ACTIVITY = [
   { name: 'Martín G.', time: 'hace 2 h', description: 'Cerró incidencia de depósito' },
 ];
 
-export default function Home({ onNavigate }) {
+export default function Home({ onNavigate, onSearch, activeCompanyId = 'puerto-norte', companyModules, onCompanyChange }) {
   const [modulesPage, setModulesPage] = useState(1);
-  const totalModulePages = Math.ceil(MODULES.length / MODULES_PER_PAGE);
-  const visibleModules = MODULES.slice(
-    (modulesPage - 1) * MODULES_PER_PAGE,
-    modulesPage * MODULES_PER_PAGE,
+  const [tourOpen, setTourOpen] = useState(false);
+  const [modulesPerPage, setModulesPerPage] = useState(MODULE_MAX_ROWS * 4); // 4 = fallback antes de medir
+  const modulesGridRef = useRef(null);
+
+  // Solo los módulos habilitados para la empresa activa (ver selector de
+  // empresa del Sidebar y Main/Modulos, donde se editan) — `companyModules`
+  // llega por prop desde App.jsx; sin backend real todavía, si no está
+  // definido para esa empresa cae al set por default del catálogo.
+  const enabledIds = companyModules?.[activeCompanyId] ?? DEFAULT_COMPANY_MODULES[activeCompanyId] ?? [];
+  const enabledModules = ALL_MODULES.filter((m) => enabledIds.includes(m.id));
+
+  const totalModulePages = Math.ceil(enabledModules.length / modulesPerPage);
+  const visibleModules = enabledModules.slice(
+    (modulesPage - 1) * modulesPerPage,
+    modulesPage * modulesPerPage,
   );
+
+  useEffect(() => {
+    let seen = true;
+    try {
+      seen = localStorage.getItem(PRODUCT_TOUR_SEEN_KEY) === '1';
+    } catch {
+      seen = true; // si localStorage no está disponible, no insistir con el tour
+    }
+    if (!seen) setTourOpen(true);
+  }, []);
+
+  // Máximo 3 filas de módulos siempre — el resto se ve en la siguiente
+  // página, a pedido. Como las cards tienen ancho fijo (ver nota de
+  // MODULE_CARD_WIDTH), cuántas entran por fila depende del ancho real
+  // disponible (colapsar el sidebar o agrandar la ventana suma columnas) —
+  // se mide con ResizeObserver en vez de asumir un breakpoint fijo, y se
+  // replica a mano el mismo cálculo que usa CSS Grid con `auto-fill` para
+  // que "cuántas caben por fila" coincida siempre con lo que se ve.
+  useEffect(() => {
+    const el = modulesGridRef.current;
+    if (!el) return;
+
+    function measure() {
+      const width = el.clientWidth;
+      const columns = Math.max(1, Math.floor((width + MODULE_GRID_GAP) / (MODULE_CARD_WIDTH + MODULE_GRID_GAP)));
+      setModulesPerPage(columns * MODULE_MAX_ROWS);
+    }
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    setModulesPage(1);
+  }, [activeCompanyId, modulesPerPage]);
+
+  function handleCloseTour() {
+    setTourOpen(false);
+    try {
+      localStorage.setItem(PRODUCT_TOUR_SEEN_KEY, '1');
+    } catch {
+      // navegación privada / site data bloqueado — sin persistencia, el tour
+      // puede volver a aparecer en la próxima visita, no es crítico.
+    }
+  }
 
   return (
     <LayoutBase
+      onSearch={onSearch}
       sidebarProps={{
         ...MAIN_SIDEBAR_PROPS,
         defaultActiveHref: '/',
+        defaultActiveCompanyId: activeCompanyId,
         onNavigate: onNavigate ?? ((d) => console.log('navigate', d)),
-        onCompanyChange: (c) => console.log('company change', c),
+        onCompanyChange: onCompanyChange ?? ((c) => console.log('company change', c)),
         onLogout: () => console.log('logout'),
         onToggle: (d) => console.log('toggle', d),
       }}
     >
       <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Acceso rápido</h2>
-          <p className={styles.sectionSubtitle}>Tus maestros y procesos favoritos</p>
-        </div>
+        <PageHeader type="home" title="Acceso rápido" subtitle="Tus maestros y procesos favoritos" />
         <div className={styles.quickAccessRow}>
           {QUICK_ACCESS.map((qa) => (
             <div key={qa.title} className={styles.quickAccessSlot}>
@@ -85,13 +139,10 @@ export default function Home({ onNavigate }) {
 
       <div className={styles.bottomRow}>
         <section className={styles.modulesCol}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Módulos</h2>
-            <p className={styles.sectionSubtitle}>{MODULES.length} módulos disponibles</p>
-          </div>
-          <div className={styles.modulesGrid}>
+          <PageHeader type="home" title="Módulos" subtitle={`${enabledModules.length} módulos disponibles`} />
+          <div className={styles.modulesGrid} ref={modulesGridRef}>
             {visibleModules.map((m) => (
-              <CardModule key={m.title} {...m} />
+              <CardModule key={m.id} {...m} />
             ))}
           </div>
           {totalModulePages > 1 && (
@@ -105,13 +156,12 @@ export default function Home({ onNavigate }) {
         </section>
 
         <section className={styles.activityCol}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Actividad reciente</h2>
-            <p className={styles.sectionSubtitle}>Últimas acciones del equipo</p>
-          </div>
+          <PageHeader type="home" title="Actividad reciente" subtitle="Últimas acciones del equipo" />
           <ActivityList items={ACTIVITY} />
         </section>
       </div>
+
+      <TourPopup open={tourOpen} slides={PRODUCT_TOUR_SLIDES} onClose={handleCloseTour} />
     </LayoutBase>
   );
 }

@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toggle Icon — Spec de componente</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-yellow:#eab308;
+  --ink:#061e30; --mut:#6a7883; --code:#2d3eb1; --line:#e3e5ea; --page:#f7f8fa; --acc:#4059fd;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.4 Inter,system-ui,sans-serif}
+main{max-width:1200px;margin:0 auto;padding:64px 64px 96px}
+header{margin-bottom:24px}
+.eyebrow{font-size:12px;font-weight:500;color:var(--mut)}
+h1{font-size:24px;line-height:1.2;margin:8px 0}
+.desc{color:var(--mut);margin:0 0 12px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:500;color:var(--mut);background:#fff}
+section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px;margin:0 0 24px}
+section.warn{background:#fef3c7}
+h2{display:flex;align-items:center;gap:12px;font-size:20px;line-height:1.2;margin:0 0 16px}
+h2 .n{font:400 11px 'JetBrains Mono',monospace;color:var(--code)}
+h3{font-size:16px;font-weight:600;margin:20px 0 10px;line-height:1.2}
+p{margin:0 0 12px}
+code{font:400 13px 'JetBrains Mono',monospace;color:var(--code)}
+table{width:100%;border-collapse:collapse;margin:0 0 12px}
+th{color:var(--mut);font-size:12px;font-weight:500;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+ul{margin:0;padding-left:20px} li{margin:6px 0}
+.sup{font-weight:600}
+.ok{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:500;background:#dcfce7;color:#16a34a}
+.no{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:500;background:#fee2e2;color:#dc2626}
+.stage{background:var(--page);border:1px dashed #a78bfa;border-radius:10px;padding:32px;display:flex;gap:64px;justify-content:center;align-items:flex-start}
+.stage figure{margin:0;text-align:center}
+.stage figcaption{font-size:12px;color:var(--mut);margin-top:12px}
+kbd{font:400 12px 'JetBrains Mono',monospace;border:1px solid #c9ced8;border-radius:4px;padding:1px 5px;background:#fff}
+.do,.dont{border:1px solid var(--line);border-radius:10px;padding:20px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.do h3{color:#16a34a;margin-top:0}.dont h3{color:#dc2626;margin-top:0}
+.pin{position:relative;display:inline-block}
+.mk{position:absolute;width:20px;height:20px;border-radius:10px;background:var(--ink);color:#fff;font:600 12px/20px Inter;text-align:center}
+.ln{position:absolute;background:var(--ink)}
+@media(max-width:800px){main{padding:24px 16px}.two{grid-template-columns:1fr}}
+
+/* Componente tal cual ToggleIcon.module.css (all: unset incluido) */
+.fav{all:unset;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--color-yellow);cursor:pointer}
+.fav svg{display:block}
+.fav.tab:focus-visible{outline:2px solid #667afd;outline-offset:2px}
+.title{font-size:24px;font-weight:700;margin:0}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="eyebrow">PHARO DESIGN SYSTEM · COMPONENTES</div>
+  <h1>Toggle Icon</h1>
+  <p class="desc">Spec del component set <code>Toggle Icon</code> (página Toggle Icon, nodo <code>657:39</code>): 2 variantes de <code>State</code> (<code>Inactive</code> y <code>Active</code>), con el color ligado a un token.</p>
+  <div class="chips"><span class="chip">Component set 657:39</span><span class="chip">2 variantes</span><span class="chip">Tamaño: 20 × 20 px</span><span class="chip">Actualizado 29/09/2026</span></div>
+</header>
+
+<section>
+<h2><span class="n">·</span>Vista general (interactiva)</h2>
+<div class="stage">
+  <figure>
+    <button class="fav" type="button" aria-pressed="false" aria-label="Agregar a favoritos" data-star="off"></button>
+    <figcaption><code>State=Inactive</code></figcaption>
+  </figure>
+  <figure>
+    <button class="fav" type="button" aria-pressed="true" aria-label="Quitar de favoritos" data-star="on"></button>
+    <figcaption><code>State=Active</code></figcaption>
+  </figure>
+  <figure>
+    <div style="display:flex;align-items:center;gap:4px"><h3 class="title" style="margin:0">Buque</h3><button class="fav tab" id="live" type="button" aria-pressed="false" aria-label="Agregar a favoritos" data-star="off"></button></div>
+    <figcaption>En contexto (clic para alternar)</figcaption>
+  </figure>
+</div>
+</section>
+
+<section>
+<h2><span class="n">1</span>Qué es</h2>
+<p><code>Toggle Icon</code> es un botón de estrella que permite marcar o desmarcar un maestro o proceso como favorito.</p>
+</section>
+
+<section>
+<h2><span class="n">2</span>Cuándo usarlo</h2>
+<ul>
+<li>Para marcar como favorito un maestro o proceso desde su pantalla principal, junto al título (por ejemplo, <strong>Buque</strong> en <code>/buques</code>).</li>
+<li>Para que ese maestro o proceso aparezca en el <strong>Acceso rápido</strong> de la Home de su módulo.</li>
+<li>Para cualquier control de dos estados de tipo “guardar / quitar de mi lista”, donde el resultado se ve de inmediato en otro lugar.</li>
+</ul>
+</section>
+
+<section>
+<h2><span class="n">3</span>Cuándo no usarlo</h2>
+<ul>
+<li><em>No usar en pantallas administrativas de Main (Usuarios, Perfiles, Empresas) → no llevan favorito; el favorito es un concepto de módulos de negocio.</em></li>
+<li><em>No usar para activar o desactivar una opción de un formulario → usar <code>Checkbox</code>.</em></li>
+<li><em>No usar para ejecutar una acción (guardar, exportar, eliminar) → usar <code>Button</code> con <code>iconOnly</code>.</em></li>
+<li><em>No usar como estado de un registro dentro de una tabla (activo / inactivo) → usar <code>Badge</code>.</em></li>
+<li><em>No usar dentro de formularios de alta, edición o vista → el favorito se marca desde la pantalla principal del maestro.</em></li>
+</ul>
+</section>
+
+<section>
+<h2><span class="n">4</span>Variantes</h2>
+<p>Una sola propiedad de variante (<code>State</code>). No hay jerarquías ni tamaños.</p>
+<table>
+<tr><th>Variante</th><th>Vista</th><th>Para qué sirve</th><th>Ejemplo de uso</th></tr>
+<tr><td><code>State=Inactive</code></td><td><button class="fav" type="button" aria-hidden="true" tabindex="-1" data-star="off"></button></td><td>Estrella vacía: el elemento <strong>no</strong> es favorito. Acción disponible: agregar.</td><td>“Buque” sin marcar; etiqueta “Agregar a favoritos”.</td></tr>
+<tr><td><code>State=Active</code></td><td><button class="fav" type="button" aria-hidden="true" tabindex="-1" data-star="on"></button></td><td>Estrella rellena: el elemento <strong>es</strong> favorito. Acción disponible: quitar.</td><td>“Buque” marcado; etiqueta “Quitar de favoritos”.</td></tr>
+</table>
+<p><strong>Tamaños:</strong> solo existe uno (20 × 20 px). El color es siempre <code>color/yellow/500</code> en ambas variantes: cambia la forma (contorno o relleno), no el color.</p>
+</section>
+
+<section>
+<h2><span class="n">5</span>Estados</h2>
+<p>En Figma, cada estado de valor es una variante. Los estados interactivos del navegador no tienen diseño.</p>
+<table>
+<tr><th>Estado</th><th>Cómo se ve / comporta</th><th>En Figma</th></tr>
+<tr><td><code>Default</code> (= <code>Inactive</code>)</td><td>Estrella de contorno, amarilla, cursor <code>pointer</code>.</td><td><span class="ok">Existe</span></td></tr>
+<tr><td><code>Selected</code> (= <code>Active</code>)</td><td>Estrella rellena, amarilla. <code>aria-pressed="true"</code> en código.</td><td><span class="ok">Existe</span></td></tr>
+<tr><td><code>Hover</code></td><td>Sin diseño; en código solo cambia el cursor.</td><td><span class="no">Falta</span></td></tr>
+<tr><td><code>Focus</code> (focus-visible)</td><td>Sin diseño. En código el estilo usa <code>all: unset</code>, que elimina el anillo de foco del navegador: <strong>el foco no se ve</strong>.</td><td><span class="no">Falta</span></td></tr>
+<tr><td><code>Pressed</code></td><td>Sin diseño.</td><td><span class="no">Falta</span></td></tr>
+<tr><td><code>Disabled</code>, <code>Loading</code></td><td>No aplican hoy: el componente no tiene esas props.</td><td><span class="no">Falta</span></td></tr>
+</table>
+<table>
+<tr><th>Variante × Estado</th><th>Default</th><th>Hover</th><th>Focus</th><th>Pressed</th><th>Disabled</th></tr>
+<tr><td><code>Inactive</code></td><td><span class="ok">Existe</span></td><td><span class="no">Falta</span></td><td><span class="no">Falta</span></td><td><span class="no">Falta</span></td><td><span class="no">Falta</span></td></tr>
+<tr><td><code>Active</code></td><td><span class="ok">Existe</span></td><td><span class="no">Falta</span></td><td><span class="no">Falta</span></td><td><span class="no">Falta</span></td><td><span class="no">Falta</span></td></tr>
+</table>
+<p><strong>Huecos:</strong> las 2 variantes solo cubren el estado en reposo. Hover, Focus, Pressed y Disabled no existen para ninguna de las dos.</p>
+</section>
+
+<section>
+<h2><span class="n">6</span>Anatomía</h2>
+<div class="stage" style="padding:56px 32px">
+  <div class="pin" style="padding:8px">
+    <button class="fav" type="button" tabindex="-1" aria-hidden="true" data-star="on" style="transform:scale(3);transform-origin:center;margin:20px"></button>
+    <div class="mk" style="left:-44px;top:44px">1</div><div class="ln" style="left:-24px;top:54px;width:34px;height:1px"></div>
+    <div class="mk" style="left:118px;top:44px">2</div><div class="ln" style="left:84px;top:54px;width:34px;height:1px"></div>
+  </div>
+</div>
+<ol style="padding-left:20px">
+<li><strong>Contenedor</strong> — obligatorio. Capa: el propio componente (<code>State=…</code>). Frame de 20 × 20 px, sin fondo, sin borde, sin padding. En código es un <code>&lt;button type="button"&gt;</code>.</li>
+<li><strong>Ícono estrella</strong> — obligatorio. Capa: <code>Icon</code>. Vector de 20 × 20 px, relleno con <code>color/yellow/500</code> (#eab308). Contorno en <code>Inactive</code>, relleno en <code>Active</code>.</li>
+</ol>
+<p style="color:var(--mut);font-size:12px">Composición ilustrativa a escala 3×. No hay label, contador ni badge.</p>
+</section>
+
+<section>
+<h2><span class="n">7</span>Propiedades (Figma)</h2>
+<table>
+<tr><th>Propiedad</th><th>Tipo (Variant / Boolean / Instance swap / Text)</th><th>Valores</th><th>Default</th><th>Notas</th></tr>
+<tr><td><code>State</code></td><td>Variant</td><td><code>Inactive</code>, <code>Active</code></td><td><code>Inactive</code></td><td>En código se controla con la prop <code>favorite</code> (boolean).</td></tr>
+</table>
+<p>No hay propiedades de texto, boolean ni instance swap. El ícono no es una instancia: es un vector propio del componente.</p>
+<h3>Combinaciones inválidas o sin efecto</h3>
+<ul>
+<li>No hay combinaciones inválidas: una sola propiedad con dos valores.</li>
+<li>En código, sin <code>onToggle</code> el botón se dibuja pero no hace nada; <code>LayoutMaestroDataGrid</code> ni lo renderiza en ese caso.</li>
+</ul>
+<p class="sup">[Supuesto — validar] Nombre y valores de <code>State</code> (<code>Inactive</code>/<code>Active</code>) elegidos al crear el componente; confirmar con el equipo si prefieren <code>Favorite=True/False</code>.</p>
+</section>
+
+<section>
+<h2><span class="n">8</span>Reglas de uso</h2>
+<div class="two">
+<div class="do"><h3>✅ Hacer</h3>
+<ul>
+<li>Ubicarlo a la derecha del título de la pantalla, con 4 px de separación (<code>--spacing-xs</code>).</li>
+<li>Usar un solo <code>Toggle Icon</code> por pantalla.</li>
+<li>Mostrarlo solo en la pantalla principal de un maestro o proceso de un módulo de negocio.</li>
+<li>Mantener el estado fuera del componente (controlado): la Home del módulo lee el mismo estado.</li>
+<li>Usar el color <code>color/yellow/500</code> (<code>--color-yellow</code>) siempre, sin importar el estado.</li>
+<li>Usar instancias del component set y cambiar solo <code>State</code>.</li>
+</ul></div>
+<div class="dont"><h3>❌ No hacer</h3>
+<ul>
+<li>Mostrarlo en Usuarios, Perfiles o Empresas (pantallas de Main).</li>
+<li>Cambiar el color entre marcado y sin marcar: el cambio es solo de forma.</li>
+<li>Agregar texto o contador junto a la estrella sin definirlo antes con diseño.</li>
+<li>Usarlo como interruptor de una opción de formulario.</li>
+<li>Desacoplar la instancia para cambiar tamaño o color.</li>
+<li>Dibujar una estrella suelta en lugar de usar el componente.</li>
+</ul></div>
+</div>
+</section>
+
+<section>
+<h2><span class="n">9</span>Notas de accesibilidad</h2>
+<p><strong>Patrón WAI-ARIA APG:</strong> Button (toggle button).</p>
+<h3>Teclado</h3>
+<table>
+<tr><th>Tecla</th><th>Acción</th></tr>
+<tr><td><kbd>Tab</kbd></td><td>Mueve el foco al botón (justo después del título, antes de los botones de acción).</td></tr>
+<tr><td><kbd>Shift</kbd> + <kbd>Tab</kbd></td><td>Mueve el foco al elemento anterior.</td></tr>
+<tr><td><kbd>Enter</kbd></td><td>Alterna favorito.</td></tr>
+<tr><td><kbd>Espacio</kbd></td><td>Alterna favorito.</td></tr>
+</table>
+<p><strong>Orden de foco:</strong> un solo punto de foco. El foco no se mueve al alternar el estado (queda en el botón).</p>
+<h3>Lector de pantalla</h3>
+<ul>
+<li>Elemento nativo <code>&lt;button type="button"&gt;</code> con <code>aria-pressed</code> (<code>"true"</code> en <code>Active</code>).</li>
+<li>Nombre accesible hoy: “Agregar a favoritos” (<code>Inactive</code>) y “Quitar de favoritos” (<code>Active</code>). Se lee: “Quitar de favoritos, botón, presionado”.</li>
+<li>El ícono es decorativo: debe llevar <code>aria-hidden="true"</code>.</li>
+</ul>
+<p class="sup">[Supuesto — validar] Combinar <code>aria-pressed</code> con una etiqueta que cambia puede confundir: el lector anuncia una acción y un estado a la vez. Recomendado: una etiqueta fija (“Favorito”) con <code>aria-pressed</code>, o cambiar la etiqueta sin <code>aria-pressed</code>.</p>
+<h3>Visual</h3>
+<table>
+<tr><th>Elemento</th><th>Ratio</th><th>Resultado</th></tr>
+<tr><td>Estrella #eab308 sobre #ffffff</td><td>1,9:1</td><td><strong>No cumple</strong> 3:1 para elementos de UI</td></tr>
+<tr><td>Estrella #eab308 sobre #f7f8fa (fondo de pantalla, <code>--color-surface-hover</code>)</td><td>1,8:1</td><td><strong>No cumple</strong> 3:1</td></tr>
+<tr><td>Anillo de foco</td><td>—</td><td><strong>No existe</strong> (<code>all: unset</code> lo elimina)</td></tr>
+</table>
+<ul>
+<li><strong>Área táctil:</strong> 20 × 20 px, por debajo del mínimo AA de 24 × 24 px y del recomendado de 44 × 44 px. Sugerido: ampliar el área clicable con padding invisible.</li>
+<li><strong>No depender solo del color:</strong> se cumple, porque los dos estados se distinguen por la forma (contorno vs relleno).</li>
+<li><strong>Movimiento:</strong> no hay animación; si se agrega, respetar <code>prefers-reduced-motion</code>.</li>
+</ul>
+</section>
+
+<section>
+<h2><span class="n">10</span>Componentes átomo relacionados</h2>
+<h3>Usa internamente</h3>
+<ul>
+<li><code>Icon</code> (en código: <code>bi-star</code> / <code>bi-star-fill</code>, 20 px). En Figma el ícono está dibujado como vector propio, porque no hay estrellas en la página Icon. <span class="sup">[Supuesto — validar]</span> Reemplazar por una instancia cuando existan.</li>
+</ul>
+<h3>Hermanos / alternativos</h3>
+<ul>
+<li><code>Checkbox</code>: opción de sí/no dentro de un formulario, con label y valor que se envía al guardar.</li>
+<li><code>Button</code> (<code>iconOnly</code>): ejecuta una acción inmediata; no mantiene estado activado.</li>
+<li><code>Badge</code>: muestra un estado de solo lectura; no es interactivo.</li>
+</ul>
+</section>
+
+<section class="warn">
+<h2><span class="n">·</span>Pendientes</h2>
+<ul>
+<li>Definir <code>Hover</code>, <code>Focus</code> y <code>Pressed</code> (hoy el foco no se ve, y este es el punto más urgente).</li>
+<li>Subir el contraste de la estrella (1,9:1) o sumar una señal extra; validar con diseño.</li>
+<li>Ampliar el área táctil de 20 px a 24 px como mínimo (ideal 44 px).</li>
+<li>Decidir la etiqueta accesible: fija con <code>aria-pressed</code> o cambiante sin él.</li>
+<li>Confirmar los nombres <code>State</code> / <code>Inactive</code> / <code>Active</code> del component set.</li>
+<li>Sumar las estrellas a la página Icon y usar instancias en vez del vector propio.</li>
+</ul>
+</section>
+
+</main>
+<script>
+const P={off:'M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z',
+on:'M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z'};
+function draw(b){b.innerHTML='<svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="'+P[b.dataset.star]+'"/></svg>';}
+document.querySelectorAll('.fav').forEach(draw);
+const live=document.getElementById('live');
+live.addEventListener('click',()=>{const on=live.dataset.star==='off';live.dataset.star=on?'on':'off';live.setAttribute('aria-pressed',on);live.setAttribute('aria-label',on?'Quitar de favoritos':'Agregar a favoritos');draw(live);});
+</script>
+</body>
+</html>

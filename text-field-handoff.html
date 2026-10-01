@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text field — Handoff para developers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Tokens del componente (leídos de Figma, nodo 327:22) */
+  --color-text-default:#061e30; --font-family-base:Inter,system-ui,sans-serif;
+  --font-size-label:12px; --font-size-body:14px; --font-weight-regular:400; --font-weight-medium:500;
+  --text-input-placeholder:#afb7bd; --text-input-value:#061e30;
+  --spacing-padding-input-x:12px; --spacing-padding-input-y:8px; --spacing-xs:4px; --radius-input:4px;
+  --border-width-default:1px; --border-width-focus:2px;
+  --surface-input-default:#ffffff; --border-input-default:#e3e5ea; --border-input-focus:#667afd;
+  --color-text-disabled:#a3a3a3; --surface-input-disabled:#f5f5f5; --border-input-disabled:#e5e5e5;
+  --border-input-error:#dc2626; --color-danger-default:#dc2626;
+  /* Solo documentación */
+  --ink:#061e30; --mut:#6a7883; --code:#2d3eb1; --line:#e3e5ea; --page:#f7f8fa; --red:#dc2626;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.4 var(--font-family-base)}
+main{max-width:1200px;margin:0 auto;padding:64px 64px 96px}
+header{margin-bottom:24px}
+.eyebrow{font-size:12px;font-weight:500;color:var(--mut)}
+h1{font-size:24px;line-height:1.2;margin:8px 0}
+.desc{color:var(--mut);margin:0 0 8px}
+.meta{display:flex;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--mut)}
+section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px;margin:0 0 24px}
+section.warn{background:#fef3c7}
+h2{display:flex;align-items:center;gap:12px;font-size:20px;line-height:1.2;margin:0 0 16px}
+h2 .n{font:400 11px 'JetBrains Mono',monospace;color:var(--code)}
+h3{font-size:16px;font-weight:600;margin:24px 0 12px;line-height:1.2}
+p{margin:0 0 12px}
+.lead{color:var(--mut);margin:0 0 16px}
+code,.c{font:400 13px 'JetBrains Mono',monospace;color:var(--code)}
+table{width:100%;border-collapse:collapse;margin:0 0 16px}
+th{background:#f7f8fa;color:var(--mut);font-size:12px;font-weight:500;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+td.k{font-weight:600;white-space:nowrap}
+.note{background:#fef3c7;border-radius:10px;padding:16px;margin:16px 0 0}
+.note p:last-child{margin:0}
+.pend{font-weight:600}
+ol.q{margin:0;padding-left:22px} ol.q li{margin:8px 0}
+ul.l{margin:0 0 12px;padding-left:20px} ul.l li{margin:6px 0}
+kbd{font:400 12px 'JetBrains Mono',monospace;border:1px solid #c9ced8;border-radius:4px;padding:1px 5px;background:#fff}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.panel{background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:24px;position:relative;min-height:230px}
+.panel small{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:var(--mut);font-size:12px}
+.matrix{background:#f7f8fa;border-radius:10px;padding:24px;display:flex;flex-wrap:wrap;gap:32px}
+.matrix figure{margin:0}.matrix figcaption{font-size:12px;color:var(--mut);margin-bottom:8px;text-transform:uppercase;letter-spacing:.02em}
+
+/* Componente de referencia */
+.tf{display:flex;flex-direction:column;gap:var(--spacing-xs);width:280px}
+.tf label{font:var(--font-weight-medium) var(--font-size-label)/1.2 var(--font-family-base);color:var(--color-text-default)}
+.tf input{box-sizing:border-box;width:100%;height:36px;padding:var(--spacing-padding-input-y) var(--spacing-padding-input-x);border:0;border-radius:var(--radius-input);background:var(--surface-input-default);box-shadow:inset 0 0 0 var(--border-width-default) var(--border-input-default);font:var(--font-weight-regular) var(--font-size-body)/20px var(--font-family-base);color:var(--text-input-value);outline:0}
+.tf input::placeholder{color:var(--text-input-placeholder)}
+.tf input:focus,.tf.is-focus input{box-shadow:inset 0 0 0 var(--border-width-focus) var(--border-input-focus)}
+.tf input[aria-invalid="true"]{box-shadow:inset 0 0 0 var(--border-width-default) var(--border-input-error)}
+.tf input:disabled{background:var(--surface-input-disabled);box-shadow:inset 0 0 0 var(--border-width-default) var(--border-input-disabled);color:var(--color-text-disabled)}
+.tf input:disabled::placeholder{color:var(--color-text-disabled)}
+.tf:has(input:disabled) label{color:var(--color-text-disabled)}
+.tf .helper{margin:0;font:var(--font-weight-medium) var(--font-size-label)/1.2 var(--font-family-base);color:var(--color-danger-default)}
+
+/* Diagramas (escala 1.5×) */
+.d{position:relative;width:420px;margin:24px auto 0}
+.d .b{position:absolute;border:1px dashed var(--red);background:rgba(220,38,38,.08)}
+.d .t{position:absolute;font:400 11px 'JetBrains Mono',monospace;color:var(--red);white-space:nowrap}
+.d .mock{width:420px;display:flex;flex-direction:column;gap:6px}
+.d .mock .lb{height:21px;font:500 18px/21px Inter;color:var(--ink)}
+.d .mock .fd{height:54px;border-radius:6px;box-shadow:inset 0 0 0 1.5px var(--border-input-default);padding:12px 18px;font:400 21px/30px Inter;color:var(--ink);background:#fff}
+.d .mock .fd.f{box-shadow:inset 0 0 0 3px var(--border-input-focus)}
+.d .mock .hp{height:21px;font:500 18px/21px Inter;color:var(--red)}
+.mk{position:absolute;width:20px;height:20px;border-radius:10px;background:var(--ink);color:#fff;font:600 12px/20px Inter;text-align:center}
+.ln{position:absolute;background:var(--ink)}
+@media(max-width:900px){main{padding:24px 16px}.panels{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="eyebrow">PHARO DESIGN SYSTEM · HANDOFF DEV</div>
+  <h1>Text field — Handoff para developers</h1>
+  <p class="desc">Spec de implementación del component set Text field (327:22): partes, sizing, tokens, estados, comportamiento, accesibilidad, responsive, edge cases y composición. Complementa a "Text field - Spec" (uso y reglas de diseño).</p>
+  <div class="meta"><span>Component set 327:22</span><span>4 variantes de State</span><span>Tamaño: único</span><span>Actualizado 29/09/2026</span><span>Estado: borrador para revisión</span></div>
+</header>
+
+<!-- 00 -->
+<section>
+<h2><span class="n">00</span>Resumen y API</h2>
+<p class="lead">Campo de texto de una línea con etiqueta y mensaje de ayuda para errores. En Figma solo hay una propiedad de variante (<code>State</code>) y tres propiedades de texto. <strong>Focus no es prop</strong>: se resuelve con <code>:focus</code>; <strong>Error</strong> se expresa con <code>aria-invalid</code> y <code>error</code> (ver Preguntas abiertas #1).</p>
+<table>
+<tr><th>Prop</th><th>Tipo</th><th>Default</th><th>Mapea a Figma</th></tr>
+<tr><td><code>label</code></td><td><code>string</code></td><td>—</td><td>prop de texto <code>Label</code> (default "Label"). Obligatoria</td></tr>
+<tr><td><code>value</code> / <code>defaultValue</code></td><td><code>string</code></td><td><code>''</code></td><td>prop de texto <code>Value</code>: valor escrito en Focus / Error / Disabled</td></tr>
+<tr><td><code>placeholder</code></td><td><code>string</code></td><td>—</td><td><code>Value</code> en <code>State=Default</code> (color placeholder). <span class="pend">⚠️ Pendiente #2</span></td></tr>
+<tr><td><code>helperText</code></td><td><code>string</code></td><td>—</td><td>prop de texto <code>Helper text</code> (default "Texto de ayuda"). Solo se muestra con error</td></tr>
+<tr><td><code>error</code></td><td><code>boolean</code></td><td><code>false</code></td><td>State = Error. Requiere <code>helperText</code></td></tr>
+<tr><td><code>disabled</code></td><td><code>boolean</code></td><td><code>false</code></td><td>State = Disabled</td></tr>
+<tr><td><code>type</code></td><td><code>'text'</code></td><td><code>'text'</code></td><td>— (solo código; otros tipos son componentes distintos)</td></tr>
+<tr><td><code>id</code>, <code>name</code>, <code>required</code>, <code>maxLength</code>, <code>autoComplete</code></td><td>atributos nativos</td><td>—</td><td>— (solo código; <code>required</code> no tiene indicador en Figma, #9)</td></tr>
+<tr><td><code>onChange</code>, <code>onFocus</code>, <code>onBlur</code></td><td><code>(e) ⇒ void</code></td><td>—</td><td>—</td></tr>
+</table>
+<h3>Matriz de variantes (referencia de implementación)</h3>
+<div class="matrix">
+  <figure><figcaption>Default</figcaption><div class="tf"><label for="m1">Label</label><input id="m1" placeholder="Placeholder text"></div></figure>
+  <figure><figcaption>Focus</figcaption><div class="tf is-focus"><label for="m2">Label</label><input id="m2" value="Placeholder text"></div></figure>
+  <figure><figcaption>Disabled</figcaption><div class="tf"><label for="m3">Label</label><input id="m3" placeholder="Placeholder text" disabled></div></figure>
+  <figure><figcaption>Error</figcaption><div class="tf"><label for="m4">Label</label><input id="m4" value="Placeholder text" aria-invalid="true" aria-describedby="m4h"><p class="helper" id="m4h">Texto de ayuda</p></div></figure>
+</div>
+</section>
+
+<!-- 01 -->
+<section>
+<h2><span class="n">01</span>Partes (anatomía)</h2>
+<div class="panels" style="grid-template-columns:1fr">
+  <div class="panel" style="min-height:250px">
+    <div class="d" style="margin-top:30px">
+      <div class="b" style="left:-8px;top:-8px;width:436px;height:124px;background:none;border-color:var(--ink)"></div><div class="mk" style="left:430px;top:-18px">1</div><div class="mock"><div class="lb">Label</div><div class="fd" style="box-shadow:inset 0 0 0 1.5px var(--border-input-error);">Placeholder text</div><div class="hp">Texto de ayuda</div></div>
+      <div class="mk" style="left:-34px;top:-2px">2</div><div class="ln" style="left:-14px;top:8px;width:14px;height:1px"></div>
+      <div class="mk" style="left:-34px;top:60px">3</div><div class="ln" style="left:-14px;top:70px;width:14px;height:1px"></div>
+      <div class="mk" style="left:110px;top:62px;display:none"></div>
+      <div class="mk" style="left:60px;top:108px;display:none"></div>
+      <div class="mk" style="left:454px;top:60px">5</div><div class="ln" style="left:420px;top:70px;width:34px;height:1px"></div>
+      <div class="mk" style="left:-34px;top:98px">4</div><div class="ln" style="left:-14px;top:108px;width:14px;height:1px"></div>
+      <div class="mk" style="left:-34px;top:-40px;display:none"></div>
+    </div>
+        <small>Raíz (1) = contenedor de todo el componente. Composición ilustrativa a escala 1,5×.</small>
+  </div>
+</div>
+<table>
+<tr><th>#</th><th>Parte</th><th>Elemento / slot</th><th>Obligatoria</th><th>Descripción</th></tr>
+<tr><td>1</td><td><code>root</code></td><td><code>&lt;div&gt;</code></td><td>Sí</td><td>Contenedor. Layout columna, gap <code>--spacing-xs</code>. Capa Figma: el propio <code>State=…</code>.</td></tr>
+<tr><td>2</td><td><code>label</code></td><td><code>&lt;label for&gt;</code></td><td>Sí</td><td>Etiqueta visible, asociada al input. Prop <code>label</code>. Capa Figma: <code>label</code>.</td></tr>
+<tr><td>3</td><td><code>field</code> + <code>value</code></td><td><code>&lt;input type="text"&gt;</code></td><td>Sí</td><td>Caja del campo y texto. En código es un único <code>&lt;input&gt;</code> con el estilo de <code>field</code>. Capas Figma: <code>field</code> (frame) y <code>value</code> (texto).</td></tr>
+<tr><td>4</td><td><code>helper</code></td><td><code>&lt;p id&gt;</code></td><td>No</td><td>Mensaje debajo del campo. Se renderiza solo con <code>error</code> y <code>helperText</code>. Capa Figma: <code>helper</code>.</td></tr>
+<tr><td>5</td><td>Anillo / borde</td><td>estilo del <code>&lt;input&gt;</code></td><td>Sí</td><td>No es un elemento: es <code>box-shadow</code> inset (1 px, 2 px en foco). Ver Sizing.</td></tr>
+</table>
+<p style="color:var(--mut);font-size:12px">Las partes 3 y 5 comparten elemento; la numeración se mantiene igual en el resto del documento.</p>
+</section>
+
+<!-- 02 -->
+<section>
+<h2><span class="n">02</span>Sizing</h2>
+<p class="lead">Un único tamaño. Layout de <code>root</code>: columna, <code>align-items: stretch</code>, gap 4. Layout de <code>field</code>: fila, <code>align-items: center</code>. Alto derivado del contenido (no hay alto fijo en Figma); la caja mide <strong>36 px</strong>. Ancho en Figma: 280 px; en código <strong>fill</strong> (<code>width: 100%</code>) con 280 px por defecto en el contenedor.</p>
+<div class="panels">
+  <div class="panel">
+    <div class="d" style="width:340px;margin-top:10px">
+      <div style="width:340px" class="mock">
+        <div class="lb" style="font-size:14px;line-height:17px;height:17px">Label</div>
+        <div class="fd" style="height:44px;padding:10px 15px;font-size:17px;line-height:24px;border-radius:5px">Placeholder text</div>
+      </div>
+      <div class="b" style="left:0;top:23px;width:15px;height:44px"></div><div class="t" style="left:0;top:74px">px 12</div>
+      <div class="b" style="left:90px;top:17px;width:80px;height:6px"></div><div class="b" style="left:200px;top:23px;width:12px;height:10px"></div><div class="b" style="left:200px;top:57px;width:12px;height:10px"></div>
+      <div class="t" style="left:350px;top:38px">h 36</div>
+      <div class="t" style="left:350px;top:0">label 14</div>
+      <div class="t" style="left:220px;top:74px">py 8 · line 20</div>
+      <div class="t" style="left:178px;top:14px">gap 4</div>
+    </div>
+    <small>Default · escala 1,2×</small>
+  </div>
+  <div class="panel">
+    <div class="d" style="width:340px;margin-top:10px">
+      <div style="width:340px" class="mock">
+        <div class="lb" style="font-size:14px;line-height:17px;height:17px">Label</div>
+        <div class="fd f" style="height:44px;padding:10px 15px;font-size:17px;line-height:24px;border-radius:5px;box-shadow:inset 0 0 0 2.4px var(--border-input-focus)">Placeholder text</div>
+        <div class="hp" style="font-size:14px;line-height:17px;height:17px;color:var(--mut)">helper 14 (solo Error)</div>
+      </div>
+      <div class="t" style="left:350px;top:38px">borde 2 · adentro</div>
+      <div class="t" style="left:350px;top:66px">alto total 54 / 72</div>
+    </div>
+    <small>Focus: el borde crece hacia adentro, el alto no cambia</small>
+  </div>
+</div>
+<table>
+<tr><th>Propiedad</th><th>Valor (todas las variantes)</th><th>Token / nota</th></tr>
+<tr><td>Width</td><td>Figma 280 px · código: fill</td><td><span class="pend">⚠️ Pendiente</span> min / max (#7)</td></tr>
+<tr><td>Height <code>field</code></td><td>36 px (8 + 20 + 8)</td><td>Fijo con <code>box-sizing: border-box; height: 36px</code></td></tr>
+<tr><td>Height total</td><td>54 px (14 + 4 + 36) · Error: 72 px (+ 4 + 14)</td><td>—</td></tr>
+<tr><td>Padding x / y</td><td>12 px / 8 px</td><td><code>--spacing-padding-input-x</code> / <code>--spacing-padding-input-y</code></td></tr>
+<tr><td>Gap label–field y field–helper</td><td>4 px</td><td><code>--spacing-xs</code></td></tr>
+<tr><td>Radius</td><td>4 px</td><td><code>--radius-input</code></td></tr>
+<tr><td>Borde</td><td>1 px; 2 px en Focus; siempre <strong>inside</strong></td><td><code>--border-width-default</code> / <code>--border-width-focus</code></td></tr>
+<tr><td>Alto de texto</td><td>label 14 (12 × 1,2) · value 20 (14 × 1,4) · helper 14</td><td>Ver Tokens → Tipografía</td></tr>
+</table>
+<div class="note"><p><strong>Nota — borde dentro de la caja:</strong> en Figma el borde es interno y el padding no cambia entre estados, así que el texto no se mueve. Con <code>border</code> de CSS la caja crecería 2 px y el texto se movería 1 px en Focus. Recomendado: dibujar el borde con <code>box-shadow: inset 0 0 0 1px …</code> (2 px en Focus). ⚠️ Validar con diseño.</p></div>
+</section>
+
+<!-- 03 -->
+<section>
+<h2><span class="n">03</span>Tokens</h2>
+<p class="lead">Nombres en formato CSS variable (en Figma: <code>border/input/default</code> ↔ <code>--border-input-default</code>). Los tokens son semánticos; solo existe el tema claro.</p>
+<h3>Color</h3>
+<table>
+<tr><th>Parte</th><th>Propiedad</th><th>Token</th><th>Valor</th></tr>
+<tr><td><code>label</code></td><td>color</td><td><code>--color-text-default</code></td><td>#061E30</td></tr>
+<tr><td><code>field</code></td><td>background</td><td><code>--surface-input-default</code></td><td>#FFFFFF</td></tr>
+<tr><td><code>field</code></td><td>border-color</td><td><code>--border-input-default</code></td><td>#E3E5EA</td></tr>
+<tr><td><code>value</code> (placeholder)</td><td>color</td><td><code>--text-input-placeholder</code></td><td>#AFB7BD</td></tr>
+<tr><td><code>value</code> (con valor)</td><td>color</td><td><code>--text-input-value</code></td><td>#061E30</td></tr>
+<tr><td><code>helper</code></td><td>color</td><td><code>--color-danger-default</code></td><td>#DC2626</td></tr>
+</table>
+<h3>Tipografía</h3>
+<table>
+<tr><th>Parte</th><th>Estilo Figma</th><th>Tokens</th><th>Valor resuelto</th></tr>
+<tr><td><code>label</code>, <code>helper</code></td><td><code>Label/Small</code></td><td><code>--font-family-base</code>, <code>--font-size-label</code>, <code>--font-weight-medium</code></td><td>Inter 12 / 1,2 · 500</td></tr>
+<tr><td><code>value</code></td><td><code>Body/Base</code></td><td><code>--font-family-base</code>, <code>--font-size-body</code>, <code>--font-weight-regular</code></td><td>Inter 14 / 1,4 · 400</td></tr>
+</table>
+<h3>Spacing, bordes y sombras</h3>
+<table>
+<tr><th>Categoría</th><th>Token</th><th>Valor</th></tr>
+<tr><td>Spacing</td><td><code>--spacing-padding-input-x</code> · <code>--spacing-padding-input-y</code> · <code>--spacing-xs</code></td><td>12 px · 8 px · 4 px</td></tr>
+<tr><td>Radius</td><td><code>--radius-input</code></td><td>4 px</td></tr>
+<tr><td>Ancho de borde</td><td><code>--border-width-default</code> · <code>--border-width-focus</code></td><td>1 px · 2 px</td></tr>
+<tr><td>Sombra / elevación</td><td>No aplica</td><td>El componente no usa sombras (el borde se dibuja con <code>box-shadow</code> inset solo como técnica, ver Sizing)</td></tr>
+</table>
+</section>
+
+<!-- 04 -->
+<section>
+<h2><span class="n">04</span>Estados</h2>
+<p class="lead">Solo se listan los tokens que cambian respecto a Default.</p>
+<table>
+<tr><th>Estado</th><th>Selector</th><th>Parte</th><th>Propiedad</th><th>Token</th></tr>
+<tr><td class="k">Hover</td><td><code>:hover</code></td><td>—</td><td>—</td><td><span class="pend">⚠️ Pendiente de definir</span> — no existe en Figma (#3)</td></tr>
+<tr><td class="k" rowspan="3">Focus</td><td rowspan="3"><code>:focus</code></td><td><code>field</code></td><td>border</td><td><code>--border-input-focus</code> #667AFD, <code>--border-width-focus</code> (2 px), interno</td></tr>
+<tr><td><code>value</code></td><td>color</td><td><code>--text-input-value</code> #061E30</td></tr>
+<tr><td><code>label</code></td><td>—</td><td>Sin cambios</td></tr>
+<tr><td class="k">Pressed</td><td>—</td><td>—</td><td>—</td><td>No aplica — un campo de texto no tiene estado pressed</td></tr>
+<tr><td class="k" rowspan="4">Disabled</td><td rowspan="4"><code>:disabled</code></td><td><code>label</code></td><td>color</td><td><code>--color-text-disabled</code> #A3A3A3</td></tr>
+<tr><td><code>field</code></td><td>background</td><td><code>--surface-input-disabled</code> #F5F5F5</td></tr>
+<tr><td><code>field</code></td><td>border-color</td><td><code>--border-input-disabled</code> #E5E5E5</td></tr>
+<tr><td><code>value</code></td><td>color</td><td><code>--color-text-disabled</code> #A3A3A3</td></tr>
+<tr><td class="k">Loading</td><td>—</td><td>—</td><td>—</td><td>No aplica por ahora — no existe en Figma (#4)</td></tr>
+<tr><td class="k" rowspan="2">Error</td><td rowspan="2"><code>[aria-invalid="true"]</code></td><td><code>field</code></td><td>border-color</td><td><code>--border-input-error</code> #DC2626 (1 px)</td></tr>
+<tr><td><code>helper</code></td><td>visible + color</td><td><code>--color-danger-default</code> #DC2626, <code>Label/Small</code></td></tr>
+<tr><td class="k">Selected</td><td>—</td><td>—</td><td>—</td><td>No aplica — no es un control de selección</td></tr>
+<tr><td class="k">Read-only</td><td><code>:read-only</code></td><td>—</td><td>—</td><td><span class="pend">⚠️ Pendiente de definir</span> (#4)</td></tr>
+</table>
+<div class="note"><p><strong>Combinaciones:</strong> Disabled gana sobre todo (sin foco, sin hover, sin validación). Focus + Error no existe en Figma (#3); sugerido: mantener el color de error y usar 2 px de ancho de borde, para que el foco siga siendo visible. ⚠️ Validar con diseño. Un campo con valor y sin foco (Filled) tampoco existe: usar <code>--text-input-value</code> con borde Default.</p>
+<p><strong>Focus:</strong> en un <code>&lt;input&gt;</code> de texto, <code>:focus-visible</code> y <code>:focus</code> coinciden siempre; usar <code>:focus-visible</code>. <strong>Transiciones:</strong> ⚠️ Pendiente, no hay tokens de motion. Sugerido: <code>box-shadow, background-color, color 120ms ease-out</code>, desactivado con <code>prefers-reduced-motion: reduce</code>.</p></div>
+</section>
+
+<!-- 05 -->
+<section>
+<h2><span class="n">05</span>Comportamiento</h2>
+<ul class="l">
+<li><strong>Click en el label:</strong> mueve el foco al input (<code>label for</code> + <code>id</code>).</li>
+<li><strong>Focus:</strong> aplica el estado Focus. No hay cambio de layout ni scroll propio.</li>
+<li><strong>Escribir:</strong> el placeholder desaparece al primer carácter. Se emite <code>onChange</code> en cada cambio, sin debounce.</li>
+<li><strong>Validación:</strong> el componente <strong>no valida</strong>; quien lo usa pasa <code>error</code> y <code>helperText</code>. Recomendado validar en <code>onBlur</code> y al enviar, no en cada tecla. Al corregirse el valor, quitar el error en el siguiente <code>onChange</code> <strong>[Supuesto — validar]</strong>.</li>
+<li><strong>Error:</strong> aparece el <code>helper</code> y se enlaza con <code>aria-describedby</code>. El alto total pasa de 54 a 72 px (desplaza el contenido siguiente).</li>
+<li><strong>Disabled:</strong> no recibe foco ni eventos, y no se envía en formularios nativos. Cursor <code>not-allowed</code> <strong>[Supuesto — validar]</strong>.</li>
+<li><strong>Enter:</strong> dentro de un <code>&lt;form&gt;</code> con botón de envío, envía el formulario (comportamiento nativo).</li>
+<li><strong>Controlado vs. no controlado:</strong> soportar ambos (<code>value</code> + <code>onChange</code>, o <code>defaultValue</code>). Por defecto, no controlado.</li>
+<li><strong>Eventos que expone:</strong> <code>onChange(e)</code>, <code>onFocus(e)</code>, <code>onBlur(e)</code>. Expone <code>ref</code> al <code>&lt;input&gt;</code>.</li>
+<li><strong>Timings:</strong> no hay delays ni animaciones definidas. <span class="pend">⚠️ Pendiente</span> (ver Estados → Transiciones).</li>
+</ul>
+</section>
+
+<!-- 06 -->
+<section>
+<h2><span class="n">06</span>Accesibilidad</h2>
+<p><strong>Rol y elemento:</strong> <code>&lt;input type="text"&gt;</code> nativo (rol implícito <code>textbox</code>) con <code>&lt;label for&gt;</code>. No usar <code>div</code> con <code>contenteditable</code>. No hay patrón APG dedicado.</p>
+<h3>ARIA</h3>
+<table>
+<tr><th>Atributo</th><th>Cuándo</th><th>Valor</th></tr>
+<tr><td><code>aria-invalid</code></td><td>Estado Error</td><td><code>"true"</code>; omitir en los demás</td></tr>
+<tr><td><code>aria-describedby</code></td><td>Cuando existe el <code>helper</code></td><td><code>id</code> del <code>helper</code></td></tr>
+<tr><td><code>disabled</code></td><td>Estado Disabled</td><td>Atributo nativo (no usar <code>aria-disabled</code>)</td></tr>
+<tr><td><code>aria-required</code> / <code>required</code></td><td>Si el campo es obligatorio</td><td>Atributo nativo <span class="pend">⚠️ sin indicador visual en Figma (#9)</span></td></tr>
+<tr><td><code>role="alert"</code> o <code>aria-live="polite"</code></td><td>En el <code>helper</code> cuando aparece</td><td>Para anunciar el error sin mover el foco</td></tr>
+</table>
+<h3>Teclado</h3>
+<table>
+<tr><th>Tecla</th><th>Acción</th></tr>
+<tr><td><kbd>Tab</kbd></td><td>Mueve el foco al campo. Disabled se omite.</td></tr>
+<tr><td><kbd>Shift</kbd> + <kbd>Tab</kbd></td><td>Mueve el foco al elemento anterior.</td></tr>
+<tr><td><kbd>←</kbd> <kbd>→</kbd> <kbd>Home</kbd> <kbd>End</kbd></td><td>Mueven el cursor dentro del texto (nativo).</td></tr>
+<tr><td><kbd>Enter</kbd></td><td>Envía el formulario asociado.</td></tr>
+</table>
+<p><strong>Orden de foco:</strong> un solo punto de foco (el input). El <code>label</code> y el <code>helper</code> no son focusables. No hay focus trap. Tras un envío con errores, mover el foco al primer campo en error.</p>
+<h3>Lector de pantalla</h3>
+<ul class="l">
+<li><strong>Default / Focus:</strong> “Correo electrónico, cuadro de edición”.</li>
+<li><strong>Error:</strong> “Correo electrónico, cuadro de edición, no válido, Ingresa un correo válido…”.</li>
+<li><strong>Disabled:</strong> “Correo electrónico, cuadro de edición, no disponible”.</li>
+</ul>
+<h3>Otros</h3>
+<table>
+<tr><th>Elemento</th><th>Ratio</th><th>Resultado</th></tr>
+<tr><td>Valor #061E30 sobre #FFFFFF</td><td>17:1</td><td>Cumple AA</td></tr>
+<tr><td>Borde Focus #667AFD sobre #FFFFFF</td><td>3,6:1</td><td>Cumple AA (UI 3:1)</td></tr>
+<tr><td>Helper y borde Error #DC2626 sobre #FFFFFF</td><td>4,8:1</td><td>Cumple AA</td></tr>
+<tr><td>Borde Default #E3E5EA sobre #FFFFFF</td><td>1,3:1</td><td><strong>No cumple</strong> 3:1 <span class="pend">⚠️ #6</span></td></tr>
+<tr><td>Placeholder #AFB7BD sobre #FFFFFF</td><td>2,0:1</td><td><strong>No cumple</strong> 4,5:1 <span class="pend">⚠️ #6</span></td></tr>
+<tr><td>Disabled #A3A3A3 sobre #F5F5F5</td><td>2,3:1</td><td>Exento (componente inactivo)</td></tr>
+</table>
+<ul class="l">
+<li><strong>Área táctil:</strong> el campo mide 36 px de alto (cumple AA 24×24). Recomendado 44 px en táctil (ver Responsive).</li>
+<li><strong>Color:</strong> el error no depende solo del color porque hay <code>helper</code> de texto.</li>
+<li><strong>Movimiento:</strong> respetar <code>prefers-reduced-motion</code> si se agregan transiciones.</li>
+</ul>
+</section>
+
+<!-- 07 -->
+<section>
+<h2><span class="n">07</span>Reglas responsive</h2>
+<p class="lead">El componente <strong>no cambia de patrón</strong> entre breakpoints. Breakpoints supuestos: mobile &lt; 768, tablet 768–1023, desktop ≥ 1024. <span class="pend">⚠️ Pendiente</span> confirmar los del sistema (#10).</p>
+<table>
+<tr><th>Breakpoint</th><th>Cambios</th></tr>
+<tr><td class="k">Mobile</td><td>Width fill. Alto recomendado 44 px y <code>font-size</code> del input ≥ 16 px (por debajo, iOS Safari hace zoom al enfocar). <strong>[Supuesto — validar con diseño]</strong></td></tr>
+<tr><td class="k">Tablet</td><td>Width fill del contenedor; sin cambios de estilo.</td></tr>
+<tr><td class="k">Desktop</td><td>Width fill del contenedor (280 px por defecto en Figma); sin cambios de estilo.</td></tr>
+</table>
+<p>No se ocultan ni reordenan partes. El <code>label</code> siempre va encima del campo.</p>
+</section>
+
+<!-- 08 -->
+<section>
+<h2><span class="n">08</span>Edge cases</h2>
+<table>
+<tr><th>Caso</th><th>Comportamiento esperado</th></tr>
+<tr><td class="k">Valor largo</td><td>Una sola línea, sin wrap. El texto se desplaza dentro del input al escribir; sin foco muestra <code>text-overflow: ellipsis</code> <strong>[Supuesto — validar]</strong>.</td></tr>
+<tr><td class="k">Label largo</td><td>Hace wrap y el alto crece (el ancho es fill). Recomendado 1 línea; sin truncar ni tooltip. <span class="pend">⚠️ Pendiente (#8)</span></td></tr>
+<tr><td class="k">Helper largo</td><td>Hace wrap; el alto total crece y empuja el contenido siguiente. Sin límite de líneas definido.</td></tr>
+<tr><td class="k">Sin label</td><td>No permitido: el label es obligatorio. Si se omite visualmente, dar <code>aria-label</code>.</td></tr>
+<tr><td class="k">Error sin mensaje</td><td>No permitido: <code>error</code> requiere <code>helperText</code>.</td></tr>
+<tr><td class="k">Sin valor</td><td>Muestra <code>placeholder</code> en <code>--text-input-placeholder</code>. Si tampoco hay placeholder, campo vacío.</td></tr>
+<tr><td class="k">Layout shift al aparecer el error</td><td>+18 px de alto (4 gap + 14 helper). <span class="pend">⚠️ Pendiente:</span> decidir si se reserva el espacio.</td></tr>
+<tr><td class="k">Overflow vertical, listas</td><td>No aplica (una línea, sin opciones).</td></tr>
+<tr><td class="k">Estado vacío</td><td>Ver “Sin valor”.</td></tr>
+<tr><td class="k">Autofill del navegador</td><td>Sobrescribir el fondo de <code>:-webkit-autofill</code> para conservar <code>--surface-input-default</code> <strong>[Supuesto — validar]</strong>.</td></tr>
+<tr><td class="k">Máximo de caracteres</td><td>Soportar <code>maxLength</code> nativo; no hay contador en Figma (#9).</td></tr>
+<tr><td class="k">i18n / RTL</td><td>Usar propiedades lógicas (<code>padding-inline</code>). RTL no está diseñado. <span class="pend">⚠️ Pendiente</span></td></tr>
+</table>
+</section>
+
+<!-- 09 -->
+<section>
+<h2><span class="n">09</span>Composición y componentes átomo</h2>
+<table>
+<tr><th>Componente</th><th>Usado en parte</th><th>Props / variante usada</th><th>Para qué</th></tr>
+<tr><td>—</td><td>—</td><td>—</td><td><strong>No usa componentes anidados</strong>: en Figma son solo capas de texto y un frame. No reimplementar <code>label</code> ni <code>helper</code> como componentes aparte; viven dentro del <code>Text field</code>.</td></tr>
+<tr><td><code>Icon</code></td><td>—</td><td>No aplica</td><td>No hay ícono leading, trailing ni de error (#11).</td></tr>
+</table>
+<p><strong>Dónde se usa:</strong> en formularios, dentro de <code>Form Container</code> <strong>[Supuesto — validar]</strong>. El contenedor define el espacio entre campos; el <code>Text field</code> no agrega margen externo. Props que se pasan hacia abajo desde un formulario: <code>name</code>, <code>value</code>, <code>onChange</code>, <code>error</code>, <code>helperText</code>, <code>disabled</code>.</p>
+</section>
+
+<!-- Preguntas -->
+<section class="warn">
+<h2>Preguntas abiertas</h2>
+<ol class="q">
+<li><strong>API de Error:</strong> ¿se expone como <code>error</code> boolean o como <code>error: string</code> (el mensaje)? En Figma es una variante + prop de texto.</li>
+<li><strong>Placeholder vs valor:</strong> Figma usa una sola prop <code>Value</code>; proponemos separar <code>placeholder</code> (Default) de <code>value</code>.</li>
+<li><strong>Estados faltantes:</strong> Hover, Filled (con valor sin foco) y Focus + Error.</li>
+<li><strong>Read-only y Loading:</strong> ¿aplican? Hoy no existen.</li>
+<li><strong>Alto:</strong> 36 px actual vs 44 px recomendado para táctil.</li>
+<li><strong>Contraste:</strong> borde Default (1,3:1) y placeholder (2,0:1) no cumplen AA.</li>
+<li><strong>Ancho:</strong> ¿fill con min/max o 280 px fijo?</li>
+<li><strong>Label largo:</strong> ¿wrap, truncado o límite de caracteres?</li>
+<li><strong>Obligatorio y contador:</strong> no hay indicador de campo requerido ni contador de caracteres.</li>
+<li><strong>Breakpoints y motion:</strong> confirmar breakpoints del sistema y tokens de transición.</li>
+<li><strong>Íconos y helper informativo:</strong> ¿habrá ícono de error, botón de limpiar o helper en estados no error?</li>
+</ol>
+</section>
+
+</main>
+</body>
+</html>

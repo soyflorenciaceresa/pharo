@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Icon } from '../../icons/icons.jsx';
 import styles from './Sidebar.module.css';
 
@@ -29,9 +29,10 @@ export default function Sidebar({
   onNavigate,
   onLogout,
   onToggle,
+  defaultPinned = false,
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const [pinned, setPinned] = useState(false);
+  const [expanded, setExpanded] = useState(defaultPinned);
+  const [pinned, setPinned] = useState(defaultPinned);
   const [openGroup, setOpenGroup] = useState(0);
   const [companyOpen, setCompanyOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
@@ -81,8 +82,15 @@ export default function Sidebar({
     onCompanyChange?.(company);
   };
 
+  // No actualiza `activeHref` acá de forma optimista — a propósito, para no
+  // marcar como "activo" un ítem que todavía no tiene pantalla propia (la
+  // mayoría de los ítems de cada sidebar, ver notas en config/sidebars/*.js)
+  // cuando `onNavigate` termina siendo un no-op (App.jsx corta la navegación
+  // si el href no matchea ninguna ruta real). Si la navegación sí ocurre,
+  // cada cambio de ruta remonta la pantalla completa (ver Sidebar/App.jsx en
+  // CLAUDE.md) y el `defaultActiveHref` que le pasa la pantalla nueva ya
+  // resiembra este estado correctamente — no hace falta adelantarlo acá.
   const selectItem = (item) => {
-    setActiveHref(item.href);
     onNavigate?.({ href: item.href, label: item.label });
   };
 
@@ -119,6 +127,8 @@ export default function Sidebar({
           </span>
         </button>
       </div>
+
+      <div className={styles.divider} />
 
       <div className={cx(styles.companyWrap, companyOpen && styles.open)} ref={companyRef}>
         <button
@@ -157,48 +167,51 @@ export default function Sidebar({
       <div className={styles.scroll}>
         <nav className={styles.nav}>
           {groups.map((group, gi) => (
-            <div key={group.label ?? gi} className={cx(styles.group, openGroup === gi && styles.open)}>
-              <button
-                type="button"
-                className={styles.groupHeader}
-                aria-expanded={openGroup === gi}
-                title={group.label || ''}
-                onClick={() => setOpenGroup(openGroup === gi ? -1 : gi)}
-              >
-                <span className={styles.icon}>
-                  <Icon name={group.icon || 'bi-archive-fill'} size={16} />
-                </span>
-                <span className={styles.label}>{group.label || ''}</span>
-                <span className={styles.chevron}>
-                  <Icon name="bi-chevron-right" size={11} />
-                </span>
-              </button>
-              <div className={styles.groupBody}>
-                <div>
-                  {(group.items || []).map((item) => (
-                    <a
-                      key={item.href}
-                      href={item.href || '#'}
-                      className={styles.item}
-                      aria-current={item.href === activeHref}
-                      title={item.label || ''}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        selectItem(item);
-                      }}
-                    >
-                      <span className={styles.icon}>
-                        <Icon name={item.icon || 'bi-box-seam'} size={16} />
-                      </span>
-                      <span className={styles.label}>{item.label || ''}</span>
-                      <span className={styles.ext}>
-                        <Icon name="bi-box-arrow-up-right" size={12} />
-                      </span>
-                    </a>
-                  ))}
+            <Fragment key={group.label ?? gi}>
+              <div className={cx(styles.group, openGroup === gi && styles.open)}>
+                <button
+                  type="button"
+                  className={styles.groupHeader}
+                  aria-expanded={openGroup === gi}
+                  title={group.label || ''}
+                  onClick={() => setOpenGroup(openGroup === gi ? -1 : gi)}
+                >
+                  <span className={styles.icon}>
+                    <Icon name={group.icon || 'bi-archive-fill'} size={16} />
+                  </span>
+                  <span className={styles.label}>{group.label || ''}</span>
+                  <span className={styles.chevron}>
+                    <Icon name="bi-chevron-right" size={11} />
+                  </span>
+                </button>
+                <div className={styles.groupBody}>
+                  <div>
+                    {(group.items || []).map((item) => (
+                      <a
+                        key={item.href}
+                        href={item.href || '#'}
+                        className={styles.item}
+                        aria-current={item.href === activeHref}
+                        title={item.label || ''}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          selectItem(item);
+                        }}
+                      >
+                        <span className={styles.icon}>
+                          <Icon name={item.icon || 'bi-box-seam'} size={16} />
+                        </span>
+                        <span className={styles.label}>{item.label || ''}</span>
+                        <span className={styles.ext}>
+                          <Icon name="bi-box-arrow-up-right" size={12} />
+                        </span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+              {gi < groups.length - 1 && <div className={styles.groupDivider} />}
+            </Fragment>
           ))}
         </nav>
       </div>

@@ -1,0 +1,10 @@
+.root {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* Si los botones no entran en una línea pasan a la siguiente (handoff,
+     Responsive — supuesto pendiente de validar con diseño, Pregunta abierta #2/#9).
+     En desktop, con espacio suficiente, no cambia nada. */
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}

@@ -39,14 +39,6 @@ function RowCheckbox({ checked, indeterminate = false, onChange, ariaLabel }) {
   );
 }
 
-export function StatusChip({ label, tone = 'success' }) {
-  return (
-    <span className={styles.chip} data-tone={tone}>
-      {label}
-    </span>
-  );
-}
-
 function ActionButton({ icon, label, onClick }) {
   return (
     <button type="button" className={styles.actionButton} onClick={onClick} aria-label={label} title={label}>
@@ -62,6 +54,7 @@ export default function DataGrid({
   onSelectionChange,
   actions,
   searchPlaceholder = 'Buscar...',
+  searchable = true,
   emptyMessage = 'No se encontraron resultados.',
 }) {
   const [search, setSearch] = useState('');
@@ -103,16 +96,18 @@ export default function DataGrid({
   return (
     <div className={styles.root}>
       <div className={styles.grid}>
-        <div className={styles.toolbar}>
-          <TextField
-            className={styles.search}
-            type="search"
-            placeholder={searchPlaceholder}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label={searchPlaceholder}
-          />
-        </div>
+        {searchable && (
+          <div className={styles.toolbar}>
+            <TextField
+              className={styles.search}
+              type="search"
+              placeholder={searchPlaceholder}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              aria-label={searchPlaceholder}
+            />
+          </div>
+        )}
 
         <div className={styles.headerRow}>
           {selectable && (
