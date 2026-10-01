@@ -3,7 +3,7 @@ import Badge from '../../../components/Badge/Badge.jsx';
 import { OPERACIONES_SIDEBAR_PROPS } from '../../../config/sidebars/operaciones.js';
 
 const COLUMNS = [
-  { key: 'codigo', label: 'Código', width: 120 },
+  { key: 'imo', label: 'IMO', width: 120 },
   { key: 'denominacion', label: 'Denominación' },
   {
     key: 'estado',
@@ -17,11 +17,11 @@ const COLUMNS = [
 // `tipo` sigue viviendo en cada fila (lo captura el formulario) aunque la
 // grilla no lo muestre como columna.
 const DEFAULT_ROWS = [
-  { id: 1, codigo: 'BQ-001', denominacion: 'Estrella del Sur', tipo: 'Portacontenedores', estado: { label: 'Activo', type: 'success' } },
-  { id: 2, codigo: 'BQ-002', denominacion: 'Puerto Norte I', tipo: 'Carguero', estado: { label: 'Activo', type: 'success' } },
-  { id: 3, codigo: 'BQ-003', denominacion: 'Andina Cargo', tipo: 'Carguero', estado: { label: 'Inactivo', type: 'neutral' } },
-  { id: 4, codigo: 'BQ-004', denominacion: 'Río de la Plata', tipo: 'Remolcador', estado: { label: 'Activo', type: 'success' } },
-  { id: 5, codigo: 'BQ-005', denominacion: 'Cruz del Atlántico', tipo: 'Petrolero', estado: { label: 'Inactivo', type: 'neutral' } },
+  { id: 1, codigo: 'BQ-001', imo: '9321483', denominacion: 'Estrella del Sur', tipo: 'Portacontenedores', estado: { label: 'Activo', type: 'success' } },
+  { id: 2, codigo: 'BQ-002', imo: '9454436', denominacion: 'Puerto Norte I', tipo: 'Carguero', estado: { label: 'Activo', type: 'success' } },
+  { id: 3, codigo: 'BQ-003', imo: '9632179', denominacion: 'Andina Cargo', tipo: 'Carguero', estado: { label: 'Inactivo', type: 'neutral' } },
+  { id: 4, codigo: 'BQ-004', imo: '9704386', denominacion: 'Río de la Plata', tipo: 'Remolcador', estado: { label: 'Activo', type: 'success' } },
+  { id: 5, codigo: 'BQ-005', imo: '9811000', denominacion: 'Cruz del Atlántico', tipo: 'Petrolero', estado: { label: 'Inactivo', type: 'neutral' } },
 ];
 
 export default function Buque({ onNavigate, onSearch, rows, favoriteHrefs = [], onToggleFavorite }) {
@@ -44,7 +44,6 @@ export default function Buque({ onNavigate, onSearch, rows, favoriteHrefs = [], 
       onExport={() => console.log('exportar buques')}
       columns={COLUMNS}
       rows={rows ?? DEFAULT_ROWS}
-      selectable
       actions={[
         { key: 'view', icon: 'bi-eye', label: 'Visualizar', onClick: (row) => navigate({ href: `/buques/${row.id}/ver`, label: 'Visualizar' }) },
         { key: 'edit', icon: 'icon-edit', label: 'Editar', onClick: (row) => navigate({ href: `/buques/${row.id}/editar`, label: 'Editar' }) },

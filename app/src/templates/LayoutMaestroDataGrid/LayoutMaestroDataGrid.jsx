@@ -23,7 +23,7 @@ export default function LayoutMaestroDataGrid({
   exportLabel = 'Exportar',
   columns,
   rows,
-  selectable,
+  selectable = false,
   onSelectionChange,
   actions,
   searchPlaceholder,

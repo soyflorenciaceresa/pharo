@@ -41,7 +41,6 @@ export default function Empresas({ onNavigate, onSearch, empresas }) {
       onReload={() => console.log('recargar empresas')}
       columns={COLUMNS}
       rows={empresas ?? DEFAULT_ROWS}
-      selectable
       actions={[
         { key: 'view', icon: 'bi-eye', label: 'Visualizar', onClick: (row) => navigate({ href: `/admin/empresas/${row.id}/ver`, label: 'Visualizar' }) },
         { key: 'edit', icon: 'icon-edit', label: 'Editar', onClick: (row) => navigate({ href: `/admin/empresas/${row.id}/editar`, label: 'Editar' }) },

@@ -43,7 +43,6 @@ export default function Usuarios({ onNavigate, onSearch, usuarios }) {
       onReload={() => console.log('recargar usuarios')}
       columns={COLUMNS}
       rows={usuarios ?? DEFAULT_ROWS}
-      selectable
       actions={[
         { key: 'view', icon: 'bi-eye', label: 'Visualizar', onClick: (row) => navigate({ href: `/admin/usuarios/${row.id}/ver`, label: 'Visualizar' }) },
         { key: 'edit', icon: 'icon-edit', label: 'Editar', onClick: (row) => navigate({ href: `/admin/usuarios/${row.id}/editar`, label: 'Editar' }) },

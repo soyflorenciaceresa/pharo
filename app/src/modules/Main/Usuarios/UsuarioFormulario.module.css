@@ -11,7 +11,8 @@
 
 .checksRow {
   display: flex;
-  gap: var(--spacing-lg);
+  flex-direction: column;
+  gap: var(--spacing-sm);
   width: 100%;
 }
 

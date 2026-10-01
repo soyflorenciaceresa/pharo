@@ -17,6 +17,8 @@ export const OPERACIONES_SIDEBAR_PROPS = {
         { label: 'Buque', icon: 'icon-buques', href: '/buques' },
         { label: 'Clientes', icon: 'icon-clientes', href: '/clientes' },
         { label: 'Tipos de turnos', icon: 'icon-tipos-turnos', href: '/tipos-turnos' },
+        // Sin ícono propio en Figma todavía: placeholder `app-window` (mismo criterio que main.js).
+        { label: 'Depósitos', icon: 'app-window', href: '/depositos' },
       ],
     },
     {

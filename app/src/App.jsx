@@ -3,6 +3,8 @@ import Home from './modules/Main/Home/Home.jsx';
 import OperacionesHome from './modules/Operaciones/Home/Home.jsx';
 import Buque from './modules/Operaciones/Buque/Buque.jsx';
 import BuqueFormulario from './modules/Operaciones/Buque/BuqueFormulario.jsx';
+import Deposito from './modules/Operaciones/Deposito/Deposito.jsx';
+import DepositoFormulario from './modules/Operaciones/Deposito/DepositoFormulario.jsx';
 import Contratos from './modules/Grains/Contratos/Contratos.jsx';
 import ContratoFormulario from './modules/Grains/Contratos/ContratoFormulario.jsx';
 import AsistenteIA from './modules/AsistenteIA/AsistenteIA.jsx';
@@ -72,6 +74,10 @@ const ROUTES = [
   { pattern: '/buques/nuevo', Component: BuqueFormulario, props: { mode: 'create' } },
   { pattern: '/buques/:id/ver', Component: BuqueFormulario, props: { mode: 'view' } },
   { pattern: '/buques/:id/editar', Component: BuqueFormulario, props: { mode: 'edit' } },
+  { pattern: '/depositos', Component: Deposito },
+  { pattern: '/depositos/nuevo', Component: DepositoFormulario, props: { mode: 'create' } },
+  { pattern: '/depositos/:id/ver', Component: DepositoFormulario, props: { mode: 'view' } },
+  { pattern: '/depositos/:id/editar', Component: DepositoFormulario, props: { mode: 'edit' } },
   { pattern: '/grains/contratos', Component: Contratos },
   { pattern: '/grains/contratos/nuevo', Component: ContratoFormulario, props: { mode: 'create' } },
   { pattern: '/grains/contratos/:id/ver', Component: ContratoFormulario, props: { mode: 'view' } },
@@ -129,11 +135,21 @@ const ROUTES = [
 // (/buques/nuevo, /buques/:id/editar) necesitan leer/escribir el mismo set —
 // no hay backend todavía.
 const INITIAL_BUQUES = [
-  { id: 1, codigo: 'BQ-001', denominacion: 'Estrella del Sur', tipo: 'Portacontenedores', estado: { label: 'Activo', type: 'success' } },
-  { id: 2, codigo: 'BQ-002', denominacion: 'Puerto Norte I', tipo: 'Carguero', estado: { label: 'Activo', type: 'success' } },
-  { id: 3, codigo: 'BQ-003', denominacion: 'Andina Cargo', tipo: 'Carguero', estado: { label: 'Inactivo', type: 'neutral' } },
-  { id: 4, codigo: 'BQ-004', denominacion: 'Río de la Plata', tipo: 'Remolcador', estado: { label: 'Activo', type: 'success' } },
-  { id: 5, codigo: 'BQ-005', denominacion: 'Cruz del Atlántico', tipo: 'Petrolero', estado: { label: 'Inactivo', type: 'neutral' } },
+  { id: 1, codigo: 'BQ-001', imo: '9321483', denominacion: 'Estrella del Sur', tipo: 'Portacontenedores', estado: { label: 'Activo', type: 'success' } },
+  { id: 2, codigo: 'BQ-002', imo: '9454436', denominacion: 'Puerto Norte I', tipo: 'Carguero', estado: { label: 'Activo', type: 'success' } },
+  { id: 3, codigo: 'BQ-003', imo: '9632179', denominacion: 'Andina Cargo', tipo: 'Carguero', estado: { label: 'Inactivo', type: 'neutral' } },
+  { id: 4, codigo: 'BQ-004', imo: '9704386', denominacion: 'Río de la Plata', tipo: 'Remolcador', estado: { label: 'Activo', type: 'success' } },
+  { id: 5, codigo: 'BQ-005', imo: '9811000', denominacion: 'Cruz del Atlántico', tipo: 'Petrolero', estado: { label: 'Inactivo', type: 'neutral' } },
+];
+
+// Ejemplo — reemplazar por el catálogo real de depósitos (mismo criterio que
+// INITIAL_BUQUES: la grilla y el alta/edición comparten el set, sin backend).
+const INITIAL_DEPOSITOS = [
+  { id: 1, codigo: 'DEP-001', denominacion: 'Depósito Central', codigoLot: 'LOT-100', actualizaStock: true, depositoFiscal: false, trabajaSectorizacion: true, estado: { label: 'Activo', type: 'success' } },
+  { id: 2, codigo: 'DEP-002', denominacion: 'Depósito Fiscal Norte', codigoLot: 'LOT-200', actualizaStock: true, depositoFiscal: true, trabajaSectorizacion: false, estado: { label: 'Activo', type: 'success' } },
+  { id: 3, codigo: 'DEP-003', denominacion: 'Depósito Zona Franca', codigoLot: 'LOT-300', actualizaStock: false, depositoFiscal: true, trabajaSectorizacion: false, estado: { label: 'Inactivo', type: 'neutral' } },
+  { id: 4, codigo: 'DEP-004', denominacion: 'Depósito Contenedores', codigoLot: 'LOT-400', actualizaStock: true, depositoFiscal: false, trabajaSectorizacion: true, estado: { label: 'Activo', type: 'success' } },
+  { id: 5, codigo: 'DEP-005', denominacion: 'Depósito Graneles', codigoLot: 'LOT-500', actualizaStock: false, depositoFiscal: false, trabajaSectorizacion: false, estado: { label: 'Inactivo', type: 'neutral' } },
 ];
 
 // Ejemplo — reemplazar por el catálogo real de contratos. Vive acá (no en
@@ -249,6 +265,7 @@ function useRoute() {
 export default function App() {
   const [path, navigate] = useRoute();
   const [buques, setBuques] = useState(INITIAL_BUQUES);
+  const [depositos, setDepositos] = useState(INITIAL_DEPOSITOS);
   const [contratos, setContratos] = useState(INITIAL_CONTRATOS);
   const [usuarios, setUsuarios] = useState(INITIAL_USUARIOS);
   const [perfiles, setPerfiles] = useState(INITIAL_PERFILES);
@@ -281,6 +298,16 @@ export default function App() {
   function updateBuque(buque) {
     setBuques((prev) => prev.map((b) => (b.id === buque.id ? buque : b)));
     navigate('/buques');
+  }
+
+  function addDeposito(deposito) {
+    setDepositos((prev) => [...prev, deposito]);
+    navigate('/depositos');
+  }
+
+  function updateDeposito(deposito) {
+    setDepositos((prev) => prev.map((d) => (d.id === deposito.id ? deposito : d)));
+    navigate('/depositos');
   }
 
   function addContrato(contrato) {
@@ -348,6 +375,9 @@ export default function App() {
         rows={buques}
         onCreate={addBuque}
         onUpdate={updateBuque}
+        depositos={depositos}
+        onCreateDeposito={addDeposito}
+        onUpdateDeposito={updateDeposito}
         contratos={contratos}
         onCreateContrato={addContrato}
         onUpdateContrato={updateContrato}

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import LayoutMaestroBasico from '../../../templates/LayoutMaestroBasico/LayoutMaestroBasico.jsx';
+import LayoutMaestroFormulario from '../../../templates/LayoutMaestroFormulario/LayoutMaestroFormulario.jsx';
+import FormRow from '../../../components/FormRow/FormRow.jsx';
 import TextField from '../../../components/TextField/TextField.jsx';
 import Checkbox from '../../../components/Checkbox/Checkbox.jsx';
 import { OPERACIONES_SIDEBAR_PROPS } from '../../../config/sidebars/operaciones.js';
@@ -11,6 +13,36 @@ const TITLES = {
   edit: 'Editar Buque',
 };
 
+const EMPTY = {
+  codigo: '', denominacion: '', imo: '',
+  tipoCodigo: '', tipoDenominacion: '',
+  banderaCodigo: '', banderaDenominacion: '',
+  navieraCodigo: '', navieraDenominacion: '',
+  eslora: '', manga: '', puntal: '', coeficiente: '',
+  vrn: '', trn: '', tbt: '', tpc: '', lastre: '',
+  caladoEntrada: '', caladoSalida: '', anioConstruccion: '', indicativoLlamada: '', matricula: '',
+};
+
+// Campo "código + denominación" (Tipo, Bandera, Naviera). No existe todavía un
+// componente de selector con búsqueda (el diseño original tiene un ícono para
+// abrir el catálogo) — por ahora son dos TextField sueltos bajo una misma
+// etiqueta. Pendiente: componente real de lookup.
+function LookupField({ label, codigo, denominacion, onCodigo, onDenominacion, disabled }) {
+  return (
+    <div className={styles.lookup} role="group" aria-label={label}>
+      <span className={styles.lookupLabel}>{label}</span>
+      <div className={styles.lookupInputs}>
+        <div className={styles.lookupCodigo}>
+          <TextField placeholder="Código" aria-label={`${label} — código`} value={codigo} onChange={onCodigo} disabled={disabled} />
+        </div>
+        <div className={styles.lookupDenominacion}>
+          <TextField placeholder="Denominación" aria-label={`${label} — denominación`} value={denominacion} onChange={onDenominacion} disabled={disabled} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function BuqueFormulario({ onNavigate, onSearch, rows = [], onCreate, onUpdate, params = {}, mode = 'create' }) {
   const isView = mode === 'view';
   const isEdit = mode === 'edit';
@@ -18,9 +50,13 @@ export default function BuqueFormulario({ onNavigate, onSearch, rows = [], onCre
 
   const navigate = onNavigate ?? ((d) => console.log('navigate', d));
 
-  const [codigo, setCodigo] = useState(existing?.codigo ?? '');
-  const [denominacion, setDenominacion] = useState(existing?.denominacion ?? '');
-  const [tipo, setTipo] = useState(existing?.tipo ?? '');
+  // `tipo` (string) es el dato original de las filas; ahora el tipo es un
+  // par código + denominación, y la denominación hereda ese valor.
+  const [values, setValues] = useState({
+    ...EMPTY,
+    ...existing,
+    tipoDenominacion: existing?.tipoDenominacion ?? existing?.tipo ?? '',
+  });
   const [inactivo, setInactivo] = useState(existing?.estado?.label === 'Inactivo');
   const [errors, setErrors] = useState({});
 
@@ -51,25 +87,43 @@ export default function BuqueFormulario({ onNavigate, onSearch, rows = [], onCre
     );
   }
 
-  function updateField(setter, key) {
+  function set(key) {
     return (e) => {
-      setter(e.target.value);
+      const { value } = e.target;
+      setValues((prev) => ({ ...prev, [key]: value }));
       if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
     };
   }
 
+  // Campo de texto simple de la pantalla: value/onChange/disabled ya resueltos.
+  const field = (key, label, extra = {}) => (
+    <TextField label={label} value={values[key]} onChange={set(key)} disabled={isView} {...extra} />
+  );
+  const numeric = { inputMode: 'decimal' };
+
+  const lookup = (key, label) => (
+    <LookupField
+      label={label}
+      codigo={values[`${key}Codigo`]}
+      denominacion={values[`${key}Denominacion`]}
+      onCodigo={set(`${key}Codigo`)}
+      onDenominacion={set(`${key}Denominacion`)}
+      disabled={isView}
+    />
+  );
+
   function handleSave() {
     const nextErrors = {};
-    if (!codigo.trim()) nextErrors.codigo = 'Campo requerido';
-    if (!denominacion.trim()) nextErrors.denominacion = 'Campo requerido';
+    if (!values.codigo.trim()) nextErrors.codigo = 'Campo requerido';
+    if (!values.denominacion.trim()) nextErrors.denominacion = 'Campo requerido';
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
+    const trimmed = Object.fromEntries(Object.keys(EMPTY).map((k) => [k, String(values[k] ?? '').trim()]));
     const buque = {
       id: existing?.id ?? Date.now(),
-      codigo: codigo.trim(),
-      denominacion: denominacion.trim(),
-      tipo: tipo.trim(),
+      ...trimmed,
+      tipo: trimmed.tipoDenominacion, // compatibilidad con las filas originales
       estado: inactivo ? { label: 'Inactivo', type: 'neutral' } : { label: 'Activo', type: 'success' },
     };
 
@@ -77,8 +131,16 @@ export default function BuqueFormulario({ onNavigate, onSearch, rows = [], onCre
     else onCreate?.(buque);
   }
 
+  // Template M-02 (Formulario por secciones): varios grupos del mismo
+  // contexto, todos expandidos, y los datos opcionales en un Accordion
+  // colapsado al final. Agrupación:
+  //  - Datos generales: identificación + clasificación (tipo, bandera, naviera) + estado.
+  //  - Dimensiones: medidas del casco.
+  //  - Tonelaje y capacidad: registros de tonelaje, capacidad y lastre. ⚠️ Grupo
+  //    inferido a partir de la pantalla de referencia (no figura en Figma) — validar.
   return (
-    <LayoutMaestroBasico
+    <LayoutMaestroFormulario
+      template="M-02"
       sidebar={OPERACIONES_SIDEBAR_PROPS}
       activeHref="/buques"
       onNavigate={navigate}
@@ -91,34 +153,75 @@ export default function BuqueFormulario({ onNavigate, onSearch, rows = [], onCre
       onSave={isView ? undefined : handleSave}
       onCancel={handleCancel}
       cancelLabel={isView ? 'Volver' : 'Cancelar'}
-      formTitle="Datos del buque"
-    >
-      <div className={styles.fieldsRow}>
-        <div className={styles.field}>
-          <TextField
-            label="Código"
-            value={codigo}
-            onChange={updateField(setCodigo, 'codigo')}
-            disabled={isView}
-            error={Boolean(errors.codigo)}
-            helperText={errors.codigo}
-          />
-        </div>
-        <div className={styles.field}>
-          <TextField
-            label="Denominación"
-            value={denominacion}
-            onChange={updateField(setDenominacion, 'denominacion')}
-            disabled={isView}
-            error={Boolean(errors.denominacion)}
-            helperText={errors.denominacion}
-          />
-        </div>
-        <div className={styles.field}>
-          <TextField label="Tipo" value={tipo} onChange={(e) => setTipo(e.target.value)} disabled={isView} />
-        </div>
-      </div>
-      <Checkbox label="Inactivo" checked={inactivo} onChange={(e) => setInactivo(e.target.checked)} disabled={isView} />
-    </LayoutMaestroBasico>
+      blocks={[
+        {
+          type: 'form',
+          title: 'Datos generales',
+          children: (
+            <>
+              <FormRow>
+                {field('codigo', 'Código', { error: Boolean(errors.codigo), helperText: errors.codigo })}
+                {field('denominacion', 'Denominación', { error: Boolean(errors.denominacion), helperText: errors.denominacion })}
+                {field('imo', 'IMO')}
+              </FormRow>
+              <FormRow>
+                {lookup('tipo', 'Tipo')}
+                {lookup('bandera', 'Bandera')}
+                {lookup('naviera', 'Naviera')}
+              </FormRow>
+              <Checkbox label="Inactivo" checked={inactivo} onChange={(e) => setInactivo(e.target.checked)} disabled={isView} />
+            </>
+          ),
+        },
+        {
+          type: 'form',
+          title: 'Dimensiones',
+          children: (
+            <>
+              <FormRow>
+                {field('eslora', 'Eslora', numeric)}
+                {field('manga', 'Manga', numeric)}
+                {field('puntal', 'Puntal', numeric)}
+              </FormRow>
+              <FormRow>{field('coeficiente', 'Coeficiente', numeric)}</FormRow>
+            </>
+          ),
+        },
+        {
+          type: 'form',
+          title: 'Tonelaje y capacidad',
+          children: (
+            <>
+              <FormRow>
+                {field('vrn', 'VRN')}
+                {field('trn', 'TRN')}
+                {field('tbt', 'TBT', numeric)}
+              </FormRow>
+              <FormRow>
+                {field('tpc', 'TPC', numeric)}
+                {field('lastre', 'Lastre', numeric)}
+              </FormRow>
+            </>
+          ),
+        },
+        {
+          type: 'accordion',
+          title: 'Datos adicionales (opcional)',
+          children: (
+            <>
+              <FormRow>
+                {field('caladoEntrada', 'Calado de entrada', numeric)}
+                {field('caladoSalida', 'Calado de salida', numeric)}
+                {field('anioConstruccion', 'Año de construcción', { inputMode: 'numeric', maxLength: 4 })}
+              </FormRow>
+              <FormRow>
+                {field('indicativoLlamada', 'Indicativo de llamada')}
+                {field('matricula', 'Matrícula')}
+              </FormRow>
+            </>
+          ),
+        },
+      ]}
+    />
   );
 }

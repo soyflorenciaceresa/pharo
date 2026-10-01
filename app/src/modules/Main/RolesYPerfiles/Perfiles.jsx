@@ -42,7 +42,6 @@ export default function Perfiles({ onNavigate, onSearch, perfiles }) {
       onReload={() => console.log('recargar perfiles')}
       columns={COLUMNS}
       rows={perfiles ?? DEFAULT_ROWS}
-      selectable
       actions={[
         { key: 'view', icon: 'bi-eye', label: 'Visualizar', onClick: (row) => navigate({ href: `/admin/roles-y-perfiles/${row.id}/ver`, label: 'Visualizar' }) },
         { key: 'edit', icon: 'icon-edit', label: 'Editar', onClick: (row) => navigate({ href: `/admin/roles-y-perfiles/${row.id}/editar`, label: 'Editar' }) },
