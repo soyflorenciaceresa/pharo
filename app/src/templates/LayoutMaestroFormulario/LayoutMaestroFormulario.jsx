@@ -100,11 +100,13 @@ function renderBlock(block, key) {
       />
     );
   }
-  return (
-    <FormContainer key={key} title={block.title}>
+  const section = (
+    <FormContainer key={block.id ? undefined : key} title={block.title}>
       {block.children}
     </FormContainer>
   );
+  // `id` opcional: ancla para un índice de secciones (ver SectionIndex).
+  return block.id ? <div key={key} id={block.id} className={styles.anchor}>{section}</div> : section;
 }
 
 export default function LayoutMaestroFormulario({
@@ -126,6 +128,10 @@ export default function LayoutMaestroFormulario({
   tabs = [],
   defaultTab,
   onTabChange,
+  // Contenido opcional justo debajo del Page header (ej. un `Message` de contexto), antes de los bloques.
+  belowHeader,
+  // Acciones secundarias extra del Page header (ej. "Guardar borrador"), antes de Cancelar.
+  secondaryActions = [],
 }) {
   const [activeTab, setActiveTab] = useState(defaultTab ?? tabs[0]?.id);
 
@@ -150,9 +156,11 @@ export default function LayoutMaestroFormulario({
           actions={{
             label: 'Acciones del formulario',
             primary: onSave ? { label: saveLabel, iconStart: 'icon-check2', onClick: onSave } : undefined,
-            secondary: onCancel ? [{ label: cancelLabel, iconStart: 'icon-close', onClick: onCancel }] : [],
+            secondary: [...secondaryActions, ...(onCancel ? [{ label: cancelLabel, iconStart: 'icon-close', onClick: onCancel }] : [])],
           }}
         />
+
+        {belowHeader}
 
         {blocks.filter((b) => b.type !== 'accordion').map((block, i) => renderBlock(block, `b${i}`))}
 

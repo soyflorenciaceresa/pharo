@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import Button from '../Button/Button.jsx';
 import ActionGroup from '../ActionGroup/ActionGroup.jsx';
 import ToggleIcon from '../ToggleIcon/ToggleIcon.jsx';
@@ -83,6 +84,19 @@ export default function PageHeader({
   actions,
   className,
 }) {
+  const rowRef = useRef(null);
+  // Publica el alto del Page header (fijo) como `--page-header-height`, para que
+  // otros elementos fijos (ej. SectionIndex) se peguen justo debajo.
+  useEffect(() => {
+    const el = rowRef.current;
+    if (!el) return undefined;
+    const publish = () => document.documentElement.style.setProperty('--page-header-height', `${el.getBoundingClientRect().height}px`);
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(el);
+    return () => observer.disconnect();
+  });
+
   const config = TYPES[type];
   if (!config) {
     warn(`\`type\` inválido ("${type}"): usar 'home', 'maestro' o 'form'. No se renderiza nada.`);
@@ -112,7 +126,7 @@ export default function PageHeader({
   }
 
   return (
-    <div className={[styles.row, className].filter(Boolean).join(' ')}>
+    <div ref={rowRef} className={[styles.row, className].filter(Boolean).join(' ')}>
       <div className={styles.titleCol}>
         {hasBreadcrumb && <Breadcrumb items={breadcrumb} />}
         <div className={styles.titleRow}>

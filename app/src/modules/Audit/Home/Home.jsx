@@ -5,10 +5,11 @@ import { AUDIT_SIDEBAR_PROPS } from '../../../config/sidebars/audit.js';
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Auditorías del mes', value: 9, trendLabel: '+2 vs mes anterior', trendDirection: 'up', data: [7, 9, 10, 7, 9, 6, 9] },
-  { label: 'Hallazgos abiertos', value: 4, trendLabel: '-1 vs ayer', trendDirection: 'down', data: [2, 4, 6, 3, 5, 3, 4] },
-  { label: 'Checklists activos', value: 16, trendLabel: '+1 vs mes anterior', trendDirection: 'up', data: [14, 16, 17, 14, 15, 12, 16] },
-  { label: 'Cumplimiento promedio', value: '94%', trendLabel: '+2% vs mes anterior', trendDirection: 'up', data: [92, 91, 90, 85, 84, 78, 94] },
+  { label: 'Auditorías del mes', value: 9, trendLabel: '+2 vs mes anterior', trendDirection: 'up' },
+  { label: 'Hallazgos abiertos', value: 4, trendLabel: '-1 vs ayer', trendDirection: 'down' },
+  { label: 'Checklists activos', value: 16, trendLabel: '+1 vs mes anterior', trendDirection: 'up' },
+  { label: 'Cumplimiento promedio', value: '94%', trendLabel: '+2% vs mes anterior', trendDirection: 'up' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

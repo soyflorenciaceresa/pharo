@@ -14,3 +14,9 @@
 .tabs {
   padding-top: var(--spacing-md);
 }
+
+/* Ancla de sección (ver SectionIndex): deja espacio para el Page header y el
+   índice fijos al saltar a una sección. */
+.anchor {
+  scroll-margin-top: calc(var(--size-header-height) + var(--page-header-height, 100px) + 104px);
+}

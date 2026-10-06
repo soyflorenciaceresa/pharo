@@ -5,10 +5,11 @@ import { STOCK_SIDEBAR_PROPS } from '../../../config/sidebars/stock.js';
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Artículos en stock', value: '1.842', trendLabel: '+36 vs ayer', trendDirection: 'up', data: [1840, 1787, 1733, 1675, 1622, 1564, 1842] },
-  { label: 'Depósitos activos', value: 4, trendLabel: '+1 vs mes anterior', trendDirection: 'up', data: [2, 4, 6, 3, 5, 1, 4] },
-  { label: 'Artículos con stock bajo', value: 9, trendLabel: '-2 vs ayer', trendDirection: 'down', data: [7, 9, 12, 9, 11, 8, 9] },
-  { label: 'Movimientos del mes', value: 214, trendLabel: '+18 vs mes anterior', trendDirection: 'up', data: [212, 208, 203, 194, 189, 180, 214] },
+  { label: 'Artículos en stock', value: '1.842', trendLabel: '+36 vs ayer', trendDirection: 'up' },
+  { label: 'Depósitos activos', value: 4, trendLabel: '+1 vs mes anterior', trendDirection: 'up' },
+  { label: 'Artículos con stock bajo', value: 9, trendLabel: '-2 vs ayer', trendDirection: 'down' },
+  { label: 'Movimientos del mes', value: 214, trendLabel: '+18 vs mes anterior', trendDirection: 'up' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

@@ -27,7 +27,12 @@
   color: var(--text);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* Scroll de TODO el sidebar (header, empresa, navegación y usuario), no solo de la
+     lista de ítems: con muchos ítems el conjunto se desplaza junto. */
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   transition: width 0.5s ease;
   position: sticky;
   top: 0;
@@ -109,8 +114,8 @@
 .dropdownRow:hover { background: var(--bg-hover); }
 .dropdownRow[aria-current="true"] { background: var(--row-active); }
 
-.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding-top: var(--sp-2); scrollbar-width: thin; }
-.nav { display: flex; flex-direction: column; gap: var(--sp-1); }
+.scroll { flex: 1 0 auto; display: flex; flex-direction: column; padding-top: var(--sp-2); }
+.nav { display: flex; flex-direction: column; gap: var(--sp-1); flex: 0 0 auto; }
 
 .groupHeader { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: var(--sp-2); width: calc(100% - var(--sp-2) * 2); margin: 0 var(--sp-2); padding: var(--sp-3) var(--sp-2); border-radius: var(--r-3); font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
 .sidebar:not(.expanded) .groupHeader { justify-content: center; padding: var(--sp-3) 0; }
@@ -188,3 +193,44 @@
 .isAction { cursor: pointer; }
 .isAction:hover { background: var(--bg-hover); }
 .danger { color: var(--danger); }
+
+/* Empresa sin acciones asignadas: en vez de la navegación, un mensaje centrado
+   (candado + título + texto). Colapsado solo queda el candado. */
+.empty {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg, 24px);
+  padding: var(--sp-4);
+  text-align: center;
+}
+
+.emptyIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 24px;
+  border: 1px solid var(--divider);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-subtle);
+}
+
+.sidebar:not(.expanded) .emptyIcon { width: 40px; height: 40px; border-radius: var(--r-3); }
+.sidebar:not(.expanded) .emptyIcon svg { width: 18px; height: 18px; }
+
+.emptyText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.sidebar:not(.expanded) .emptyText { display: none; }
+
+.emptyTitle { font-size: 14px; font-weight: 600; color: var(--text-muted); }
+.emptyMessage { font-size: 13px; line-height: 1.5; color: var(--text-subtle); }

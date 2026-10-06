@@ -41,7 +41,8 @@
   --text-badge-warning: #92400e;      /* color/warning/on-subtle → amber/800 */
   --surface-badge-error: #fee2e2;     /* color/danger/subtle → red/100 */
   --text-badge-error: #991b1b;        /* color/danger/on-subtle → red/800 */
-  --surface-badge-info: #eceeff;      /* color/info/subtle → blue/100 */
+  --color-info-subtle: #eceeff;       /* color/info/subtle → blue/100 (Alias) */
+  --surface-badge-info: var(--color-info-subtle);
   --text-badge-info: #2d3eb1;         /* color/info/on-subtle → blue/800 */
   --surface-badge-neutral: #eeeff1;   /* color/neutral/subtle → ink/100 */
   --text-badge-neutral: #445664;      /* color/neutral/on-subtle → ink/700 */
@@ -138,7 +139,13 @@
   --radius-card: 16px;
   --radius-full: 9999px;
 
+  /* Empty State (788:7): en Figma usa las primitivas spacing/9 y radius/5 directo (no hay alias semántico). */
+  --spacing-9: 40px;
+  --radius-5: 12px;
+
   --size-header-height: 64px;
+  /* Tope de ancho del contenido de listados y homes (monitores grandes/ultrawide). Los formularios usan 960px (LayoutMaestroBasico/Formulario). */
+  --size-content-max-wide: 1600px;
 
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;

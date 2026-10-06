@@ -70,7 +70,6 @@ export default function Modulos({
               <span>Módulos</span>
             </div>
             <h1 className={styles.title}>Módulos</h1>
-            <p className={styles.subtitle}>Elegí qué módulos están habilitados para la empresa activa — solo estos van a aparecer en el home.</p>
           </div>
           <Button variant="solid" onClick={handleSave}>Guardar</Button>
         </div>

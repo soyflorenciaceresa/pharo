@@ -1,0 +1,64 @@
+.root {
+  position: relative;
+  width: 100%;
+}
+
+.track {
+  display: flex;
+  gap: var(--spacing-md);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  /* Espacio vertical para que no se recorte la sombra de hover de las cards. */
+  padding: 4px 0;
+  margin: -4px 0;
+}
+
+.track::-webkit-scrollbar { display: none; }
+
+.track:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-card);
+}
+
+.track > * {
+  flex: 0 0 var(--scroller-item-width, 274px);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--color-border-default);
+  border-radius: 50%;
+  background: var(--color-surface-default);
+  color: var(--color-text-default);
+  cursor: pointer;
+  box-shadow: 0px 2px 6px rgba(15, 30, 52, 0.12);
+  transition: box-shadow 0.15s ease;
+}
+
+.arrow:hover { box-shadow: 0px 3px 10px rgba(15, 30, 52, 0.2); }
+
+.arrow:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.arrowLeft { left: var(--spacing-sm); }
+.arrowRight { right: var(--spacing-sm); }
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow { transition: none; }
+  .track { scroll-behavior: auto; }
+}

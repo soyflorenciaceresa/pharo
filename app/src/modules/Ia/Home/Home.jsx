@@ -5,10 +5,11 @@ import { IA_SIDEBAR_PROPS } from '../../../config/sidebars/ia.js';
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Consultas del mes', value: '1.204', trendLabel: '+180 vs mes anterior', trendDirection: 'up', data: [1202, 1168, 1134, 1095, 1061, 1021, 1204] },
-  { label: 'Modelos activos', value: 5, trendLabel: '+1 vs mes anterior', trendDirection: 'up', data: [3, 5, 7, 4, 5, 2, 5] },
-  { label: 'Precisión promedio', value: '91%', trendLabel: '+2% vs mes anterior', trendDirection: 'up', data: [89, 88, 88, 82, 81, 75, 91] },
-  { label: 'Casos de uso en producción', value: 8, trendLabel: '+1 vs mes anterior', trendDirection: 'up', data: [6, 8, 10, 6, 8, 5, 8] },
+  { label: 'Consultas del mes', value: '1.204', trendLabel: '+180 vs mes anterior', trendDirection: 'up' },
+  { label: 'Modelos activos', value: 5, trendLabel: '+1 vs mes anterior', trendDirection: 'up' },
+  { label: 'Precisión promedio', value: '91%', trendLabel: '+2% vs mes anterior', trendDirection: 'up' },
+  { label: 'Casos de uso en producción', value: 8, trendLabel: '+1 vs mes anterior', trendDirection: 'up' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

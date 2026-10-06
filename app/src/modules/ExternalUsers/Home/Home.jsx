@@ -5,10 +5,11 @@ import { EXTERNAL_USERS_SIDEBAR_PROPS } from '../../../config/sidebars/external-
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Usuarios externos activos', value: 58, trendLabel: '+4 vs mes anterior', trendDirection: 'up', data: [56, 56, 57, 52, 52, 47, 58] },
-  { label: 'Invitaciones pendientes', value: 6, trendLabel: '+2 vs ayer', trendDirection: 'up', data: [4, 6, 8, 4, 6, 3, 6] },
-  { label: 'Empresas vinculadas', value: 12, trendLabel: '+1 vs mes anterior', trendDirection: 'up', data: [10, 12, 13, 10, 12, 8, 12] },
-  { label: 'Accesos revocados este mes', value: 2, trendLabel: '+1 vs mes anterior', trendDirection: 'up', data: [0, 2, 4, 1, 3, 0, 2] },
+  { label: 'Usuarios externos activos', value: 58, trendLabel: '+4 vs mes anterior', trendDirection: 'up' },
+  { label: 'Invitaciones pendientes', value: 6, trendLabel: '+2 vs ayer', trendDirection: 'up' },
+  { label: 'Empresas vinculadas', value: 12, trendLabel: '+1 vs mes anterior', trendDirection: 'up' },
+  { label: 'Accesos revocados este mes', value: 2, trendLabel: '+1 vs mes anterior', trendDirection: 'up' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

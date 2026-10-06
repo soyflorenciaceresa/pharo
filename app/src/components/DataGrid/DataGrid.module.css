@@ -21,7 +21,11 @@
   background: var(--color-surface-default);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow-x: auto;
+}
+
+.gridBorderless {
+  border: none;
 }
 
 .headerRow,
@@ -29,6 +33,7 @@
   display: flex;
   align-items: stretch;
   width: 100%;
+  min-width: 640px;
   border-bottom: 1px solid var(--color-border-default);
 }
 

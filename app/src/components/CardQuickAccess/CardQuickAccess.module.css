@@ -41,6 +41,18 @@
   color: var(--color-primary-default);
 }
 
+/* Color identificatorio del módulo al que pertenece el acceso — mismos 8
+   acentos + `neutral` y mismos tokens que CardModule/Sidebar. Default `blue`
+   (el color original de esta card). */
+.iconBadge[data-accent='violet'] { background: var(--color-accent-violet-subtle); color: var(--color-accent-violet); }
+.iconBadge[data-accent='green'] { background: var(--color-accent-green-subtle); color: var(--color-accent-green); }
+.iconBadge[data-accent='amber'] { background: var(--color-accent-amber-subtle); color: var(--color-accent-amber); }
+.iconBadge[data-accent='red'] { background: var(--color-accent-red-subtle); color: var(--color-accent-red); }
+.iconBadge[data-accent='cyan'] { background: var(--color-accent-cyan-subtle); color: var(--color-accent-cyan); }
+.iconBadge[data-accent='pink'] { background: var(--color-accent-pink-subtle); color: var(--color-accent-pink); }
+.iconBadge[data-accent='indigo'] { background: var(--color-accent-indigo-subtle); color: var(--color-accent-indigo); }
+.iconBadge[data-accent='neutral'] { background: var(--color-surface-selected); color: var(--color-text-secondary); }
+
 .textCol {
   flex: 1;
   min-width: 0;

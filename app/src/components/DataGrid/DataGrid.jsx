@@ -55,6 +55,7 @@ export default function DataGrid({
   actions,
   searchPlaceholder = 'Buscar...',
   searchable = true,
+  bordered = true,
   emptyMessage = 'No se encontraron resultados.',
 }) {
   const [search, setSearch] = useState('');
@@ -95,7 +96,7 @@ export default function DataGrid({
 
   return (
     <div className={styles.root}>
-      <div className={styles.grid}>
+      <div className={cx(styles.grid, !bordered && styles.gridBorderless)}>
         {searchable && (
           <div className={styles.toolbar}>
             <TextField

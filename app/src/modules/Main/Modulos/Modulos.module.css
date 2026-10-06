@@ -44,19 +44,17 @@
   color: var(--color-text-default);
 }
 
-.subtitle {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--color-text-secondary);
-}
-
-/* Mismo ancho de card fijo que Main/Home (174px, ver esa nota) — acá no hace
-   falta medir columnas por JS porque esta pantalla no pagina (se ven los 23
-   módulos siempre, sin importar cuántas filas resulten). */
+/* Misma grilla que los Módulos de Main/Home: 174px de ancho mínimo, `auto-fill`
+   agrega una columna apenas entra otra card y `1fr` reparte el sobrante — la fila
+   queda siempre llena, sin espacio vacío a la derecha. Proporción fija 174 × 133
+   (`aspect-ratio`). No pagina: se ven los 23 módulos siempre. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 174px);
+  grid-template-columns: repeat(auto-fill, minmax(174px, 1fr));
   gap: var(--spacing-md);
   width: 100%;
+}
+
+.grid > * {
+  aspect-ratio: 174 / 133;
 }

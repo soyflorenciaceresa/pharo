@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import Sidebar from '../../components/Sidebar/Sidebar.jsx';
 import TopBar from '../../components/TopBar/TopBar.jsx';
+import { NO_ACCESS_COMPANY_IDS } from '../../config/companyAccess.js';
 import { useSidebarPinned } from '../../context/SidebarPinnedContext.jsx';
 import { buildModuleFaviconHref } from '../../utils/moduleFavicon.js';
 import styles from './LayoutBase.module.css';
@@ -39,7 +40,7 @@ export default function LayoutBase({ sidebarProps, onSearch, searchPlaceholder, 
 
   return (
     <div className={styles.root}>
-      <Sidebar {...sidebarProps} defaultPinned={pinned} onToggle={handleSidebarToggle} />
+      <Sidebar {...sidebarProps} noAccessCompanyIds={NO_ACCESS_COMPANY_IDS} defaultPinned={pinned} onToggle={handleSidebarToggle} />
       <div className={styles.main}>
         <TopBar onSearch={onSearch} searchPlaceholder={searchPlaceholder} />
         <div className={fullBleed ? styles.contentFullBleed : styles.content}>{children}</div>

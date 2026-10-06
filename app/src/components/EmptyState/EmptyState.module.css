@@ -1,0 +1,56 @@
+/* Figma 788:7 — 270px de ancho en el diseño; en código ocupa el ancho de su
+   contenedor (ej. la columna de Actividad reciente). */
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  width: 100%;
+  padding: var(--spacing-9) var(--spacing-lg);
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-card);
+}
+
+.iconBadge {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--color-info-subtle);
+  color: var(--color-accent-indigo);
+  border-radius: var(--radius-5);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text-default);
+}
+
+.description {
+  margin: 0;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-label);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}

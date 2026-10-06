@@ -1,6 +1,8 @@
 .accentWrap {
   display: inline-flex;
   width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   background: var(--color-primary-default);
   border-radius: var(--radius-card);
   padding-left: var(--spacing-xs);
@@ -16,10 +18,11 @@
 .card {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: var(--spacing-md);
   width: 100%;
-  min-width: 169px;
-  height: 104.25px;
+  min-width: 0;
+  height: 100%;
   box-sizing: border-box;
   padding: var(--spacing-md);
   background: var(--color-surface-card);
@@ -33,6 +36,7 @@
 
 .row {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
   gap: 7px;
@@ -44,8 +48,7 @@
 
 .label {
   margin: 0;
-  width: 72px;
-  height: 30.25px;
+  width: 100%;
   font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 500;
@@ -57,18 +60,6 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.chart {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  color: var(--color-primary-default);
-}
-
-.sparkline {
-  display: block;
 }
 
 .value {

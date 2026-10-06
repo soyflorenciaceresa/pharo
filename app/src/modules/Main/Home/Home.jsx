@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import LayoutBase from '../../../templates/LayoutBase/LayoutBase.jsx';
 import CardQuickAccess from '../../../components/CardQuickAccess/CardQuickAccess.jsx';
+import ModuleAccessCard from '../../../components/ModuleAccessCard/ModuleAccessCard.jsx';
 import CardModule from '../../../components/CardModule/CardModule.jsx';
 import ActivityList from '../../../components/ActivityList/ActivityList.jsx';
+import Button from '../../../components/Button/Button.jsx';
 import Pagination from '../../../components/Pagination/Pagination.jsx';
 import PageHeader from '../../../components/PageHeader/PageHeader.jsx';
+import EmptyState from '../../../components/EmptyState/EmptyState.jsx';
+import { INITIAL_STATE_COMPANY_IDS, QUICK_ACCESS_INITIAL_MESSAGE } from '../../../config/companyAccess.js';
+import Message from '../../../components/Message/Message.jsx';
+import HorizontalScroller from '../../../components/HorizontalScroller/HorizontalScroller.jsx';
 import TourPopup from '../../../components/TourPopup/TourPopup.jsx';
 import { MAIN_SIDEBAR_PROPS } from '../../../config/sidebars/main.js';
 import { PRODUCT_TOUR_SLIDES } from '../../../config/productTour.js';
@@ -18,14 +24,43 @@ import styles from './Home.module.css';
 // hay cuenta de usuario real, mover esta marca a esa cuenta en vez de acá.
 const PRODUCT_TOUR_SEEN_KEY = 'pharo-product-tour-seen';
 
-// Ejemplo — reemplazar por los ítems que el usuario haya marcado como favoritos
-// (hoy: un ejemplo de cada grupo del sidebar de Main).
+// Favoritos del usuario, en este orden (pedido). El `accent` es el color
+// identificatorio del módulo (el mismo de `ALL_MODULES` en config/modules.js).
+// `href`: la pantalla real cuando existe; si no, el Home del módulo (los ítems
+// de sidebar que todavía no tienen ruta caen a Main). Ver notas por ítem.
+// Reemplazar por los favoritos reales cuando haya persistencia.
 const QUICK_ACCESS = [
-  { icon: 'icon-usuarios', title: 'Usuarios', subtitle: 'Administración', href: '/admin/usuarios' },
-  { icon: 'icon-empresas', title: 'Empresas', subtitle: 'Administración', href: '/admin/empresas' },
-  { icon: 'icon-parametros', title: 'Parámetros', subtitle: 'Configuración', href: '/config/parametros' },
-  { icon: 'icon-paises', title: 'Países', subtitle: 'Datos maestros', href: '/datos-maestros/paises' },
+  { icon: 'app-window', accent: 'violet', title: 'Depósitos', subtitle: 'Ports', href: '/depositos' },
+  { icon: 'icon-usuarios', accent: 'neutral', title: 'Personas', subtitle: 'Access Control', href: '/access-control' },
+  { icon: 'bi-cart', accent: 'cyan', title: 'Compras', subtitle: 'Purchases', href: '/purchases' },
+  { icon: 'icon-buques', accent: 'violet', title: 'Buques', subtitle: 'Ports', href: '/buques' },
+  // Free Zone no tiene "Nueva Operación" (es un proceso de Ports): lleva al Home de Free Zone.
+  { icon: 'icon-nueva-operacion', accent: 'green', title: 'Nueva Operación', subtitle: 'Free Zone', href: '/free-zone' },
+  { icon: 'app-window', accent: 'amber', title: 'Contratos', subtitle: 'Grains', href: '/grains/contratos' },
+  // Billing no tiene "Método de pago" ni "Productos" en su sidebar: llevan al Home de Billing.
+  { icon: 'icon-monedas', accent: 'green', title: 'Método de pago', subtitle: 'Billing', href: '/billing' },
+  { icon: 'app-window', accent: 'green', title: 'Productos', subtitle: 'Billing', href: '/billing' },
+  // "Balanzas" ≈ "Básculas" (sidebar de Scales, sin pantalla todavía): Home de Scales.
+  { icon: 'app-window', accent: 'violet', title: 'Balanzas', subtitle: 'Scales', href: '/scales' },
+  // "Clientes" se sacó del sidebar de Ports (sin pantalla): Home de Ports.
+  { icon: 'icon-clientes', accent: 'violet', title: 'Clientes', subtitle: 'Ports', href: '/operaciones' },
+  // No existe un módulo "Agro": se usó Grains (agroindustria, color amber). Sin pantalla de Liquidaciones todavía.
+  { icon: 'icon-monedas', accent: 'amber', title: 'Liquidaciones', subtitle: 'Grains', href: '/grains' },
 ];
+
+// Favoritos por empresa. Una empresa sin entrada usa `QUICK_ACCESS`. "Del Sur
+// Logística" está en estado inicial (usuario recién empezando, sin nada
+// configurado): sin favoritos, así que el Acceso rápido muestra el `Message`
+// de bienvenida en vez de cards.
+const QUICK_ACCESS_BY_COMPANY = {
+  'del-sur': [],
+};
+
+// Empresas en estado inicial (el usuario recién empieza y no configuró nada):
+// además de no tener favoritos, la sección Módulos muestra un `Message` de
+// bienvenida y los módulos con checkbox para elegir cuáles forman parte de su
+// trabajo (mismas `ModuleAccessCard` que `Main/Modulos`).
+const INITIAL_STATE_COMPANIES = INITIAL_STATE_COMPANY_IDS;
 
 // Las cards de módulo tienen ancho fijo (ver Home.module.css) — la cantidad
 // de columnas que entran depende del ancho disponible, así que la paginación
@@ -33,7 +68,7 @@ const QUICK_ACCESS = [
 // coincidir con `.modulesGrid` (grid-template-columns/gap) en el CSS: se
 // usan para replicar a mano el mismo cálculo que ya hace CSS Grid con
 // `auto-fill`, y así saber cuántas columnas entran realmente por fila.
-const MODULE_CARD_WIDTH = 174;
+const MODULE_CARD_WIDTH = 174; // ancho mínimo de card (minmax(174px, 1fr) en .modulesGrid)
 const MODULE_GRID_GAP = 16;
 const MODULE_MAX_ROWS = 3;
 
@@ -47,9 +82,11 @@ const ACTIVITY = [
   { name: 'Martín G.', time: 'hace 2 h', description: 'Cerró incidencia de depósito' },
 ];
 
-export default function Home({ onNavigate, onSearch, activeCompanyId = 'puerto-norte', companyModules, onCompanyChange }) {
+export default function Home({ onNavigate, onSearch, activeCompanyId = 'puerto-norte', companyModules, onCompanyChange, onSaveCompanyModules }) {
   const [modulesPage, setModulesPage] = useState(1);
   const [tourOpen, setTourOpen] = useState(false);
+  // Selección de módulos del estado inicial: local, arranca vacía (nada configurado todavía).
+  const [selectedModuleIds, setSelectedModuleIds] = useState(() => new Set());
   const [modulesPerPage, setModulesPerPage] = useState(MODULE_MAX_ROWS * 4); // 4 = fallback antes de medir
   const modulesGridRef = useRef(null);
 
@@ -57,11 +94,18 @@ export default function Home({ onNavigate, onSearch, activeCompanyId = 'puerto-n
   // empresa del Sidebar y Main/Modulos, donde se editan) — `companyModules`
   // llega por prop desde App.jsx; sin backend real todavía, si no está
   // definido para esa empresa cae al set por default del catálogo.
+  const quickAccess = QUICK_ACCESS_BY_COMPANY[activeCompanyId] ?? QUICK_ACCESS;
   const enabledIds = companyModules?.[activeCompanyId] ?? DEFAULT_COMPANY_MODULES[activeCompanyId] ?? [];
   const enabledModules = ALL_MODULES.filter((m) => enabledIds.includes(m.id));
 
-  const totalModulePages = Math.ceil(enabledModules.length / modulesPerPage);
-  const visibleModules = enabledModules.slice(
+  const isInitialState = INITIAL_STATE_COMPANIES.includes(activeCompanyId);
+  // La sección Módulos sale del estado inicial recién cuando se guarda al menos
+  // un módulo (queda en `companyModules`, así sobrevive a cambiar de pantalla).
+  const isModulesInitial = isInitialState && enabledIds.length === 0;
+  // En estado inicial se listan TODOS los módulos del catálogo para elegir; si no, solo los habilitados.
+  const listedModules = isModulesInitial ? ALL_MODULES : enabledModules;
+  const totalModulePages = Math.ceil(listedModules.length / modulesPerPage);
+  const visibleModules = listedModules.slice(
     (modulesPage - 1) * modulesPerPage,
     modulesPage * modulesPerPage,
   );
@@ -103,6 +147,21 @@ export default function Home({ onNavigate, onSearch, activeCompanyId = 'puerto-n
     setModulesPage(1);
   }, [activeCompanyId, modulesPerPage]);
 
+  function toggleModule(id) {
+    setSelectedModuleIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function saveSelectedModules() {
+    onSaveCompanyModules?.(activeCompanyId, Array.from(selectedModuleIds));
+    setSelectedModuleIds(new Set());
+    setModulesPage(1);
+  }
+
   function handleCloseTour() {
     setTourOpen(false);
     try {
@@ -126,39 +185,71 @@ export default function Home({ onNavigate, onSearch, activeCompanyId = 'puerto-n
         onToggle: (d) => console.log('toggle', d),
       }}
     >
+      <div className={styles.root}>
       <section className={styles.section}>
         <PageHeader type="home" title="Acceso rápido" subtitle="Tus maestros y procesos favoritos" />
-        <div className={styles.quickAccessRow}>
-          {QUICK_ACCESS.map((qa) => (
-            <div key={qa.title} className={styles.quickAccessSlot}>
-              <CardQuickAccess {...qa} />
-            </div>
-          ))}
-        </div>
+        {quickAccess.length === 0 ? (
+          <Message {...QUICK_ACCESS_INITIAL_MESSAGE} />
+        ) : (
+          <HorizontalScroller aria-label="Accesos rápidos">
+            {quickAccess.map((qa) => (
+              <CardQuickAccess key={qa.title} {...qa} />
+            ))}
+          </HorizontalScroller>
+        )}
       </section>
 
       <div className={styles.bottomRow}>
         <section className={styles.modulesCol}>
-          <PageHeader type="home" title="Módulos" subtitle={`${enabledModules.length} módulos disponibles`} />
-          <div className={styles.modulesGrid} ref={modulesGridRef}>
-            {visibleModules.map((m) => (
-              <CardModule key={m.id} {...m} />
-            ))}
-          </div>
-          {totalModulePages > 1 && (
-            <Pagination
-              page={modulesPage}
-              totalPages={totalModulePages}
-              onPrevious={() => setModulesPage((p) => Math.max(1, p - 1))}
-              onNext={() => setModulesPage((p) => Math.min(totalModulePages, p + 1))}
+          <PageHeader type="home" title="Módulos" subtitle={`${isModulesInitial ? ALL_MODULES.length : enabledModules.length} módulos disponibles`} />
+          {isModulesInitial && (
+            <Message
+              icon="icon-modulos"
+              title="Personalizá tu espacio"
+              message="Seleccioná los módulos que forman parte de tu trabajo."
             />
+          )}
+          <div className={styles.modulesGrid} ref={modulesGridRef}>
+            {visibleModules.map((m) =>
+              isModulesInitial ? (
+                <ModuleAccessCard
+                  key={m.id}
+                  icon={m.icon}
+                  accent={m.accent}
+                  title={m.title}
+                  description={m.description}
+                  checked={selectedModuleIds.has(m.id)}
+                  onChange={() => toggleModule(m.id)}
+                />
+              ) : (
+                <CardModule key={m.id} {...m} />
+              ),
+            )}
+          </div>
+          {(totalModulePages > 1 || (isModulesInitial && selectedModuleIds.size > 0)) && (
+            <div className={styles.modulesFooter}>
+              {totalModulePages > 1 ? (
+                <Pagination
+                  page={modulesPage}
+                  totalPages={totalModulePages}
+                  onPrevious={() => setModulesPage((p) => Math.max(1, p - 1))}
+                  onNext={() => setModulesPage((p) => Math.min(totalModulePages, p + 1))}
+                />
+              ) : (
+                <span />
+              )}
+              {isModulesInitial && selectedModuleIds.size > 0 && (
+                <Button onClick={saveSelectedModules}>Guardar</Button>
+              )}
+            </div>
           )}
         </section>
 
         <section className={styles.activityCol}>
           <PageHeader type="home" title="Actividad reciente" subtitle="Últimas acciones del equipo" />
-          <ActivityList items={ACTIVITY} />
+          {isInitialState ? <EmptyState /> : <ActivityList items={ACTIVITY} />}
         </section>
+      </div>
       </div>
 
       <TourPopup open={tourOpen} slides={PRODUCT_TOUR_SLIDES} onClose={handleCloseTour} />

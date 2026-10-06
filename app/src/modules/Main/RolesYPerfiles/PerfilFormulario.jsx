@@ -4,8 +4,7 @@ import FormContainer from '../../../components/FormContainer/FormContainer.jsx';
 import TextField from '../../../components/TextField/TextField.jsx';
 import Checkbox from '../../../components/Checkbox/Checkbox.jsx';
 import CheckboxList from '../../../components/CheckboxList/CheckboxList.jsx';
-import DataGrid from '../../../components/DataGrid/DataGrid.jsx';
-import Button from '../../../components/Button/Button.jsx';
+import ChildGridSection from '../../../components/ChildGridSection/ChildGridSection.jsx';
 import ActionGroup from '../../../components/ActionGroup/ActionGroup.jsx';
 import Select from '../../../components/Select/Select.jsx';
 import Modal from '../../../components/Modal/Modal.jsx';
@@ -176,24 +175,18 @@ export default function PerfilFormulario({ onNavigate, onSearch, perfiles = [], 
         />
       </FormContainer>
 
-      <FormContainer title="Concesionarios">
-        {!isView && (
-          <div className={styles.concesionariosHeader}>
-            <Button variant="solid" iconStart="icon-plus" onClick={handleOpenModal}>Agregar concesionario</Button>
-          </div>
-        )}
-        <DataGrid
-          columns={CONCESIONARIOS_COLUMNS}
-          rows={concesionarioRows}
-          searchPlaceholder="Buscar concesionario..."
-          emptyMessage="No hay concesionarios asignados."
-          actions={
-            isView
-              ? []
-              : [{ key: 'delete', icon: 'icon-delete', label: 'Eliminar', onClick: (row) => handleRemoveConcesionario(row.id) }]
-          }
-        />
-      </FormContainer>
+      <ChildGridSection
+        title="Concesionarios"
+        onAdd={isView ? undefined : handleOpenModal}
+        columns={CONCESIONARIOS_COLUMNS}
+        rows={concesionarioRows}
+        emptyMessage="No hay concesionarios asignados."
+        actions={
+          isView
+            ? []
+            : [{ key: 'delete', icon: 'icon-delete', label: 'Eliminar', onClick: (row) => handleRemoveConcesionario(row.id) }]
+        }
+      />
 
       <Modal
         open={modalOpen}

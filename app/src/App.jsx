@@ -3,6 +3,13 @@ import Home from './modules/Main/Home/Home.jsx';
 import OperacionesHome from './modules/Operaciones/Home/Home.jsx';
 import Buque from './modules/Operaciones/Buque/Buque.jsx';
 import BuqueFormulario from './modules/Operaciones/Buque/BuqueFormulario.jsx';
+import Equipos from './modules/Main/Equipos/Equipos.jsx';
+import EquipoFormulario from './modules/Main/Equipos/EquipoFormulario.jsx';
+import NuevaOperacion from './modules/Operaciones/NuevaOperacion/NuevaOperacion.jsx';
+import MaestroPorts from './modules/Operaciones/Maestros/MaestroPorts.jsx';
+import { MAESTROS_PORTS } from './config/maestrosPorts.js';
+import Giros from './modules/Operaciones/GiroBuque/Giros.jsx';
+import SolicitudGiro from './modules/Operaciones/GiroBuque/SolicitudGiro.jsx';
 import Deposito from './modules/Operaciones/Deposito/Deposito.jsx';
 import DepositoFormulario from './modules/Operaciones/Deposito/DepositoFormulario.jsx';
 import Contratos from './modules/Grains/Contratos/Contratos.jsx';
@@ -74,6 +81,13 @@ const ROUTES = [
   { pattern: '/buques/nuevo', Component: BuqueFormulario, props: { mode: 'create' } },
   { pattern: '/buques/:id/ver', Component: BuqueFormulario, props: { mode: 'view' } },
   { pattern: '/buques/:id/editar', Component: BuqueFormulario, props: { mode: 'edit' } },
+  { pattern: '/nueva-operacion', Component: NuevaOperacion },
+  // Maestros de Ports sin pantalla propia: grilla estándar con datos de ejemplo.
+  ...MAESTROS_PORTS.map((maestro) => ({ pattern: maestro.href, Component: MaestroPorts, props: { maestro } })),
+  { pattern: '/giros', Component: Giros },
+  { pattern: '/giros/nueva', Component: SolicitudGiro, props: { mode: 'create' } },
+  { pattern: '/giros/:id/ver', Component: SolicitudGiro, props: { mode: 'view' } },
+  { pattern: '/giros/:id/editar', Component: SolicitudGiro, props: { mode: 'edit' } },
   { pattern: '/depositos', Component: Deposito },
   { pattern: '/depositos/nuevo', Component: DepositoFormulario, props: { mode: 'create' } },
   { pattern: '/depositos/:id/ver', Component: DepositoFormulario, props: { mode: 'view' } },
@@ -84,6 +98,10 @@ const ROUTES = [
   { pattern: '/grains/contratos/:id/editar', Component: ContratoFormulario, props: { mode: 'edit' } },
   { pattern: '/asistente-ia', Component: AsistenteIA },
   { pattern: '/admin/modulos', Component: Modulos },
+  { pattern: '/admin/equipos', Component: Equipos },
+  { pattern: '/admin/equipos/nuevo', Component: EquipoFormulario, props: { mode: 'create' } },
+  { pattern: '/admin/equipos/:id/ver', Component: EquipoFormulario, props: { mode: 'view' } },
+  { pattern: '/admin/equipos/:id/editar', Component: EquipoFormulario, props: { mode: 'edit' } },
   { pattern: '/admin/usuarios', Component: Usuarios },
   { pattern: '/admin/usuarios/nuevo', Component: UsuarioFormulario, props: { mode: 'create' } },
   { pattern: '/admin/usuarios/:id/ver', Component: UsuarioFormulario, props: { mode: 'view' } },
@@ -160,6 +178,15 @@ const INITIAL_CONTRATOS = [
   { id: 1, codigoContrato: 'CT-001', codigoReferencia: 'REF-2024-001', fechaConcertacion: '2024-03-15', fechaNegocio: '2024-03-18', tipoContrato: 'Compraventa', tipoMercado: 'Disponible' },
   { id: 2, codigoContrato: 'CT-002', codigoReferencia: 'REF-2024-002', fechaConcertacion: '2024-04-02', fechaNegocio: '2024-04-05', tipoContrato: 'Compraventa', tipoMercado: 'Futuro' },
   { id: 3, codigoContrato: 'CT-003', codigoReferencia: 'REF-2024-003', fechaConcertacion: '2024-05-10', fechaNegocio: '2024-05-12', tipoContrato: 'Canje', tipoMercado: 'Disponible' },
+];
+
+// Ejemplo — reemplazar por el catálogo real de equipos. Vive acá por el mismo
+// motivo que INITIAL_USUARIOS (grilla + alta/edición comparten el set).
+// `empresaId` guarda el id de config/sidebars/main.js companies, nunca el nombre.
+const INITIAL_EQUIPOS = [
+  { id: 1, empresaId: 'puerto-norte', ip: '192.168.1.10', denominacion: 'Balanza acceso norte', seguro: true, activo: true },
+  { id: 2, empresaId: 'puerto-norte', ip: '192.168.1.11', denominacion: 'Terminal de ingreso', seguro: true, activo: true },
+  { id: 3, empresaId: 'del-sur', ip: '192.168.2.20', denominacion: 'Servidor de reportes', seguro: false, activo: false },
 ];
 
 // Ejemplo — reemplazar por el catálogo real de usuarios. Vive acá (no en
@@ -268,6 +295,8 @@ export default function App() {
   const [depositos, setDepositos] = useState(INITIAL_DEPOSITOS);
   const [contratos, setContratos] = useState(INITIAL_CONTRATOS);
   const [usuarios, setUsuarios] = useState(INITIAL_USUARIOS);
+  const [equipos, setEquipos] = useState(INITIAL_EQUIPOS);
+  const [giros, setGiros] = useState([]);
   const [perfiles, setPerfiles] = useState(INITIAL_PERFILES);
   const [empresas, setEmpresas] = useState(INITIAL_EMPRESAS);
   const [pendingQuery, setPendingQuery] = useState(null);
@@ -318,6 +347,26 @@ export default function App() {
   function updateContrato(contrato) {
     setContratos((prev) => prev.map((c) => (c.id === contrato.id ? contrato : c)));
     navigate('/grains/contratos');
+  }
+
+  function addGiro(giro) {
+    setGiros((prev) => [...prev, giro]);
+    navigate('/giros');
+  }
+
+  function updateGiro(giro) {
+    setGiros((prev) => prev.map((g) => (g.id === giro.id ? giro : g)));
+    navigate('/giros');
+  }
+
+  function addEquipo(equipo) {
+    setEquipos((prev) => [...prev, equipo]);
+    navigate('/admin/equipos');
+  }
+
+  function updateEquipo(equipo) {
+    setEquipos((prev) => prev.map((e) => (e.id === equipo.id ? equipo : e)));
+    navigate('/admin/equipos');
   }
 
   function addUsuario(usuario) {
@@ -381,6 +430,12 @@ export default function App() {
         contratos={contratos}
         onCreateContrato={addContrato}
         onUpdateContrato={updateContrato}
+        giros={giros}
+        onCreateGiro={addGiro}
+        onUpdateGiro={updateGiro}
+        equipos={equipos}
+        onCreateEquipo={addEquipo}
+        onUpdateEquipo={updateEquipo}
         usuarios={usuarios}
         onCreateUsuario={addUsuario}
         onUpdateUsuario={updateUsuario}

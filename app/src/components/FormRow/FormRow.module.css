@@ -1,7 +1,26 @@
+/* Un container query no puede estilizar al contenedor mismo: `.wrap` es el
+   contenedor medido y `.row` la grilla que se adapta. */
+.wrap {
+  container-type: inline-size;
+  width: 100%;
+}
+
 .row {
   display: grid;
   grid-template-columns: repeat(var(--form-row-columns, 3), minmax(0, 1fr));
   gap: var(--spacing-md);
   align-items: start;
   width: 100%;
+}
+
+@container (max-width: 719px) {
+  .row {
+    grid-template-columns: repeat(var(--form-row-columns-mid, 2), minmax(0, 1fr));
+  }
+}
+
+@container (max-width: 479px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

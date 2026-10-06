@@ -5,10 +5,11 @@ import { BILLING_SIDEBAR_PROPS } from '../../../config/sidebars/billing.js';
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Facturas del mes', value: 128, trendLabel: '+14 vs mes anterior', trendDirection: 'up', data: [126, 124, 122, 115, 114, 107, 128] },
-  { label: 'Monto facturado', value: '$ 18.4M', trendLabel: '+9% vs mes anterior', trendDirection: 'up', data: [182, 178, 175, 166, 163, 154, 184] },
-  { label: 'Facturas pendientes de cobro', value: 22, trendLabel: '-3 vs ayer', trendDirection: 'down', data: [20, 23, 25, 23, 26, 23, 22] },
-  { label: 'Clientes activos', value: 64, trendLabel: '+2 vs mes anterior', trendDirection: 'up', data: [62, 62, 62, 57, 57, 52, 64] },
+  { label: 'Facturas del mes', value: 128, trendLabel: '+14 vs mes anterior', trendDirection: 'up' },
+  { label: 'Monto facturado', value: '$ 18.4M', trendLabel: '+9% vs mes anterior', trendDirection: 'up' },
+  { label: 'Facturas pendientes de cobro', value: 22, trendLabel: '-3 vs ayer', trendDirection: 'down' },
+  { label: 'Clientes activos', value: 64, trendLabel: '+2 vs mes anterior', trendDirection: 'up' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

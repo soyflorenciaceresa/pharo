@@ -34,6 +34,7 @@ export default function ChildGridSection({
           rows={rows}
           actions={actions}
           searchable={searchable}
+          bordered={false}
           emptyMessage={emptyMessage}
         />
       </div>

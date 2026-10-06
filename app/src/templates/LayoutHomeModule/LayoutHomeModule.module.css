@@ -3,29 +3,36 @@
   flex-direction: column;
   gap: var(--spacing-xl);
   width: 100%;
+  max-width: var(--size-content-max-wide);
+  margin: 0 auto;
 }
 
+/* 5 cards de métrica por fila, fluidas: se agrandan/achican con el ancho de la
+   pantalla manteniendo SIEMPRE su proporción: mismo ancho que las cards de
+   Módulos de Main/Home (174) pero con 20% menos de alto (133 × 0.8 = 106.4),
+   con la misma separación de 16px. */
 .metricsRow {
-  display: flex;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--spacing-md);
   width: 100%;
 }
 
 .metricSlot {
-  flex: 1 0 0;
   min-width: 0;
+  aspect-ratio: 174 / 106.4;
 }
 
 .bottomRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--spacing-xl);
   width: 100%;
 }
 
 .quickAccessCol {
-  flex: 1 0 0;
+  flex: 1 1 480px;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -34,7 +41,13 @@
 
 .quickAccessGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* EXACTAMENTE la misma receta que `.modulesGrid` de Main/Home (cards de
+     Módulos): 174px de ancho mínimo, `auto-fill` agrega una columna apenas
+     entra otra card y `1fr` reparte el sobrante en partes iguales — la fila
+     siempre queda llena, con la misma separación de 16px entre cards (gap
+     `--spacing-md`) y sin tope de ancho. Más ancho de pantalla → más cards por
+     fila; menos → menos. Una card sola conserva el ancho de las demás columnas. */
+  grid-template-columns: repeat(auto-fill, minmax(174px, 1fr));
   gap: var(--spacing-md);
   width: 100%;
 }

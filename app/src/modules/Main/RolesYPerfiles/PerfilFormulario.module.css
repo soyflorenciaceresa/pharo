@@ -9,12 +9,6 @@
   min-width: 0;
 }
 
-.concesionariosHeader {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
 .notFound {
   margin: 0;
   font-family: var(--font-sans);

@@ -1,3 +1,9 @@
+.root {
+  width: 100%;
+  max-width: var(--size-content-max-wide);
+  margin: 0 auto;
+}
+
 .section {
   display: flex;
   flex-direction: column;
@@ -5,20 +11,9 @@
   width: 100%;
 }
 
-.quickAccessRow {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  width: 100%;
-}
-
-.quickAccessSlot {
-  flex: 1 0 0;
-  min-width: 0;
-}
-
 .bottomRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--spacing-xl);
   width: 100%;
@@ -26,27 +21,31 @@
 }
 
 .modulesCol {
-  flex: 1 0 0;
+  flex: 1 1 480px;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
 }
 
-/* Ancho de card fijo — 174px, el mismo `min-width` que ya tenía CardModule
-   (ver esa nota), que es el tamaño real que se veía antes con el sidebar
-   expandido — nunca se estira ni se achica con el viewport. `auto-fill`
-   agrega más columnas cuando entran (sidebar colapsado, pantalla más
-   grande) y las quita cuando no, dejando el espacio sobrante sin usar en vez
-   de estirar las cards existentes (por eso `auto-fill`, no `auto-fit`, que
-   sí las estiraría). El JS de Home.jsx mide este mismo ancho + gap para
-   calcular cuántas columnas entran realmente y armar la paginación de 3
-   filas — ver MODULE_CARD_WIDTH/MODULE_GRID_GAP. */
+/* Grilla de módulos: 174px es el ancho MÍNIMO de card (el tamaño del diseño
+   aprobado). `auto-fill` agrega una columna apenas entra otra card de 174px, y
+   `1fr` reparte el sobrante en partes iguales entre las columnas — la fila
+   siempre queda llena, sin espacio de sobra a la derecha. Para que al
+   estirarse mantenga la proporción del diseño, cada card fija
+   `aspect-ratio: 174 / 133` (ancho × alto a 174px de ancho): crece el alto en
+   la misma proporción que el ancho. El JS de Home.jsx replica el mismo cálculo
+   de columnas (ancho mínimo + gap) para armar la paginación de 3 filas — ver
+   MODULE_CARD_WIDTH/MODULE_GRID_GAP. */
 .modulesGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 174px);
+  grid-template-columns: repeat(auto-fill, minmax(174px, 1fr));
   gap: var(--spacing-md);
   width: 100%;
+}
+
+.modulesGrid > * {
+  aspect-ratio: 174 / 133;
 }
 
 .activityCol {
@@ -55,4 +54,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+}
+
+/* Pie de la sección Módulos: paginación a la izquierda y, en el estado inicial
+   con al menos un módulo elegido, el botón Guardar a la derecha (misma línea). */
+.modulesFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  width: 100%;
 }

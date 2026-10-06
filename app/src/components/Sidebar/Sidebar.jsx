@@ -30,6 +30,10 @@ export default function Sidebar({
   onLogout,
   onToggle,
   defaultPinned = false,
+  // Empresas sin acciones asignadas: se deshabilita la navegación y se muestra un mensaje.
+  noAccessCompanyIds = [],
+  noAccessTitle = 'Sin acciones disponibles',
+  noAccessMessage = 'No tenés acciones asignadas para la empresa seleccionada.',
 }) {
   const [expanded, setExpanded] = useState(defaultPinned);
   const [pinned, setPinned] = useState(defaultPinned);
@@ -53,6 +57,7 @@ export default function Sidebar({
 
   const activeCompany = companies.find((c) => c.id === activeCompanyId) || companies[0];
   const userInitials = initialsOf(user.name);
+  const hasNoAccess = Boolean(activeCompany && noAccessCompanyIds.includes(activeCompany.id));
 
   const expand = () => setExpanded(true);
   const collapse = () => {
@@ -165,6 +170,17 @@ export default function Sidebar({
       <div className={styles.divider} />
 
       <div className={styles.scroll}>
+        {hasNoAccess ? (
+          <div className={styles.empty} role="status">
+            <span className={styles.emptyIcon}>
+              <Icon name="bi-lock" size={28} aria-hidden="true" />
+            </span>
+            <span className={styles.emptyText}>
+              <span className={styles.emptyTitle}>{noAccessTitle}</span>
+              <span className={styles.emptyMessage}>{noAccessMessage}</span>
+            </span>
+          </div>
+        ) : (
         <nav className={styles.nav}>
           {groups.map((group, gi) => (
             <Fragment key={group.label ?? gi}>
@@ -214,6 +230,7 @@ export default function Sidebar({
             </Fragment>
           ))}
         </nav>
+        )}
       </div>
 
       <div className={styles.divider} />

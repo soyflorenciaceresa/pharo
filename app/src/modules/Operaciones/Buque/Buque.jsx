@@ -3,7 +3,7 @@ import Badge from '../../../components/Badge/Badge.jsx';
 import { OPERACIONES_SIDEBAR_PROPS } from '../../../config/sidebars/operaciones.js';
 
 const COLUMNS = [
-  { key: 'imo', label: 'IMO', width: 120 },
+  { key: 'codigo', label: 'Código', width: 120 },
   { key: 'denominacion', label: 'Denominación' },
   {
     key: 'estado',

@@ -1,4 +1,5 @@
 .lookup {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
@@ -17,6 +18,12 @@
 .lookupInputs {
   display: flex;
   gap: var(--spacing-xs);
+}
+
+/* Par código + denominación: debajo de ~280px de ancho de campo se apilan. */
+@container (max-width: 279px) {
+  .lookupInputs { flex-direction: column; }
+  .lookupCodigo { flex: 0 0 auto; }
 }
 
 .lookupCodigo {

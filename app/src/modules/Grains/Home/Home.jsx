@@ -5,10 +5,11 @@ import { GRAINS_SIDEBAR_PROPS } from '../../../config/sidebars/grains.js';
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Toneladas ingresadas hoy', value: '3.420', trendLabel: '+410 vs ayer', trendDirection: 'up', data: [3418, 3317, 3217, 3111, 3011, 2905, 3420] },
-  { label: 'Silos ocupados', value: 8, trendLabel: '+1 vs ayer', trendDirection: 'up', data: [6, 8, 10, 6, 8, 5, 8] },
-  { label: 'Cargas en espera', value: 4, trendLabel: '-2 vs ayer', trendDirection: 'down', data: [2, 4, 6, 3, 5, 3, 4] },
-  { label: 'Humedad promedio', value: '13.2%', trendLabel: '-0.4% vs ayer', trendDirection: 'down', data: [11, 13, 16, 13, 16, 13, 13] },
+  { label: 'Toneladas ingresadas hoy', value: '3.420', trendLabel: '+410 vs ayer', trendDirection: 'up' },
+  { label: 'Silos ocupados', value: 8, trendLabel: '+1 vs ayer', trendDirection: 'up' },
+  { label: 'Cargas en espera', value: 4, trendLabel: '-2 vs ayer', trendDirection: 'down' },
+  { label: 'Humedad promedio', value: '13.2%', trendLabel: '-0.4% vs ayer', trendDirection: 'down' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

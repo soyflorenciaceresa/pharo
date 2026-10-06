@@ -5,10 +5,11 @@ import { DASHBOARD_SIDEBAR_PROPS } from '../../../config/sidebars/dashboard.js';
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Reportes generados', value: 34, trendLabel: '+5 vs mes anterior', trendDirection: 'up', data: [32, 33, 34, 30, 31, 27, 34] },
-  { label: 'Usuarios activos', value: 112, trendLabel: '+9 vs mes anterior', trendDirection: 'up', data: [110, 109, 107, 101, 100, 93, 112] },
-  { label: 'Indicadores configurados', value: 21, trendLabel: '+2 vs mes anterior', trendDirection: 'up', data: [19, 20, 22, 18, 19, 16, 21] },
-  { label: 'Exportaciones del mes', value: 15, trendLabel: '+3 vs mes anterior', trendDirection: 'up', data: [13, 15, 16, 13, 14, 11, 15] },
+  { label: 'Reportes generados', value: 34, trendLabel: '+5 vs mes anterior', trendDirection: 'up' },
+  { label: 'Usuarios activos', value: 112, trendLabel: '+9 vs mes anterior', trendDirection: 'up' },
+  { label: 'Indicadores configurados', value: 21, trendLabel: '+2 vs mes anterior', trendDirection: 'up' },
+  { label: 'Exportaciones del mes', value: 15, trendLabel: '+3 vs mes anterior', trendDirection: 'up' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

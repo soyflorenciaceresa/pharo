@@ -5,10 +5,11 @@ import { ACCOUNTING_SIDEBAR_PROPS } from '../../../config/sidebars/accounting.js
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Asientos del mes', value: 340, trendLabel: '+28 vs mes anterior', trendDirection: 'up', data: [338, 330, 322, 308, 300, 287, 340] },
-  { label: 'Balance del mes', value: '$ 2.1M', trendLabel: '+4% vs mes anterior', trendDirection: 'up', data: [19, 20, 22, 18, 19, 16, 21] },
-  { label: 'Cuentas activas', value: 186, trendLabel: '+3 vs mes anterior', trendDirection: 'up', data: [184, 180, 177, 168, 165, 156, 186] },
-  { label: 'Cierres pendientes', value: 2, trendLabel: '-1 vs mes anterior', trendDirection: 'down', data: [0, 2, 4, 1, 3, 0, 2] },
+  { label: 'Asientos del mes', value: 340, trendLabel: '+28 vs mes anterior', trendDirection: 'up' },
+  { label: 'Balance del mes', value: '$ 2.1M', trendLabel: '+4% vs mes anterior', trendDirection: 'up' },
+  { label: 'Cuentas activas', value: 186, trendLabel: '+3 vs mes anterior', trendDirection: 'up' },
+  { label: 'Cierres pendientes', value: 2, trendLabel: '-1 vs mes anterior', trendDirection: 'down' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

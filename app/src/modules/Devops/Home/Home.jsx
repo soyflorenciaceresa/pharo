@@ -5,10 +5,11 @@ import { DEVOPS_SIDEBAR_PROPS } from '../../../config/sidebars/devops.js';
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Despliegues del mes', value: 47, trendLabel: '+6 vs mes anterior', trendDirection: 'up', data: [45, 46, 46, 42, 42, 38, 47] },
-  { label: 'Incidentes abiertos', value: 1, trendLabel: '-1 vs ayer', trendDirection: 'down', data: [0, 1, 3, 0, 2, 0, 1] },
-  { label: 'Uptime del mes', value: '99.95%', trendLabel: '+0.1% vs mes anterior', trendDirection: 'up', data: [97, 96, 95, 89, 88, 82, 99] },
-  { label: 'Ambientes activos', value: 6, trendLabel: '+1 vs mes anterior', trendDirection: 'up', data: [4, 6, 8, 4, 6, 3, 6] },
+  { label: 'Despliegues del mes', value: 47, trendLabel: '+6 vs mes anterior', trendDirection: 'up' },
+  { label: 'Incidentes abiertos', value: 1, trendLabel: '-1 vs ayer', trendDirection: 'down' },
+  { label: 'Uptime del mes', value: '99.95%', trendLabel: '+0.1% vs mes anterior', trendDirection: 'up' },
+  { label: 'Ambientes activos', value: 6, trendLabel: '+1 vs mes anterior', trendDirection: 'up' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

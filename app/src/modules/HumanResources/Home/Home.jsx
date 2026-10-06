@@ -5,10 +5,11 @@ import { HUMAN_RESOURCES_SIDEBAR_PROPS } from '../../../config/sidebars/human-re
 // Ejemplo — reemplazar por los KPIs reales del módulo (mismo criterio que
 // modules/Operaciones/Home/Home.jsx, el primer módulo del kit).
 const METRICS = [
-  { label: 'Empleados activos', value: 214, trendLabel: '+4 vs mes anterior', trendDirection: 'up', data: [212, 208, 203, 194, 189, 180, 214] },
-  { label: 'Licencias en curso', value: 6, trendLabel: '+1 vs ayer', trendDirection: 'up', data: [4, 6, 8, 4, 6, 3, 6] },
-  { label: 'Vacantes abiertas', value: 3, trendLabel: '-1 vs mes anterior', trendDirection: 'down', data: [1, 3, 5, 2, 4, 1, 3] },
-  { label: 'Ausentismo del mes', value: '2.1%', trendLabel: '-0.3% vs mes anterior', trendDirection: 'down', data: [0, 2, 4, 1, 3, 0, 2] },
+  { label: 'Empleados activos', value: 214, trendLabel: '+4 vs mes anterior', trendDirection: 'up' },
+  { label: 'Licencias en curso', value: 6, trendLabel: '+1 vs ayer', trendDirection: 'up' },
+  { label: 'Vacantes abiertas', value: 3, trendLabel: '-1 vs mes anterior', trendDirection: 'down' },
+  { label: 'Ausentismo del mes', value: '2.1%', trendLabel: '-0.3% vs mes anterior', trendDirection: 'down' },
+  { label: 'Alertas abiertas', value: 3, trendLabel: '-1 vs ayer', trendDirection: 'down' },
 ];
 
 // Ejemplo — reemplazar por el feed real del módulo.

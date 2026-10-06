@@ -58,6 +58,8 @@ const DEFAULT_ENABLED_IDS = [
 
 export const DEFAULT_COMPANY_MODULES = {
   'puerto-norte': DEFAULT_ENABLED_IDS,
-  'del-sur': DEFAULT_ENABLED_IDS,
+  // Del Sur Logística arranca sin nada configurado (estado inicial de Main/Home):
+  // el usuario elige sus módulos ahí mismo o en Main/Modulos.
+  'del-sur': [],
   andina: DEFAULT_ENABLED_IDS,
 };

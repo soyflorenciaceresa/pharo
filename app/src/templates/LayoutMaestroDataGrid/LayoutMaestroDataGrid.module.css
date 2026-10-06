@@ -3,5 +3,7 @@
   flex-direction: column;
   gap: var(--spacing-md);
   width: 100%;
+  max-width: var(--size-content-max-wide);
+  margin: 0 auto;
 }
 
