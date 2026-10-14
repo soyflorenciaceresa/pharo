@@ -1,0 +1,11 @@
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.error {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-danger-default);
+}

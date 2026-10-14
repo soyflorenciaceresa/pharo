@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accordion — Spec</title>
+<!--
+  Spec del componente Accordion (Pharo Design System), con la estructura fija de 10 secciones de la skill
+  "spec-de-componente". Fuente: Figma component set `Accordion` 851:29 (página Accordion; reconstruido a partir del
+  código el 14/10/2026) y código app/src/components/Accordion. Estilo visual = "Button - Spec" de Figma
+  (marco 1200px, padding 64, gap 24, tarjetas blancas; número de sección en mono azul oscuro sin recuadro; código
+  inline en mono azul oscuro sin fondo; listas con viñeta gris; Hacer/No hacer en tarjetas blancas; pins oscuros).
+-->
+<style>
+  :root {
+    --color-primary-default: #4059fd;
+    --color-text-default: #061e30;
+    --color-text-secondary: #6a7883;
+    --color-border-default: #e3e5ea;
+    --color-border-focus: #667afd;
+    --color-surface-hover: #f7f8fa;
+    --color-surface-card: #ffffff;
+    --code: #2d3eb1;
+    --green: #16a34a; --red: #dc2626; --amber: #d97706;
+    --spacing-sm: 8px; --spacing-md: 16px; --spacing-lg: 24px;
+    --radius-card: 16px; --radius-sm: 4px;
+    --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { background: #e9ebef; }
+  body { margin: 0; font-family: var(--font); color: var(--color-text-default); font-size: 14px; line-height: 1.4; }
+
+  .spec { width: 100%; max-width: 1200px; margin: 40px auto; background: var(--color-surface-hover); border-radius: 16px; padding: 64px; display: flex; flex-direction: column; gap: 24px; }
+  .header { display: flex; flex-direction: column; gap: 8px; }
+  .eyebrow { font-size: 12px; font-weight: 500; line-height: 1.2; color: var(--color-text-secondary); text-transform: uppercase; }
+  .title { margin: 0; font-size: 24px; font-weight: 700; line-height: 1.2; }
+  .desc { margin: 0; font-size: 16px; line-height: 1.4; }
+  .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font-size: 12px; font-weight: 500; line-height: 1.2; color: var(--color-text-secondary); background: #fff; border: 1px solid var(--color-border-default); border-radius: 999px; padding: 4px 10px; }
+
+  .card { background: #fff; border: 1px solid var(--color-border-default); border-radius: 12px; padding: 32px; display: flex; flex-direction: column; gap: 16px; }
+  .st { display: flex; align-items: center; gap: 12px; }
+  .st .num { font-family: var(--mono); font-size: 11px; color: var(--code); }
+  .st h2 { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.2; }
+  .card p { margin: 0; font-size: 16px; }
+  .card h3 { margin: 0; font-size: 14px; font-weight: 600; }
+  ul, ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  ul li { display: flex; gap: 8px; } ul li::before { content: '•'; color: var(--color-text-secondary); flex: none; }
+  ol { counter-reset: part; } ol li { display: flex; gap: 10px; counter-increment: part; align-items: flex-start; }
+  ol li::before { content: counter(part); flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--color-text-default); color: #fff; font-size: 12px; font-weight: 500; display: grid; place-items: center; line-height: 1.2; }
+  strong { font-weight: 600; } em { font-style: normal; font-weight: 600; }
+  code { font-family: var(--mono); font-size: 13px; color: var(--code); }
+  .card p code { font-size: 15px; }
+  .assume { font-weight: 600; color: var(--amber); }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--color-border-default); font-size: 14px; }
+  th { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+  .c { text-align: center; }
+  .yes { color: var(--green); font-weight: 600; } .no { color: var(--red); font-weight: 600; }
+  .matrix { border: 1px solid var(--color-border-default); border-radius: 10px; padding: 16px; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .col { border: 1px solid var(--color-border-default); border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .col h3 { font-size: 16px; line-height: 1.2; } .col.do h3 { color: var(--green); } .col.dont h3 { color: var(--red); }
+
+  /* ===== Demo: réplica de Accordion.module.css ===== */
+  .stage { border: 1px solid var(--color-border-default); border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 16px; background: #fff; }
+  .stage .lbl { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); line-height: 1.2; }
+  .acc { display: flex; flex-direction: column; background: var(--color-surface-card); border: 1px solid var(--color-border-default); border-radius: var(--radius-card); box-shadow: 0 1px 1.5px rgba(15,30,52,.06); width: 100%; }
+  .acc .hd { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: var(--spacing-sm); width: 100%; padding: var(--spacing-lg); cursor: pointer; }
+  .acc .hd:focus-visible, .acc .hd.is-focus { outline: 2px solid var(--color-border-focus); outline-offset: -2px; border-radius: var(--radius-sm); }
+  .acc .tt { flex: 1; min-width: 0; text-align: left; font-size: 16px; font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .acc .chev { flex: none; display: flex; width: 16px; height: 16px; transition: transform .25s ease; }
+  .acc.open .chev { transform: rotate(90deg); }
+  .acc .body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
+  .acc.open .body { grid-template-rows: 1fr; }
+  .acc .bi { overflow: hidden; } .acc .dv { height: 1px; background: var(--color-border-default); }
+  .acc .ct { display: flex; flex-direction: column; gap: var(--spacing-md); padding: var(--spacing-lg); }
+  .fld { display: flex; flex-direction: column; gap: 4px; flex: 1; font-size: 12px; font-weight: 500; }
+  .fld i { display: block; height: 36px; border: 1px solid var(--color-border-default); border-radius: 4px; font-style: normal; font-weight: 400; color: #9aa6b2; padding: 8px 12px; font-size: 14px; }
+  .frow { display: flex; gap: 16px; }
+  @media (prefers-reduced-motion: reduce) { .acc .chev, .acc .body { transition: none; } }
+
+  .anat { position: relative; padding: 14px 0 8px; margin: 0 44px; }
+  .pin { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: var(--color-text-default); color: #fff; font-size: 12px; font-weight: 500; display: grid; place-items: center; z-index: 2; box-shadow: 0 0 0 2px #fff; }
+
+  @media (max-width: 1240px) { .spec { margin: 0 auto; padding: 24px; border-radius: 0; } .cols { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main class="spec" id="accordion-spec">
+
+  <header class="header">
+    <div class="eyebrow">Pharo Design System · Componentes</div>
+    <h1 class="title">Accordion</h1>
+    <p class="desc" style="margin:0">Spec del component set <code>Accordion</code> (página Accordion): card colapsable con título, flecha y contenido libre; se expande y colapsa al hacer clic en el header.</p>
+    <div class="meta">
+      <span class="chip">Component set 851:29</span>
+      <span class="chip">2 variantes · 1 propiedad de texto</span>
+      <span class="chip">Ancho de referencia: 800 px</span>
+      <span class="chip">Código: components/Accordion</span>
+      <span class="chip">Actualizado 14/10/2026</span>
+    </div>
+  </header>
+
+  <section class="card" id="s01">
+    <div class="st"><span class="num">01</span><h2>Qué es</h2></div>
+    <p><code>Accordion</code> es una card con un header clickeable que muestra u oculta un bloque de contenido, para agrupar información secundaria sin ocupar espacio cuando no se necesita.</p>
+  </section>
+
+  <section class="card" id="s02">
+    <div class="st"><span class="num">02</span><h2>Cuándo usarlo</h2></div>
+    <ul>
+      <li>Para un bloque <strong>opcional o secundario</strong> de un formulario de maestro que la mayoría de las personas va a saltear, por ejemplo "Datos adicionales (opcional)", "Suspensión (opcional)" o "Cuenta bancaria para nómina (opcional)".</li>
+      <li>Para documentos y certificados que no se tienen a mano al crear el registro, como "Certificados y documentos" en el alta de empresa.</li>
+      <li>Al final de las pantallas de maestros (templates <code>M-01</code> a <code>M-04</code>), colapsado por defecto, para no alargar la pantalla con campos poco usados.</li>
+      <li>Cuando el contenido de cada panel es independiente del resto y no hace falta verlos juntos; pueden convivir varios paneles abiertos a la vez.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s03">
+    <div class="st"><span class="num">03</span><h2>Cuándo no usarlo</h2></div>
+    <ul>
+      <li><em>No usar para información que la mayoría necesita ver o completar</em> → usar <code>FormContainer</code> (<code>Form Section</code>), siempre visible.</li>
+      <li><em>No usar para campos obligatorios</em>: un error de validación quedaría escondido en un panel cerrado → ponerlos en un <code>FormContainer</code>.</li>
+      <li><em>No usar para separar secciones paralelas del mismo peso</em> que se miran de a una → usar <code>Tabs</code>.</li>
+      <li><em>No usar para pasos secuenciales y dependientes</em> (alta nueva, larga) → usar un <strong>Progress Tracker / wizard</strong> (patrón sin componente propio todavía).</li>
+      <li><em>No usar con muy poco contenido</em> (uno o dos campos): genera sensación de vacío y un clic de más → mostrarlo directo.</li>
+      <li><em>No usar para una acción que bloquea el resto de la pantalla</em> (confirmar, pedir un dato esencial) → usar <code>Modal</code>.</li>
+      <li><em>No anidar un Accordion dentro de otro</em> → aplanar la estructura con secciones apiladas.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s04">
+    <div class="st"><span class="num">04</span><h2>Variantes</h2></div>
+    <p><code>Accordion</code> tiene una sola propiedad de variante, <code>Expanded</code>, y un único tamaño y estilo. No hay variantes de jerarquía ni de color.</p>
+    <table>
+      <thead><tr><th>Variante</th><th>Para qué sirve</th><th>Ejemplo de uso</th></tr></thead>
+      <tbody>
+        <tr><td><code>Expanded=False</code></td><td>Estado cerrado: solo el header, con la flecha apuntando a la derecha. Es el estado por defecto recomendado para bloques opcionales.</td><td>"Datos adicionales (opcional)" al abrir el formulario de un buque.</td></tr>
+        <tr><td><code>Expanded=True</code></td><td>Estado abierto: header con la flecha hacia abajo, línea divisoria y el contenido.</td><td>El mismo bloque, luego de que la persona lo abre para cargar el calado.</td></tr>
+      </tbody>
+    </table>
+    <div class="stage">
+      <div class="lbl">Ejemplo — cerrado y abierto (clic para alternar)</div>
+      <div class="acc" data-toggle><button class="hd" aria-expanded="false"><span class="tt">Datos adicionales (opcional)</span><span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></span></button><div class="body"><div class="bi"><div class="dv"></div><div class="ct"><div class="frow"><div class="fld">Calado de entrada<i>Placeholder text</i></div><div class="fld">Calado de salida<i>Placeholder text</i></div><div class="fld">Año de construcción<i>Placeholder text</i></div></div></div></div></div></div>
+      <div class="acc open" data-toggle><button class="hd" aria-expanded="true"><span class="tt">Certificados y documentos</span><span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></span></button><div class="body"><div class="bi"><div class="dv"></div><div class="ct"><div class="frow"><div class="fld">Logo<i>Elegir archivo</i></div><div class="fld">Certificado AFIP<i>Elegir archivo</i></div></div></div></div></div></div>
+    </div>
+  </section>
+
+  <section class="card" id="s05">
+    <div class="st"><span class="num">05</span><h2>Estados</h2></div>
+    <ul>
+      <li><strong>Collapsed (cerrado):</strong> solo el header. La flecha <code>ChevronRight</code> apunta a la derecha; <code>aria-expanded="false"</code>. En Figma: <code>Expanded=False</code>.</li>
+      <li><strong>Expanded (abierto):</strong> aparecen la línea divisoria y el contenido; la flecha rota 90° en sentido horario (apunta abajo); <code>aria-expanded="true"</code>. En Figma: <code>Expanded=True</code>. En código arranca abierto por defecto (<code>defaultExpanded = true</code>).</li>
+      <li><strong>Focus (<code>focus-visible</code>):</strong> anillo de 2&nbsp;px <code>color/border/focus</code> (<code>#667afd</code>) dentro del header (<code>outline-offset: -2px</code>), esquinas <code>radius/sm</code>. Existe solo en código.</li>
+      <li><strong>Hover:</strong> no definido: hoy solo cambia el cursor a mano. <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Pressed:</strong> no definido. <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Disabled:</strong> no existe; el componente no soporta un panel deshabilitado. Si una sección no está disponible, no se muestra.</li>
+      <li><strong>Animación:</strong> la flecha rota y el contenido se despliega en 0,25&nbsp;s (<code>ease</code>); con <code>prefers-reduced-motion</code> ambos cambian al instante. No existe en Figma.</li>
+    </ul>
+    <h3>Matriz Variante × Estado</h3>
+    <div class="matrix">
+      <table>
+        <thead><tr><th>Variante</th><th class="c">Default</th><th class="c">Hover</th><th class="c">Focus</th><th class="c">Pressed</th><th class="c">Disabled</th></tr></thead>
+        <tbody>
+          <tr><td><code>Expanded=False</code></td><td class="c"><span class="yes">✓</span> Figma · ✓ código</td><td class="c"><span class="no">✗</span> Figma · ✗ código</td><td class="c"><span class="no">✗</span> Figma · <span class="yes">✓</span> código</td><td class="c"><span class="no">✗</span> / ✗</td><td class="c"><span class="no">✗</span> / ✗</td></tr>
+          <tr><td><code>Expanded=True</code></td><td class="c"><span class="yes">✓</span> Figma · ✓ código</td><td class="c"><span class="no">✗</span> Figma · ✗ código</td><td class="c"><span class="no">✗</span> Figma · <span class="yes">✓</span> código</td><td class="c"><span class="no">✗</span> / ✗</td><td class="c"><span class="no">✗</span> / ✗</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Huecos:</strong> Hover, Focus y Pressed no existen en Figma; Focus sí está en código y debe dibujarse para que diseño y código coincidan.</p>
+    <div class="stage">
+      <div class="lbl">Referencia visual — Default · Focus</div>
+      <div class="acc"><button class="hd"><span class="tt">Default</span><span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></span></button></div>
+      <div class="acc"><button class="hd is-focus"><span class="tt">Con foco (teclado)</span><span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></span></button></div>
+    </div>
+  </section>
+
+  <section class="card" id="s06">
+    <div class="st"><span class="num">06</span><h2>Anatomía</h2></div>
+    <div class="stage">
+      <div class="anat" aria-hidden="true">
+        <span class="pin" style="left:-34px;top:0">1</span>
+        <span class="pin" style="left:-34px;top:47px">2</span>
+        <span class="pin" style="left:24px;top:16px">3</span>
+        <span class="pin" style="right:-34px;top:47px">4</span>
+        <span class="pin" style="left:-34px;top:81px">5</span>
+        <span class="pin" style="left:-34px;top:130px">6</span>
+        <div class="acc open"><button class="hd"><span class="tt">Datos del buque</span><span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></span></button><div class="body"><div class="bi"><div class="dv"></div><div class="ct"><div class="frow"><div class="fld">Nombre del buque<i>Placeholder text</i></div><div class="fld">IMO<i>Placeholder text</i></div><div class="fld">Bandera<i>Placeholder text</i></div></div></div></div></div></div>
+      </div>
+    </div>
+    <ol>
+      <li><span><strong>Contenedor</strong> (raíz de cada variante, <code>Expanded=…</code>) — obligatorio. Frame vertical: relleno <code>surface/card</code>, borde de 1&nbsp;px <code>color/border/default</code>, radio <code>radius/card</code> y sombra 0·1·1,5&nbsp;px al 6&nbsp;%. Ancho ajustable; alto según el contenido.</span></li>
+      <li><span><strong>Header</strong> (<code>Header</code>) — obligatorio. Frame horizontal, padding <code>spacing/lg</code> (24&nbsp;px), 8&nbsp;px entre título y flecha (<code>spacing/sm</code>). Toda su superficie es el botón que alterna.</span></li>
+      <li><span><strong>Título</strong> (<code>Title</code>, texto) — obligatorio. Estilo <code>Heading/H3</code> (16&nbsp;px, Semi Bold, interlineado 120&nbsp;%), <code>color/text/default</code>, una sola línea con puntos suspensivos. Propiedad de texto <code>Title</code>.</span></li>
+      <li><span><strong>Flecha</strong> (<code>Chevron</code>, 16×16 con una instancia de <code>ChevronRight</code>) — obligatoria. Rota 90° en <code>Expanded=True</code>.</span></li>
+      <li><span><strong>Línea divisoria</strong> (<code>Divider</code>, 1&nbsp;px, <code>color/border/default</code>) — opcional: solo existe en <code>Expanded=True</code>. Ocupa todo el ancho.</span></li>
+      <li><span><strong>Contenido</strong> (<code>Content</code>) — opcional: solo en <code>Expanded=True</code>. Frame vertical con padding <code>spacing/lg</code> y 16&nbsp;px entre filas (<code>spacing/md</code>); aloja contenido libre (en Figma, un ejemplo de tres <code>Text field</code> en una fila).</span></li>
+    </ol>
+  </section>
+
+  <section class="card" id="s07">
+    <div class="st"><span class="num">07</span><h2>Propiedades (Figma)</h2></div>
+    <p>Leídas del archivo (<code>componentPropertyDefinitions</code>) del component set <code>Accordion</code>.</p>
+    <table>
+      <thead><tr><th>Propiedad</th><th>Tipo (Figma)</th><th>Valores</th><th>Default</th><th>Notas</th></tr></thead>
+      <tbody>
+        <tr><td><code>Expanded</code></td><td>Variant</td><td><code>False</code> · <code>True</code></td><td><code>False</code></td><td>Define si se ve el contenido. En código el default es lo contrario (<code>defaultExpanded = true</code>).</td></tr>
+        <tr><td><code>Title</code></td><td>Text</td><td>texto libre</td><td><code>Datos del buque</code></td><td>Una sola línea; si no entra se trunca con puntos suspensivos.</td></tr>
+      </tbody>
+    </table>
+    <h3>Combinaciones inválidas</h3>
+    <ul>
+      <li>No hay combinaciones inválidas entre propiedades: <code>Expanded</code> y <code>Title</code> son independientes.</li>
+      <li>El contenido de <code>Expanded=True</code> es un ejemplo fijo (no un slot): en Figma no se pueden agregar filas dentro de una instancia; para otro contenido hay que editar el componente.</li>
+    </ul>
+    <h3>API en código (<code>app/src/components/Accordion</code>)</h3>
+    <table>
+      <thead><tr><th>Prop</th><th>Tipo</th><th>Notas</th></tr></thead>
+      <tbody>
+        <tr><td><code>title</code></td><td><code>string</code></td><td>Texto del header.</td></tr>
+        <tr><td><code>defaultExpanded</code></td><td><code>boolean</code> (default <code>true</code>)</td><td><strong>Semi-controlado</strong>: siembra el estado inicial; después el componente lo maneja solo. Usar <code>false</code> para bloques opcionales.</td></tr>
+        <tr><td><code>onToggle</code></td><td><code>(expanded) =&gt; void</code></td><td>Se dispara al alternar, con el nuevo estado.</td></tr>
+        <tr><td><code>children</code></td><td>nodo</td><td>El contenido, sin restricciones.</td></tr>
+        <tr><td><code>className</code></td><td><code>string</code></td><td>Opcional.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card" id="s08">
+    <div class="st"><span class="num">08</span><h2>Reglas de uso</h2></div>
+    <div class="cols">
+      <div class="col do">
+        <h3>Hacer</h3>
+        <ul>
+          <li>Colocar el Accordion <strong>al final de la pantalla</strong> y colapsado por defecto (<code>defaultExpanded={false}</code>).</li>
+          <li>Usar un máximo de 1 o 2 por pantalla; con más grupos de peso parecido usar <code>Tabs</code>.</li>
+          <li>Nombrar el bloque con un título claro que indique que es opcional, por ejemplo <em>"Datos adicionales (opcional)"</em>.</li>
+          <li>Usar solo la primera letra en mayúscula y títulos cortos, para que entren en una línea.</li>
+          <li>Dejar que convivan varios paneles abiertos si hay más de uno.</li>
+          <li>Mantener la señal doble: flecha <em>y</em> el texto del título que describe el contenido.</li>
+          <li>Usar solo tokens del kit (<code>surface/card</code>, <code>color/border/default</code>, <code>radius/card</code>, <code>spacing/lg</code>, <code>spacing/md</code>, <code>spacing/sm</code>).</li>
+        </ul>
+      </div>
+      <div class="col dont">
+        <h3>No hacer</h3>
+        <ul>
+          <li>Poner campos obligatorios dentro: un error de validación quedaría escondido.</li>
+          <li>Usarlo como contenedor principal de una pantalla; el contenedor por defecto es <code>FormContainer</code>.</li>
+          <li>Anidar un Accordion dentro de otro, o dentro de una tab con otro Accordion.</li>
+          <li>Abrirlo por defecto cuando el contenido es opcional.</li>
+          <li>Cambiar el ícono de la flecha o rotarla distinto de 90°.</li>
+          <li>Agregar un ícono a la izquierda del título: se quitó a pedido del diseño.</li>
+          <li>Usar títulos largos o con varias líneas.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="s09">
+    <div class="st"><span class="num">09</span><h2>Notas de accesibilidad</h2></div>
+    <p>Patrón de referencia: <strong>WAI-ARIA APG — Accordion Pattern</strong>.</p>
+    <h3>Teclado</h3>
+    <table>
+      <thead><tr><th>Tecla</th><th>Acción</th><th>Estado en el código</th></tr></thead>
+      <tbody>
+        <tr><td><code>Tab</code> / <code>Shift+Tab</code></td><td>Mueve el foco al header siguiente/anterior (cada header es un <code>&lt;button&gt;</code>).</td><td><span class="yes">✓</span></td></tr>
+        <tr><td><code>Enter</code> / <code>Espacio</code></td><td>Abre o cierra el panel del header con foco.</td><td><span class="yes">✓</span> (nativo del botón)</td></tr>
+        <tr><td><code>↓</code> / <code>↑</code></td><td>Mueve el foco al header siguiente/anterior (opcional en APG). <span class="assume">[Supuesto — validar]</span></td><td><span class="no">✗</span> no implementado</td></tr>
+        <tr><td><code>Home</code> / <code>End</code></td><td>Foco al primer/último header (opcional en APG). <span class="assume">[Supuesto — validar]</span></td><td><span class="no">✗</span> no implementado</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Orden de foco:</strong> de arriba hacia abajo, igual que el orden visual. El componente no mueve el foco al abrir ni al cerrar: queda en el header.</p>
+    <h3>Lector de pantalla</h3>
+    <ul>
+      <li><strong>Hoy:</strong> el header es un <code>&lt;button&gt;</code> con <code>aria-expanded="true|false"</code>. Se lee: "Datos del buque, botón, contraído" / "Datos del buque, botón, expandido".</li>
+      <li><strong>Falta (APG):</strong> envolver el botón en un encabezado (<code>&lt;h3&gt;</code>), vincular el botón con su panel con <code>aria-controls</code> y, en el panel, <code>role="region"</code> con <code>aria-labelledby</code> (recomendado con 6 paneles o menos). <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Problema detectado en el código:</strong> el panel cerrado solo se oculta visualmente (altura 0 con <code>overflow: hidden</code>); sus campos siguen en el orden de foco y en el árbol de accesibilidad. Debería ocultarse con <code>inert</code> o <code>visibility: hidden</code> al cerrarse.</li>
+      <li>Si un error de validación ocurre dentro de un panel cerrado, abrirlo y enfocar el campo; no debería pasar si no hay campos obligatorios dentro.</li>
+    </ul>
+    <h3>Visual</h3>
+    <table>
+      <thead><tr><th>Elemento</th><th>Combinación</th><th>Contraste</th><th>Criterio</th></tr></thead>
+      <tbody>
+        <tr><td>Título</td><td><code>#061e30</code> sobre <code>#ffffff</code></td><td>16,99 : 1</td><td><span class="yes">✓</span> AA texto (4,5)</td></tr>
+        <tr><td>Flecha</td><td><code>#061e30</code> sobre <code>#ffffff</code></td><td>16,99 : 1</td><td><span class="yes">✓</span> UI (3,0)</td></tr>
+        <tr><td>Anillo de foco</td><td><code>#667afd</code> sobre <code>#ffffff</code></td><td>3,64 : 1</td><td><span class="yes">✓</span> foco (3,0)</td></tr>
+        <tr><td>Borde y línea divisoria</td><td><code>#e3e5ea</code> sobre <code>#ffffff</code></td><td>1,26 : 1</td><td>Decorativo; no comunica estado.</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><strong>No depende solo del color:</strong> el estado abierto o cerrado se ve por la dirección de la flecha, la línea divisoria y el contenido.</li>
+      <li><strong>Área táctil:</strong> todo el header es clickeable, con alto de unos 67&nbsp;px y el ancho completo: supera el mínimo AA (24×24) y el recomendado (44×44).</li>
+      <li><strong>Título truncado:</strong> si no entra, se corta con puntos suspensivos y no hay forma de leerlo completo (sin <code>title</code> ni tooltip). Mantener títulos cortos.</li>
+      <li><strong>Movimiento:</strong> la rotación de la flecha y el despliegue duran 0,25&nbsp;s; se desactivan con <code>prefers-reduced-motion: reduce</code>.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s10">
+    <div class="st"><span class="num">10</span><h2>Componentes átomo relacionados</h2></div>
+    <h3>Usa internamente</h3>
+    <ul>
+      <li><code>ChevronRight</code> (ícono de la página Icon; en código <code>bi-chevron-right</code> de Bootstrap Icons).</li>
+      <li>Estilo de texto <code>Heading/H3</code> para el título.</li>
+      <li>El contenido de ejemplo usa <code>Text field</code>; la línea divisoria es un frame propio (<code>Divider</code>), no un componente.</li>
+    </ul>
+    <h3>Hermanos / alternativos</h3>
+    <table>
+      <thead><tr><th>Componente</th><th>Elegirlo cuando…</th></tr></thead>
+      <tbody>
+        <tr><td><code>FormContainer</code> (<code>Form Section</code>)</td><td>El contenido es central y debe verse siempre; es el contenedor por defecto y tiene la misma piel (card, título y línea divisoria) pero sin flecha.</td></tr>
+        <tr><td><code>Tabs</code></td><td>Hay 2 o más secciones paralelas del mismo peso que se miran de a una.</td></tr>
+        <tr><td>Progress Tracker (sin componente)</td><td>Los pasos son secuenciales y dependientes (solo altas nuevas).</td></tr>
+        <tr><td><code>Modal</code></td><td>Hay que pedir un dato esencial o confirmar algo antes de seguir, bloqueando el fondo.</td></tr>
+        <tr><td><code>ChildGridSection</code></td><td>El bloque es una colección hija con su grilla y botón "Agregar"; no es colapsable.</td></tr>
+      </tbody>
+    </table>
+    <div class="stage">
+      <div class="lbl">Uso real — al final de un formulario M-02: Form Section arriba y Accordion cerrado debajo</div>
+      <div class="acc open" style="box-shadow:0 1px 1.5px rgba(15,30,52,.06)"><div class="hd" style="cursor:default"><span class="tt">Dimensiones</span></div><div class="body" style="display:block"><div class="bi"><div class="dv"></div><div class="ct"><div class="frow"><div class="fld">Eslora<i>Placeholder text</i></div><div class="fld">Manga<i>Placeholder text</i></div><div class="fld">Puntal<i>Placeholder text</i></div></div></div></div></div></div>
+      <div class="acc" data-toggle><button class="hd" aria-expanded="false"><span class="tt">Datos adicionales (opcional)</span><span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></span></button><div class="body"><div class="bi"><div class="dv"></div><div class="ct"><div class="frow"><div class="fld">Matrícula<i>Placeholder text</i></div><div class="fld">Indicativo de llamada<i>Placeholder text</i></div></div></div></div></div></div>
+    </div>
+  </section>
+
+  <section class="card" id="pendientes">
+    <div class="st"><h2>Pendientes</h2></div>
+    <ul>
+      <li><strong>Default de <code>Expanded</code>:</strong> en Figma el default es <code>False</code> y en código <code>defaultExpanded = true</code>. Decidir uno solo. <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Estados faltantes en Figma:</strong> dibujar Focus (ya existe en código) y decidir si hay Hover y Pressed. <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Contenido libre en Figma:</strong> el contenido de <code>Expanded=True</code> es un ejemplo fijo; evaluar un slot cuando la API de Figma lo permita.</li>
+      <li><strong>Accesibilidad en código:</strong> ocultar el panel cerrado (<code>inert</code>/<code>visibility</code>), agregar <code>aria-controls</code>, <code>role="region"</code> y <code>aria-labelledby</code>, y el encabezado <code>&lt;h3&gt;</code>; flechas, Home y End son opcionales. <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Título truncado:</strong> definir si se muestra completo (tooltip) o se limita el largo.</li>
+      <li><strong>Origen del componente en Figma:</strong> el component set se reconstruyó desde el código el 14/10/2026 porque la página estaba vacía; validar con diseño que coincide con la intención original.</li>
+      <li><strong>Handoff dev:</strong> falta la página <code>Accordion - Handoff Dev</code> (sizing, tokens, responsive, edge cases).</li>
+    </ul>
+  </section>
+
+</main>
+<script>
+  document.querySelectorAll('[data-toggle]').forEach(function (acc) {
+    var btn = acc.querySelector('.hd');
+    btn.addEventListener('click', function () {
+      var open = acc.classList.toggle('open'); btn.setAttribute('aria-expanded', open);
+    });
+  });
+</script>
+</body>
+</html>

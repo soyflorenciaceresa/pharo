@@ -145,7 +145,7 @@ export default function EmpresaFormulario({ onNavigate, onSearch, empresas = [],
       onCompanyChange={(c) => console.log('company change', c)}
       onLogout={() => console.log('logout')}
       onToggle={(d) => console.log('toggle', d)}
-      breadcrumb={[{ label: 'Empresas' }, { label: TITLES[mode] }]}
+      breadcrumb={[{ label: 'Empresas' }, { label: mode === 'create' ? 'Crear' : TITLES[mode] }]}
       title={TITLES[mode]}
       onSave={isView ? undefined : handleSave}
       onCancel={handleCancel}

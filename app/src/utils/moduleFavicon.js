@@ -1,4 +1,4 @@
-import { ICONS } from '../icons/icons.jsx';
+import { getIconMarkup } from '../icons/icons.jsx';
 
 // Mismos dos tokens que usa el badge del isotipo en el Sidebar
 // (`.brandIconBox[data-accent]` en Sidebar.module.css: fondo "-subtle" +
@@ -31,12 +31,12 @@ const ACCENT_COLORS = {
 //
 // `<style>:root{--bg:...}</style>` es para íconos que usan
 // `fill="var(--bg)"` para un detalle recortado (ver icons.jsx, ej.
-// bi-archive-fill) — en un SVG standalone esa variable no existe salvo que
+// bi-archive) — en un SVG standalone esa variable no existe salvo que
 // se declare acá; el resto de los íconos (que usan `currentColor`) la
 // resuelven vía el atributo `color` en el `<g>` que los envuelve, sin
 // necesitar la variable.
 export function buildModuleFaviconHref(iconName, accent) {
-  const path = ICONS[iconName] || ICONS['app-window'];
+  const path = getIconMarkup(iconName) || getIconMarkup('app-window');
   const { bg, fg } = ACCENT_COLORS[accent] || ACCENT_COLORS.blue;
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">` +

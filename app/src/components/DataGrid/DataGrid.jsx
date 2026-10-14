@@ -120,7 +120,7 @@ export default function DataGrid({
             <div
               key={col.key}
               className={cx(styles.cell, styles.headerCell, !col.width && styles.cellFlex)}
-              style={col.width ? { width: col.width, flexShrink: 0 } : undefined}
+              style={col.width ? { width: col.width, flexShrink: 0 } : col.minWidth ? { minWidth: col.minWidth } : undefined}
             >
               {col.label}
             </div>
@@ -145,7 +145,7 @@ export default function DataGrid({
                 <div
                   key={col.key}
                   className={cx(styles.cell, !col.width && styles.cellFlex)}
-                  style={col.width ? { width: col.width, flexShrink: 0 } : undefined}
+                  style={col.width ? { width: col.width, flexShrink: 0 } : col.minWidth ? { minWidth: col.minWidth } : undefined}
                 >
                   {col.render ? col.render(row) : <span className={styles.cellText}>{row[col.key]}</span>}
                 </div>

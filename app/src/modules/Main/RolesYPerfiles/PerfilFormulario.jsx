@@ -132,7 +132,7 @@ export default function PerfilFormulario({ onNavigate, onSearch, perfiles = [], 
       onCompanyChange={(c) => console.log('company change', c)}
       onLogout={() => console.log('logout')}
       onToggle={(d) => console.log('toggle', d)}
-      breadcrumb={[{ label: 'Roles y perfiles' }, { label: TITLES[mode] }]}
+      breadcrumb={[{ label: 'Roles y perfiles' }, { label: mode === 'create' ? 'Crear' : TITLES[mode] }]}
       title={TITLES[mode]}
       onSave={isView ? undefined : handleSave}
       onCancel={handleCancel}
@@ -184,7 +184,7 @@ export default function PerfilFormulario({ onNavigate, onSearch, perfiles = [], 
         actions={
           isView
             ? []
-            : [{ key: 'delete', icon: 'icon-delete', label: 'Eliminar', onClick: (row) => handleRemoveConcesionario(row.id) }]
+            : [{ key: 'delete', icon: 'bi-trash', label: 'Eliminar', onClick: (row) => handleRemoveConcesionario(row.id) }]
         }
       />
 

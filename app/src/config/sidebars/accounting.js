@@ -7,6 +7,8 @@
 // de App.jsx, mismo criterio ya usado en MAIN_SIDEBAR_PROPS para ítems sin
 // Figma definido: `icon: 'app-window'` y el href no resuelve a ninguna ruta
 // hasta que se construya esa pantalla.
+import { MAESTROS_ACCOUNTING } from '../maestrosModulos.js';
+
 export const ACCOUNTING_SIDEBAR_PROPS = {
   brandLabel: 'Accounting',
   brandIcon: 'icon-truckshift',
@@ -16,10 +18,8 @@ export const ACCOUNTING_SIDEBAR_PROPS = {
     {
       label: 'Maestros',
       icon: 'icon-maestros',
-      items: [
-        { label: 'Plan de cuentas', icon: 'app-window', href: '/accounting/plan-de-cuentas' },
-        { label: 'Centros de costo', icon: 'app-window', href: '/accounting/centros-costo' },
-      ],
+      // Todos los maestros salen de config/maestrosModulos.js (grilla estándar con datos de ejemplo). Orden alfabético.
+      items: MAESTROS_ACCOUNTING.map(({ label, icon, href }) => ({ label, icon, href })).sort((x, y) => x.label.localeCompare(y.label, 'es')),
     },
     {
       label: 'Procesos',

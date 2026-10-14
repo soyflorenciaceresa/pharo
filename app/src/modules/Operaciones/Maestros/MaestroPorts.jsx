@@ -18,12 +18,12 @@ const COLUMNS = [
   },
 ];
 
-export default function MaestroPorts({ maestro, onNavigate, onSearch, favoriteHrefs = [], onToggleFavorite }) {
+export default function MaestroPorts({ maestro, sidebar = OPERACIONES_SIDEBAR_PROPS, onNavigate, onSearch, favoriteHrefs = [], onToggleFavorite }) {
   const navigate = onNavigate ?? ((d) => console.log('navigate', d));
 
   return (
     <LayoutMaestroDataGrid
-      sidebar={OPERACIONES_SIDEBAR_PROPS}
+      sidebar={sidebar}
       activeHref={maestro.href}
       onNavigate={navigate}
       onSearch={onSearch}

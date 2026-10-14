@@ -7,6 +7,8 @@
 // de App.jsx, mismo criterio ya usado en MAIN_SIDEBAR_PROPS para ítems sin
 // Figma definido: `icon: 'app-window'` y el href no resuelve a ninguna ruta
 // hasta que se construya esa pantalla.
+import { MAESTROS_SCALES } from '../maestrosModulos.js';
+
 export const SCALES_SIDEBAR_PROPS = {
   brandLabel: 'Scales',
   brandIcon: 'icon-truckshift',
@@ -16,10 +18,8 @@ export const SCALES_SIDEBAR_PROPS = {
     {
       label: 'Maestros',
       icon: 'icon-maestros',
-      items: [
-        { label: 'Básculas', icon: 'app-window', href: '/scales/basculas' },
-        { label: 'Tickets de pesaje', icon: 'app-window', href: '/scales/tickets' },
-      ],
+      // Todos los maestros salen de config/maestrosModulos.js (grilla estándar con datos de ejemplo). Orden alfabético.
+      items: MAESTROS_SCALES.map(({ label, icon, href }) => ({ label, icon, href })).sort((x, y) => x.label.localeCompare(y.label, 'es')),
     },
     {
       label: 'Procesos',

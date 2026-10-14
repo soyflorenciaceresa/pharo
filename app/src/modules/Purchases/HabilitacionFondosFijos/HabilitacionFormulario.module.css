@@ -1,0 +1,13 @@
+.notFound {
+  margin: 0;
+  padding: 0 var(--spacing-lg);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.modalFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}

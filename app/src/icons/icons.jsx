@@ -1,35 +1,38 @@
-// Approximations of Bootstrap Icons (bi-*), matching the shapes built in
-// Figma's "Sidebar final" page. Each element carries its own fill/stroke —
-// "currentColor" for the icon color, "var(--bg)" for cutout details so they
-// blend with whatever background token a consumer binds "--bg" to.
-// bi-pin-angle/bi-pin-fill are exact vector traces from Figma (nodes
-// 438:3105 "PinAngle" and 438:3104 "Pin"), not hand-drawn approximations.
+// Sistema de íconos del kit. Dos orígenes, un solo punto de entrada (`<Icon name>`):
+//
+//  REGLA: los íconos son SIEMPRE SIN RELLENO (outline) — nunca variantes `-fill`.
+//  Un estado (fijado, activo) se comunica con color u otro ícono outline, no
+//  rellenando el glifo. ÚNICA EXCEPCIÓN: `bi-star-fill`, la estrella del favorito
+//  marcado (ToggleIcon), que por diseño va rellena.
+//
+//  1. `bi-*` — Bootstrap Icons OFICIALES, tomados del paquete npm
+//     `bootstrap-icons` (MIT). No se dibujan ni se copian a mano: el nombre
+//     `bi-eye` resuelve el archivo `node_modules/bootstrap-icons/icons/eye.svg`.
+//     Para usar uno nuevo, agregar su nombre (sin el prefijo `bi-`) a la lista
+//     de `BOOTSTRAP_GLOB` de abajo — solo entran al bundle los listados.
+//  2. `icon-*` / `app-window` — glifos propios del sistema, trazos exactos
+//     exportados de Figma (no existen en Bootstrap Icons). Viven en `ICONS`.
+//
+// Los SVG de Bootstrap vienen en viewBox 16 con `fill="currentColor"`, así que
+// heredan el color del texto como el resto.
+const BOOTSTRAP_GLOB = import.meta.glob(
+  '/node_modules/bootstrap-icons/icons/{archive,bar-chart,box-arrow-right,box-arrow-up-right,box-seam,building,cart,chat,chevron-down,chevron-left,chevron-right,download,eye,file-earmark-text,grid-1x2,house-door,inbox,lock,mic,paperclip,person-badge,pin,pin-angle,receipt,search,send,share,star,star-fill,trash,upload}.svg',
+  { query: '?raw', import: 'default', eager: true },
+);
+
+// Única excepción a la regla "sin relleno": la estrella del favorito marcado (ToggleIcon).
+const FILL_EXCEPTIONS = ['bi-star-fill'];
+
+// 'bi-eye' -> markup interior del SVG oficial, envuelto para heredar currentColor.
+const BOOTSTRAP_ICONS = Object.fromEntries(
+  Object.entries(BOOTSTRAP_GLOB).map(([path, raw]) => {
+    const name = path.split('/').pop().replace('.svg', '');
+    const inner = raw.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '').trim();
+    return [`bi-${name}`, `<g fill="currentColor">${inner}</g>`];
+  }),
+);
+
 export const ICONS = {
-  // Trazo exacto (Card-Module "Purchases", 445:56) — reemplaza la
-  // aproximación dibujada a mano que estaba pendiente de reemplazo.
-  'bi-cart': '<path d="M0 2.5C0 2.36739 0.0526784 2.24021 0.146447 2.14645C0.240215 2.05268 0.367392 2 0.5 2H2C2.11153 2.00003 2.21985 2.03735 2.30773 2.10602C2.39561 2.1747 2.45801 2.27078 2.485 2.379L2.89 4H14.5C14.5759 4.00002 14.6509 4.01734 14.7191 4.05065C14.7874 4.08396 14.8472 4.13238 14.8939 4.19224C14.9407 4.2521 14.9732 4.32182 14.9889 4.39611C15.0047 4.4704 15.0034 4.54731 14.985 4.621L13.485 10.621C13.458 10.7292 13.3956 10.8253 13.3077 10.894C13.2199 10.9626 13.1115 11 13 11H4C3.88847 11 3.78015 10.9626 3.69227 10.894C3.60439 10.8253 3.54199 10.7292 3.515 10.621L1.61 3H0.5C0.367392 3 0.240215 2.94732 0.146447 2.85355C0.0526784 2.75979 0 2.63261 0 2.5ZM3.14 5L4.39 10H12.61L13.86 5H3.14ZM5 13C4.73478 13 4.48043 13.1054 4.29289 13.2929C4.10536 13.4804 4 13.7348 4 14C4 14.2652 4.10536 14.5196 4.29289 14.7071C4.48043 14.8946 4.73478 15 5 15C5.26522 15 5.51957 14.8946 5.70711 14.7071C5.89464 14.5196 6 14.2652 6 14C6 13.7348 5.89464 13.4804 5.70711 13.2929C5.51957 13.1054 5.26522 13 5 13ZM3 14C3 13.4696 3.21071 12.9609 3.58579 12.5858C3.96086 12.2107 4.46957 12 5 12C5.53043 12 6.03914 12.2107 6.41421 12.5858C6.78929 12.9609 7 13.4696 7 14C7 14.5304 6.78929 15.0391 6.41421 15.4142C6.03914 15.7893 5.53043 16 5 16C4.46957 16 3.96086 15.7893 3.58579 15.4142C3.21071 15.0391 3 14.5304 3 14ZM12 13C11.7348 13 11.4804 13.1054 11.2929 13.2929C11.1054 13.4804 11 13.7348 11 14C11 14.2652 11.1054 14.5196 11.2929 14.7071C11.4804 14.8946 11.7348 15 12 15C12.2652 15 12.5196 14.8946 12.7071 14.7071C12.8946 14.5196 13 14.2652 13 14C13 13.7348 12.8946 13.4804 12.7071 13.2929C12.5196 13.1054 12.2652 13 12 13ZM10 14C10 13.4696 10.2107 12.9609 10.5858 12.5858C10.9609 12.2107 11.4696 12 12 12C12.5304 12 13.0391 12.2107 13.4142 12.5858C13.7893 12.9609 14 13.4696 14 14C14 14.5304 13.7893 15.0391 13.4142 15.4142C13.0391 15.7893 12.5304 16 12 16C11.4696 16 10.9609 15.7893 10.5858 15.4142C10.2107 15.0391 10 14.5304 10 14Z" fill="currentColor"/>',
-  'bi-pin-angle': '<path d="M9.828 0.722C9.89371 0.721883 9.95879 0.734717 10.0195 0.759768C10.0803 0.78482 10.1355 0.821598 10.182 0.868L15.132 5.818C15.2257 5.91176 15.2784 6.03892 15.2784 6.1715C15.2784 6.30408 15.2257 6.43124 15.132 6.525C14.652 7.005 14.06 7.113 13.629 7.113C13.452 7.113 13.294 7.095 13.169 7.074L10.035 10.208C10.1171 10.5405 10.1707 10.8794 10.195 11.221C10.241 11.923 10.163 12.908 9.475 13.596C9.38124 13.6897 9.25408 13.7424 9.1215 13.7424C8.98892 13.7424 8.86176 13.6897 8.768 13.596L5.939 10.768L2.757 13.95C2.562 14.145 1.538 14.852 1.343 14.657C1.148 14.462 1.855 13.437 2.05 13.243L5.232 10.061L2.404 7.232C2.31026 7.13824 2.25761 7.01108 2.25761 6.8785C2.25761 6.74592 2.31026 6.61876 2.404 6.525C3.092 5.837 4.077 5.758 4.779 5.805C5.12061 5.82932 5.45952 5.88285 5.792 5.965L8.926 2.832C8.90082 2.67959 8.88744 2.52547 8.886 2.371C8.886 1.941 8.994 1.349 9.475 0.868C9.56871 0.774531 9.69565 0.722028 9.828 0.722ZM9.95 2.832V2.834C9.97888 2.92197 9.98276 3.01623 9.96122 3.10628C9.93968 3.19632 9.89356 3.27862 9.828 3.344L6.293 6.878C6.22732 6.9434 6.14475 6.98926 6.05451 7.01045C5.96428 7.03164 5.86993 7.02733 5.782 6.998H5.78L5.766 6.994C5.67078 6.96581 5.57473 6.94047 5.478 6.918C5.22638 6.85963 4.97061 6.82085 4.713 6.802C4.291 6.774 3.877 6.81 3.538 6.952L9.048 12.461C9.189 12.121 9.225 11.708 9.197 11.286C9.17093 10.9288 9.10656 10.5754 9.005 10.232L9.001 10.219C8.97147 10.1309 8.96706 10.0354 8.98825 9.94495C9.00945 9.85452 9.05542 9.77177 9.121 9.706L12.657 6.171C12.7251 6.10249 12.8116 6.05518 12.906 6.03477C13.0004 6.01436 13.0987 6.02173 13.189 6.056L13.285 6.078C13.372 6.095 13.493 6.112 13.629 6.112C13.7437 6.11333 13.858 6.1 13.972 6.072L9.927 2.028C9.899 2.14267 9.88567 2.257 9.887 2.371C9.88773 2.52637 9.90857 2.68099 9.949 2.831L9.95 2.832Z" fill="currentColor"/>',
-  'bi-pin-fill': '<path d="M4.146 0.145996C4.19252 0.099594 4.24773 0.0628159 4.30847 0.0377642C4.36921 0.0127125 4.4343 -0.000121534 4.5 -4.18684e-06H11.5C11.6326 -4.18684e-06 11.7598 0.0526742 11.8536 0.146442C11.9473 0.240211 12 0.367388 12 0.499996C12 1.18 11.658 1.674 11.354 1.979C11.228 2.104 11.104 2.203 11 2.277V6.708L11.078 6.756C11.281 6.883 11.554 7.07 11.829 7.311C12.36 7.775 13 8.527 13 9.5C13 9.6326 12.9473 9.75978 12.8536 9.85355C12.7598 9.94732 12.6326 10 12.5 10H8.5V14.5C8.5 14.776 8.276 16 8 16C7.724 16 7.5 14.776 7.5 14.5V10H3.5C3.36739 10 3.24021 9.94732 3.14645 9.85355C3.05268 9.75978 3 9.6326 3 9.5C3 8.527 3.64 7.775 4.17 7.311C4.42894 7.08667 4.70663 6.88493 5 6.708V2.277C4.8745 2.18692 4.75615 2.08729 4.646 1.979C4.342 1.674 4 1.179 4 0.499996C3.99988 0.434291 4.01272 0.369207 4.03777 0.308465C4.06282 0.247723 4.0996 0.192515 4.146 0.145996ZM5.724 1.553L5.726 1.554C5.80842 1.59576 5.87766 1.65955 5.92603 1.73828C5.97439 1.817 6 1.9076 6 2V7C6 7.09277 5.97418 7.18372 5.92544 7.26267C5.87669 7.34161 5.80695 7.40543 5.724 7.447H5.722L5.71 7.454L5.656 7.484C5.36146 7.64892 5.08438 7.84324 4.829 8.064C4.511 8.342 4.244 8.66 4.104 9H11.896C11.756 8.66 11.489 8.342 11.171 8.064C10.9 7.82969 10.6047 7.62518 10.29 7.454L10.278 7.448H10.276C10.1929 7.40636 10.1231 7.34238 10.0743 7.26324C10.0255 7.1841 9.99982 7.09294 10 7V2C9.99962 1.90331 10.0273 1.80858 10.0796 1.72729C10.132 1.646 10.2068 1.58164 10.295 1.542C10.4227 1.46647 10.5406 1.37545 10.646 1.271C10.726 1.191 10.801 1.101 10.86 0.999996H5.14C5.20067 1.1 5.272 1.19033 5.354 1.271C5.46462 1.38061 5.58899 1.4754 5.724 1.553Z" fill="currentColor"/>',
-  'bi-archive-fill': '<rect x="1" y="2" width="14" height="3" rx="0.5" fill="currentColor"/><path d="M2 5L14 5L14 12.5L2 12.5Z" fill="currentColor"/><rect x="6" y="8" width="4" height="1" rx="0.5" fill="var(--bg)"/>',
-  'bi-grid-1x2-fill': '<rect x="1" y="2" width="6" height="12" rx="1" fill="currentColor"/><rect x="9" y="2" width="6" height="12" rx="1" fill="currentColor"/>',
-  'bi-building': '<rect x="3" y="1.5" width="10" height="13" rx="0.5" fill="currentColor"/><rect x="4.5" y="3.2" width="1.5" height="1.5" fill="var(--bg)"/><rect x="7" y="3.2" width="1.5" height="1.5" fill="var(--bg)"/><rect x="9.5" y="3.2" width="1.5" height="1.5" fill="var(--bg)"/><rect x="4.5" y="6.2" width="1.5" height="1.5" fill="var(--bg)"/><rect x="7" y="6.2" width="1.5" height="1.5" fill="var(--bg)"/><rect x="9.5" y="6.2" width="1.5" height="1.5" fill="var(--bg)"/><rect x="4.5" y="9.2" width="1.5" height="1.5" fill="var(--bg)"/><rect x="7" y="9.2" width="1.5" height="1.5" fill="var(--bg)"/><rect x="9.5" y="9.2" width="1.5" height="1.5" fill="var(--bg)"/><rect x="6.3" y="11.5" width="2.4" height="3" fill="var(--bg)"/>',
-  'bi-box-seam': '<path d="M8 1L14.5 4L14.5 12L8 15L1.5 12L1.5 4Z" fill="currentColor"/><rect x="1.5" y="4" width="13" height="1.1" fill="var(--bg)"/><rect x="7.45" y="4" width="1.1" height="11" fill="var(--bg)"/>',
-  'bi-house-door': '<path d="M8 1.5L15 7.5L13 7.5L13 9L3 9L3 7.5L1 7.5Z" fill="currentColor"/><rect x="3" y="9" width="10" height="5.5" fill="currentColor"/><rect x="6.7" y="10.5" width="2.6" height="4" fill="var(--bg)"/>',
-  'bi-receipt': '<path d="M2 1L14 1L14 15L12.5 13.5L11 15L9.5 13.5L8 15L6.5 13.5L5 15L3.5 13.5L2 15Z" fill="currentColor"/><rect x="4" y="4" width="8" height="1" fill="var(--bg)"/><rect x="4" y="6.5" width="8" height="1" fill="var(--bg)"/><rect x="4" y="9" width="8" height="1" fill="var(--bg)"/>',
-  'bi-inbox': '<path d="M2 3L6 3L7 6L9 6L10 3L14 3L15 8L15 12.5L1 12.5L1 8Z" fill="currentColor"/><rect x="7" y="6.4" width="2" height="1.2" fill="var(--bg)"/>',
-  'bi-file-earmark-text': '<path d="M3 1L10 1L14 5L14 15L3 15Z" fill="currentColor"/><path d="M10 1L14 5L10 5Z" fill="var(--bg)"/><rect x="5" y="8" width="6" height="1" fill="var(--bg)"/><rect x="5" y="10.5" width="6" height="1" fill="var(--bg)"/><rect x="5" y="13" width="6" height="1" fill="var(--bg)"/>',
-  'bi-box-arrow-up-right': '<path d="M3 6L3 13L10 13L10 9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 2L13 2L13 8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 9.5L13 3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
-  'bi-chevron-right': '<path d="M5 3L10.5 8L5 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
-  'bi-chevron-left': '<path d="M11 3L5.5 8L11 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
-  // Sin equivalente en ningún frame de Figma todavía — aproximación dibujada
-  // a mano, mismo stroke-width que bi-chevron-left/right para consistencia
-  // visual. Usado como indicador de despliegue en Select.
-  'bi-chevron-down': '<path d="M3 5.5L8 11L13 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
-  'bi-box-arrow-right': '<path d="M8 2.5L4 2.5L4 13.5L8 13.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 8L14 8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M11 5L14 8L11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>',
-  'bi-person-badge': '<rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/><ellipse cx="8" cy="6.2" rx="1.7" ry="1.7" fill="currentColor"/><path d="M4.5 12C4.5 9.5 6 8.5 8 8.5C10 8.5 11.5 9.5 11.5 12Z" fill="currentColor"/>',
-  // Sin trazo de Figma disponible (no forma parte del Data Grid 304:388) —
-  // aproximación dibujada a mano, mismo criterio que el resto de bi-*.
-  'bi-eye': '<path d="M1 8C1 8 3.5 3 8 3C12.5 3 15 8 15 8C15 8 12.5 13 8 13C3.5 13 1 8 1 8Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="8" r="2.2" fill="none" stroke="currentColor" stroke-width="1.3"/>',
   // Not a Bootstrap icon — custom glyph from Figma ("App"), used as the
   // default badge icon for CardQuickAccess/CardModule, y como isotipo del
   // Sidebar de Main (496:4632/496:4633). Trazo exacto (antes era una
@@ -82,8 +85,6 @@ export const ICONS = {
   // viewBox nativo 16x16 (stroke-width 1.33333) sin modificar los paths;
   // color original #6a7883 reemplazado por currentColor.
   'icon-edit': '<path d="M14.116 4.54133C14.4685 4.18895 14.6665 3.71098 14.6666 3.21257C14.6667 2.71416 14.4687 2.23614 14.1163 1.88367C13.7639 1.53119 13.286 1.33314 12.7876 1.33308C12.2892 1.33302 11.8111 1.53095 11.4587 1.88333L2.56133 10.7827C2.40655 10.937 2.29208 11.127 2.228 11.336L1.34733 14.2373C1.3301 14.295 1.3288 14.3562 1.34357 14.4146C1.35833 14.4729 1.38861 14.5262 1.4312 14.5687C1.47378 14.6112 1.52708 14.6414 1.58544 14.6561C1.6438 14.6707 1.70504 14.6693 1.76267 14.652L4.66467 13.772C4.87345 13.7085 5.06345 13.5947 5.218 13.4407L14.116 4.54133Z" fill="none" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 3.33333L12.6667 6" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>',
-  'icon-delete': '<path d="M6.66667 7.33333V11.3333" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.33333 7.33333V11.3333" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.6667 4V13.3333C12.6667 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66667C4.31304 14.6667 3.97391 14.5262 3.72386 14.2761C3.47381 14.0261 3.33333 13.687 3.33333 13.3333V4" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 4H14" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.33333 4V2.66667C5.33333 2.31304 5.47381 1.97391 5.72386 1.72386C5.97391 1.47381 6.31304 1.33333 6.66667 1.33333H9.33333C9.68696 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6667 2.31304 10.6667 2.66667V4" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>',
-  'icon-share': '<path d="M12 5.33333C13.1046 5.33333 14 4.4379 14 3.33333C14 2.22876 13.1046 1.33333 12 1.33333C10.8954 1.33333 10 2.22876 10 3.33333C10 4.4379 10.8954 5.33333 12 5.33333Z" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 10C5.10457 10 6 9.10457 6 8C6 6.89543 5.10457 6 4 6C2.89543 6 2 6.89543 2 8C2 9.10457 2.89543 10 4 10Z" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 14.6667C13.1046 14.6667 14 13.7712 14 12.6667C14 11.5621 13.1046 10.6667 12 10.6667C10.8954 10.6667 10 11.5621 10 12.6667C10 13.7712 10.8954 14.6667 12 14.6667Z" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.72667 9.00667L10.28 11.66" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.2733 4.34L5.72667 6.99333" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>',
   // Layout Maestro Data Grid (492:3534) — exact vector traces from Figma
   // ("PlusLg", "ArrowClockwise", "BoxArrowRight" en la fila de botones);
   // fill original (white / #4059fd) reemplazado por currentColor para que
@@ -94,37 +95,34 @@ export const ICONS = {
 
   // Sin frame de Figma equivalente todavía (Buscador de la TopBar) —
   // aproximación dibujada a mano (lupa), mismo criterio que el resto de bi-*.
-  'bi-search': '<circle cx="6.8" cy="6.8" r="4.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.4 10.4L14.2 14.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>',
 
   // Set de íconos del Buscador de IA / Chatbox (Pharo IA) — sin frame de
   // Figma equivalente todavía, aproximaciones dibujadas a mano mismo criterio
   // que el resto de bi-*.
-  'bi-chat': '<path d="M3.5 2C2.67157 2 2 2.67157 2 3.5V8.5C2 9.32843 2.67157 10 3.5 10H3.5V12.5L6 10H12.5C13.3284 10 14 9.32843 14 8.5V3.5C14 2.67157 13.3284 2 12.5 2H3.5Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>',
-  'bi-paperclip': '<path d="M9.5 4L5 8.5C4.17157 9.32843 4.17157 10.6716 5 11.5C5.82843 12.3284 7.17157 12.3284 8 11.5L12.5 7C13.6046 5.89543 13.6046 4.10457 12.5 3C11.3954 1.89543 9.60457 1.89543 8.5 3L4 7.5C2.34315 9.15685 2.34315 11.8431 4 13.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>',
-  'bi-mic': '<rect x="6" y="1.5" width="4" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 7.5C3.5 10.5376 5.51472 13 8 13C10.4853 13 12.5 10.5376 12.5 7.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 13V15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5.5 15H10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
-  'bi-send': '<path d="M2 8L14 2L9 14L7 9L2 8Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M14 2L7 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
-  'bi-download': '<path d="M8 2V10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4.5 6.5L8 10L11.5 6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 12.5H13.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
-  // Sin equivalente en ningún frame de Figma todavía — aproximación dibujada
   // a mano, mismo trazo que bi-download pero con la flecha invertida (sube
   // en vez de bajar). Usado en FileUpload.
-  'bi-upload': '<path d="M8 10V2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4.5 5.5L8 2L11.5 5.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 12.5H13.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
-  'bi-bar-chart': '<rect x="2" y="9" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="6.5" y="5" width="3" height="9" rx="0.5" fill="currentColor"/><rect x="11" y="2" width="3" height="12" rx="0.5" fill="currentColor"/>',
   // Favoritos, ver `ToggleIcon` (Figma: `Toggle Icon`, 657:39 — ahí la
   // estrella es un vector propio, no una instancia del set de íconos; no hay
   // estrellas en la página Icon todavía). Trazo estándar de Bootstrap Icons
   // (bi-star/bi-star-fill), mismo criterio que el resto de bi-* del kit.
-  'bi-star': '<path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" fill="currentColor"/>',
-  'bi-star-fill': '<path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" fill="currentColor"/>',
   // Historial (reloj con flecha antihoraria), ver `EmptyState` (Figma: `Icon/History`,
   // 788:6 — dibujado en la página Empty State, no existe en la página Icon).
   // Trazo estilo Lucide `history`, 24px de origen reescalado al viewBox de 16.
   'icon-history': '<g transform="scale(0.6667)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></g>',
-  // Candado (Sidebar sin acciones disponibles). Trazo estándar de Bootstrap Icons (bi-lock).
-  'bi-lock': '<path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="currentColor"/>',
 };
 
+// Markup interior de un ícono por nombre (`bi-*` oficial de Bootstrap, o `icon-*` de Figma).
+export function getIconMarkup(name) {
+  return BOOTSTRAP_ICONS[name] || ICONS[name] || '';
+}
+
 export function Icon({ name, size = 16, className, ...rest }) {
-  const markup = ICONS[name] || '';
+  if (import.meta.env.DEV && /^bi-.*-fill$/.test(name || '') && !FILL_EXCEPTIONS.includes(name)) {
+    console.warn(`Icon: "${name}" es una variante con relleno — los íconos del kit son siempre outline (sin -fill).`);
+  }
+  if (import.meta.env.DEV && name && !getIconMarkup(name)) {
+    console.warn(`Icon: "${name}" no existe. Para un bi-* agregalo a BOOTSTRAP_GLOB en icons.jsx; para un glifo propio, a ICONS.`);
+  }
   return (
     <svg
       viewBox="0 0 16 16"
@@ -132,7 +130,7 @@ export function Icon({ name, size = 16, className, ...rest }) {
       height={size}
       className={className}
       {...rest}
-      dangerouslySetInnerHTML={{ __html: markup }}
+      dangerouslySetInnerHTML={{ __html: getIconMarkup(name) }}
     />
   );
 }
