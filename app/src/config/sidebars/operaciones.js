@@ -17,8 +17,8 @@ export const OPERACIONES_SIDEBAR_PROPS = {
       icon: 'icon-maestros',
       // Orden alfabético (se ordena acá, no a mano, para que un ítem nuevo caiga en su
       // lugar). Buque y Depósitos tienen pantalla propia; el resto sale de
-      // config/maestrosPorts.js (grilla estándar con datos de ejemplo). "Giros" no se
-      // repite acá: ya existe en el grupo Giro buque.
+      // config/maestrosPorts.js (grilla estándar con datos de ejemplo). "Giros" de acá es el maestro
+      // /giros-turnos; el proceso Solicitud de giro buque (/giros) está en el grupo Giro buque.
       items: [
         { label: 'Buque', icon: 'icon-buques', href: '/buques' },
         { label: 'Depósitos', icon: 'app-window', href: '/depositos' },

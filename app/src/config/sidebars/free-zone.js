@@ -7,6 +7,8 @@
 // de App.jsx, mismo criterio ya usado en MAIN_SIDEBAR_PROPS para ítems sin
 // Figma definido: `icon: 'app-window'` y el href no resuelve a ninguna ruta
 // hasta que se construya esa pantalla.
+import { MAESTROS_FREE_ZONE } from '../maestrosModulos.js';
+
 export const FREE_ZONE_SIDEBAR_PROPS = {
   brandLabel: 'Free Zone',
   brandIcon: 'app-window',
@@ -16,10 +18,8 @@ export const FREE_ZONE_SIDEBAR_PROPS = {
     {
       label: 'Maestros',
       icon: 'icon-maestros',
-      items: [
-        { label: 'Depósitos', icon: 'app-window', href: '/free-zone/depositos' },
-        { label: 'Operadores autorizados', icon: 'app-window', href: '/free-zone/operadores' },
-      ],
+      // Todos los maestros salen de config/maestrosModulos.js (grilla estándar con datos de ejemplo). Orden alfabético.
+      items: MAESTROS_FREE_ZONE.map(({ label, icon, href }) => ({ label, icon, href })).sort((x, y) => x.label.localeCompare(y.label, 'es')),
     },
     {
       label: 'Procesos',

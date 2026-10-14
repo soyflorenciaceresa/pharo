@@ -16,11 +16,18 @@ export default function ChildGridSection({
   actions,
   searchable = false,
   emptyMessage,
+  // Botones outline extra a la izquierda de "Agregar" (ej. "Actualizar"): [{ label, onClick, iconStart? }]
+  extraActions = [],
 }) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <span className={styles.title}>{title}</span>
+        {extraActions.map((a) => (
+          <Button key={a.label} variant="outline" iconStart={a.iconStart} onClick={a.onClick}>
+            {a.label}
+          </Button>
+        ))}
         {onAdd && (
           <Button variant="outline" onClick={onAdd}>
             {addLabel}

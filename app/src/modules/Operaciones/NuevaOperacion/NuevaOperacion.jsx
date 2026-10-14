@@ -161,7 +161,7 @@ export default function NuevaOperacion({ onNavigate, onSearch }) {
             ],
             rows: clientes,
             emptyMessage: errors.clientes ? 'Agregá al menos un cliente para confirmar.' : 'Todavía no agregaste clientes.',
-            actions: [{ key: 'delete', icon: 'icon-delete', label: 'Eliminar', onClick: (row) => setClientes((prev) => prev.filter((r) => r.id !== row.id)) }],
+            actions: [{ key: 'delete', icon: 'bi-trash', label: 'Eliminar', onClick: (row) => setClientes((prev) => prev.filter((r) => r.id !== row.id)) }],
           },
           {
             type: 'accordion',

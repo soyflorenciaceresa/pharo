@@ -97,7 +97,7 @@ export default function EquipoFormulario({ onNavigate, onSearch, equipos = [], o
       onCompanyChange={(c) => console.log('company change', c)}
       onLogout={() => console.log('logout')}
       onToggle={(d) => console.log('toggle', d)}
-      breadcrumb={[{ label: 'Equipos' }, { label: TITLES[mode] }]}
+      breadcrumb={[{ label: 'Equipos' }, { label: mode === 'create' ? 'Crear' : TITLES[mode] }]}
       title={TITLES[mode]}
       onSave={isView ? undefined : handleSave}
       onCancel={handleCancel}

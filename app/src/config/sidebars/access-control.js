@@ -7,6 +7,8 @@
 // de App.jsx, mismo criterio ya usado en MAIN_SIDEBAR_PROPS para ítems sin
 // Figma definido: `icon: 'app-window'` y el href no resuelve a ninguna ruta
 // hasta que se construya esa pantalla.
+import { MAESTROS_ACCESS_CONTROL } from '../maestrosModulos.js';
+
 export const ACCESS_CONTROL_SIDEBAR_PROPS = {
   brandLabel: 'Access Control',
   brandIcon: 'icon-truckshift',
@@ -16,10 +18,12 @@ export const ACCESS_CONTROL_SIDEBAR_PROPS = {
     {
       label: 'Maestros',
       icon: 'icon-maestros',
+      // Personas tiene pantalla propia; el resto sale de config/maestrosModulos.js (grilla
+      // estándar con datos de ejemplo). Orden alfabético.
       items: [
-        { label: 'Personas autorizadas', icon: 'app-window', href: '/access-control/personas-autorizadas' },
-        { label: 'Puntos de acceso', icon: 'app-window', href: '/access-control/puntos-acceso' },
-      ],
+        { label: 'Personas', icon: 'app-window', href: '/access-control/personas' },
+        ...MAESTROS_ACCESS_CONTROL.map(({ label, icon, href }) => ({ label, icon, href })),
+      ].sort((x, y) => x.label.localeCompare(y.label, 'es')),
     },
     {
       label: 'Procesos',

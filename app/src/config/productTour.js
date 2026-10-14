@@ -16,7 +16,7 @@ export const PRODUCT_TOUR_SLIDES = [
   {
     title: 'Nuevo menú lateral',
     description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.',
-    icon: 'bi-grid-1x2-fill',
+    icon: 'bi-grid-1x2',
     accent: 'violet',
   },
   {

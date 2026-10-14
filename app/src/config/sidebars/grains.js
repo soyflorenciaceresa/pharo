@@ -8,6 +8,8 @@
 // MAIN_SIDEBAR_PROPS para ítems sin Figma definido: `icon: 'app-window'` y
 // el href no resuelve a ninguna ruta hasta que se construya esa pantalla.
 // "Contratos" (Maestros) sí es un maestro real — ver modules/Grains/Contratos/.
+import { MAESTROS_GRAINS } from '../maestrosModulos.js';
+
 export const GRAINS_SIDEBAR_PROPS = {
   brandLabel: 'Grains',
   brandIcon: 'app-window',
@@ -17,9 +19,13 @@ export const GRAINS_SIDEBAR_PROPS = {
     {
       label: 'Maestros',
       icon: 'icon-maestros',
+      // Contratos y Clientes tienen pantalla propia; el resto sale de config/maestrosModulos.js
+      // (grilla estándar con datos de ejemplo). Orden alfabético.
       items: [
         { label: 'Contratos', icon: 'app-window', href: '/grains/contratos' },
-      ],
+        { label: 'Clientes', icon: 'app-window', href: '/grains/clientes' },
+        ...MAESTROS_GRAINS.map(({ label, icon, href }) => ({ label, icon, href })),
+      ].sort((x, y) => x.label.localeCompare(y.label, 'es')),
     },
     {
       label: 'Procesos',

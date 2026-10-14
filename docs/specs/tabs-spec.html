@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabs — Spec</title>
+<!--
+  Spec del componente Tabs (Pharo Design System), siguiendo la estructura fija de 10 secciones de la skill
+  "spec-de-componente". Fuente: Figma node 484:11 (sección "Tabs — Design System Component", página Tabs,
+  componente `Tabs` 483:1652 + `Tab / Active` 483:2 + `Tab / Inactive` 483:5) y código app/src/components/Tabs.
+  Layout replicado del frame "Button - Spec" de Figma (1200px, padding 64, gap 24, tarjetas blancas) para que
+  la exportación a Figma sea 1:1. Estilos del demo = Tabs.module.css con los mismos tokens de tokens/tokens.css.
+-->
+<style>
+  :root {
+    --color-primary-default: #4059fd;
+    --color-text-default: #061e30;
+    --color-text-secondary: #6a7883;
+    --color-border-default: #e3e5ea;
+    --color-border-focus: #667afd;
+    --color-surface-hover: #f7f8fa;
+    --color-surface-card: #ffffff;
+    --color-success: #16a34a;
+    --color-danger: #dc2626;
+    --color-warning: #d97706;
+    --spacing-sm: 8px;
+    --spacing-xl: 32px;
+    --radius-sm: 4px;
+    --radius-card: 12px;
+    --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { background: #e9ebef; }
+  body { margin: 0; font-family: var(--font); color: var(--color-text-default); font-size: 14px; line-height: 1.5; }
+
+  /* Frame 1200 × auto, igual que "Button - Spec" */
+  .spec { width: 100%; max-width: 1200px; margin: 40px auto; background: var(--color-surface-hover); padding: 64px; display: flex; flex-direction: column; gap: 24px; }
+  .header { display: flex; flex-direction: column; gap: 8px; }
+  .eyebrow { font-size: 12px; font-weight: 500; letter-spacing: .04em; color: var(--color-text-secondary); text-transform: uppercase; }
+  .title { margin: 0; font-size: 24px; font-weight: 700; line-height: 1.2; }
+  .desc { margin: 0; font-size: 14px; color: var(--color-text-secondary); max-width: 800px; }
+  .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .chip { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); background: #fff; border: 1px solid var(--color-border-default); border-radius: 999px; padding: 2px 10px; }
+
+  .card { background: var(--color-surface-card); border: 1px solid var(--color-border-default); border-radius: var(--radius-card); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .card > h2 { margin: 0; font-size: 18px; font-weight: 700; display: flex; align-items: baseline; gap: 10px; }
+  .num { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; color: var(--color-primary-default); background: #eef1ff; border-radius: 4px; padding: 1px 6px; }
+  .card p { margin: 0; }
+  .card h3 { margin: 8px 0 0; font-size: 14px; font-weight: 700; }
+  ul, ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; background: #f1f3f6; border-radius: 4px; padding: 1px 5px; color: #1f2a44; }
+  .assume { font-weight: 600; color: var(--color-warning); white-space: nowrap; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--color-border-default); }
+  th { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); background: #fafbfc; }
+  td.c, th.c { text-align: center; }
+  .yes { color: var(--color-success); font-weight: 700; }
+  .no { color: var(--color-danger); font-weight: 700; }
+  .half { color: var(--color-warning); font-weight: 700; }
+
+  @media (max-width: 1240px) { .spec { margin: 0 auto; padding: 24px; } .cols { grid-template-columns: 1fr !important; } .anat { max-width: 100%; } }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .do, .dont { border-radius: 8px; padding: 14px 16px; }
+  .do { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .dont { background: #fef2f2; border: 1px solid #fecaca; }
+  .do h3, .dont h3 { margin: 0 0 8px; }
+
+  /* ===== Demo: réplica 1:1 de Tabs.module.css ===== */
+  .stage { background: var(--color-surface-hover); border-radius: 8px; padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+  .stage.white { background: #fff; border: 1px dashed var(--color-border-default); }
+  .stage .lbl { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-text-secondary); }
+  .tabs { display: flex; flex-direction: column; align-items: flex-start; width: 100%; }
+  .tabs .row { display: flex; align-items: flex-start; gap: var(--spacing-xl); width: 100%; }
+  .tab { all: unset; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm); flex-shrink: 0; cursor: pointer; }
+  .tab:focus-visible, .tab.is-focus { outline: 2px solid var(--color-border-focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+  .tab .label { font-family: var(--font); font-size: 14px; font-weight: 500; line-height: 1.4; color: var(--color-text-secondary); white-space: nowrap; }
+  .tab.active .label { color: var(--color-primary-default); }
+  .tab .indicator { width: 100%; height: 2px; background: transparent; }
+  .tab.active .indicator { background: var(--color-primary-default); }
+  .tabs .border { height: 1px; flex-shrink: 0; width: 100%; background: var(--color-border-default); }
+  .panel { font-size: 13px; color: var(--color-text-secondary); }
+
+  /* Anatomía numerada */
+  .anat { position: relative; width: 460px; height: 118px; padding-top: 28px; margin-bottom: 8px; }
+  .pin { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: #e11d48; color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; box-shadow: 0 0 0 2px #fff; }
+  .hl { outline: 1.5px dashed #e11d48; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main class="spec" id="tabs-spec">
+
+  <header class="header">
+    <div class="eyebrow">Pharo Design System · Componentes</div>
+    <h1 class="title">Tabs</h1>
+    <p class="desc">Spec del componente <code>Tabs</code> (página Tabs): fila de pestañas con indicador de 2&nbsp;px bajo la pestaña activa y un borde inferior a todo el ancho. Cambia el panel visible dentro de la misma página.</p>
+    <div class="meta">
+      <span class="chip">Componente 483:1652</span>
+      <span class="chip">Usa Tab / Active 483:2 · Tab / Inactive 483:5</span>
+      <span class="chip">2 estados de tab</span>
+      <span class="chip">Código: components/Tabs</span>
+      <span class="chip">Actualizado 14/10/2026</span>
+    </div>
+  </header>
+
+  <!-- 01 -->
+  <section class="card" id="s01">
+    <h2><span class="num">01</span> Qué es</h2>
+    <p><code>Tabs</code> es una fila de pestañas que permite alternar entre paneles de contenido paralelos dentro de la misma página, mostrando uno a la vez.</p>
+  </section>
+
+  <!-- 02 -->
+  <section class="card" id="s02">
+    <h2><span class="num">02</span> Cuándo usarlo</h2>
+    <ul>
+      <li>Para separar las colecciones hijas de un maestro (por ejemplo <em>Categorías</em> y <em>Conceptos</em> de un convenio, o <em>Función</em> y <em>Grupo familiar</em> de un empleado), cada una con su grilla — templates <code>M-04b</code> y <code>M-04c</code>.</li>
+      <li>Para dividir un formulario en grupos de datos de contextos distintos que se completan por separado y no necesitan verse a la vez — template <code>M-03</code> (una <code>Form Section</code> por tab, mínimo 2).</li>
+      <li>Cuando hay entre 2 y 5 secciones con etiqueta corta (1–2 palabras) y la persona no necesita compararlas.</li>
+      <li>Cuando las secciones son independientes: el orden en que se visitan no importa.</li>
+    </ul>
+  </section>
+
+  <!-- 03 -->
+  <section class="card" id="s03">
+    <h2><span class="num">03</span> Cuándo no usarlo</h2>
+    <ul>
+      <li><em>No usar para pasos que dependen unos de otros (alta nueva, larga y secuencial)</em> → usar un <strong>Progress Tracker / wizard</strong> (patrón sin componente propio todavía).</li>
+      <li><em>No usar para un bloque secundario u opcional</em> (datos adicionales, suspensión) → usar <code>Accordion</code> colapsado al final de la pantalla.</li>
+      <li><em>No usar para navegar a otra página o módulo</em> (cambia la URL) → usar el <code>Sidebar</code>, enlaces o <code>Breadcrumb</code>. Las tabs de navegación y las de contenido no se mezclan.</li>
+      <li><em>No usar con una sola colección o grupo</em> → mostrarlo directo en un <code>FormContainer</code> o <code>ChildGridSection</code>, sin tabs.</li>
+      <li><em>No usar cuando la persona debe ver o completar todo a la vez</em> (campos centrales de un registro) → apilar <code>FormContainer</code>.</li>
+      <li><em>No usar más de una fila de tabs por pantalla, ni tabs dentro de tabs</em> → reorganizar con una sola fila y <code>FormContainer</code>/<code>Accordion</code> dentro de cada panel.</li>
+      <li><em>No usar con muchas opciones (más de 5–6) o etiquetas largas</em> → agrupar mejor, o usar un <code>Select</code>/lista lateral.</li>
+    </ul>
+  </section>
+
+  <!-- 04 -->
+  <section class="card" id="s04">
+    <h2><span class="num">04</span> Variantes</h2>
+    <p><code>Tabs</code> no tiene variantes de tamaño, jerarquía ni estilo: un único tamaño (Medium, texto 14&nbsp;px) y una única presentación. Lo que cambia es el <strong>estado de cada tab</strong>, resuelto en Figma como dos componentes separados (no como un component set).</p>
+    <table>
+      <thead><tr><th>Variante</th><th>Para qué sirve</th><th>Ejemplo de uso</th></tr></thead>
+      <tbody>
+        <tr><td><code>Tab / Active</code></td><td>La pestaña cuyo panel está visible: texto en color primario e indicador de 2&nbsp;px.</td><td>"Categorías" cuando se está viendo la grilla de categorías de un convenio.</td></tr>
+        <tr><td><code>Tab / Inactive</code></td><td>Una pestaña disponible pero no seleccionada: texto secundario, sin indicador.</td><td>"Conceptos" mientras se ve "Categorías".</td></tr>
+      </tbody>
+    </table>
+    <div class="stage">
+      <div class="lbl">Ejemplo — 3 tabs, la primera activa</div>
+      <div class="tabs"><div class="row" role="tablist">
+        <button class="tab active"><span class="label">Datos generales</span><span class="indicator"></span></button>
+        <button class="tab"><span class="label">Contactos</span><span class="indicator"></span></button>
+        <button class="tab"><span class="label">Documentos</span><span class="indicator"></span></button>
+      </div><div class="border"></div></div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="card" id="s05">
+    <h2><span class="num">05</span> Estados</h2>
+    <ul>
+      <li><strong>Default (inactiva):</strong> label <code>color/text/secondary</code> (<code>#6a7883</code>), indicador sin relleno. Cursor de mano.</li>
+      <li><strong>Selected (activa):</strong> label <code>color/primary/default</code> (<code>#4059fd</code>) e indicador de 2&nbsp;px del mismo color. Exactamente una por fila. Es el único estado que existe como componente en Figma además del inactivo.</li>
+      <li><strong>Focus (<code>focus-visible</code>):</strong> anillo de 2&nbsp;px <code>color/border/focus</code> (<code>#667afd</code>) a 2&nbsp;px de distancia, esquinas <code>radius/sm</code>. Existe solo en código.</li>
+      <li><strong>Hover:</strong> no definido — hoy solo cambia el cursor. <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Pressed:</strong> no definido. <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Disabled:</strong> no existe — el componente no soporta tabs deshabilitadas. Si hay una sección no disponible, no se muestra su tab.</li>
+    </ul>
+    <h3>Matriz Variante × Estado</h3>
+    <table>
+      <thead><tr><th>Variante</th><th class="c">Default</th><th class="c">Hover</th><th class="c">Focus</th><th class="c">Pressed</th><th class="c">Disabled</th></tr></thead>
+      <tbody>
+        <tr><td><code>Tab / Active</code></td><td class="c"><span class="yes">✓</span> Figma · ✓ código</td><td class="c"><span class="no">✗</span> Figma · ✗ código</td><td class="c"><span class="no">✗</span> Figma · <span class="yes">✓</span> código</td><td class="c"><span class="no">✗</span> / ✗</td><td class="c"><span class="no">✗</span> / ✗</td></tr>
+        <tr><td><code>Tab / Inactive</code></td><td class="c"><span class="yes">✓</span> Figma · ✓ código</td><td class="c"><span class="no">✗</span> Figma · ✗ código</td><td class="c"><span class="no">✗</span> Figma · <span class="yes">✓</span> código</td><td class="c"><span class="no">✗</span> / ✗</td><td class="c"><span class="no">✗</span> / ✗</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Huecos:</strong> Hover, Focus y Pressed no existen en Figma; Focus sí está en código y debe dibujarse en Figma para que diseño y código coincidan.</p>
+    <div class="stage">
+      <div class="lbl">Referencia visual — Default · Selected · Focus</div>
+      <div class="tabs"><div class="row">
+        <button class="tab"><span class="label">Inactiva</span><span class="indicator"></span></button>
+        <button class="tab active"><span class="label">Activa</span><span class="indicator"></span></button>
+        <button class="tab is-focus"><span class="label">Inactiva con foco</span><span class="indicator"></span></button>
+      </div><div class="border"></div></div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="card" id="s06">
+    <h2><span class="num">06</span> Anatomía</h2>
+    <div class="anat" aria-hidden="true">
+      <span class="pin" style="left:-4px;top:2px">1</span>
+      <span class="pin" style="left:20px;top:2px">2</span>
+      <span class="pin" style="left:116px;top:2px">3</span>
+      <div class="tabs hl" style="width:460px"><div class="row hl">
+        <button class="tab active"><span class="label hl">Datos generales</span><span class="indicator hl"></span></button>
+        <button class="tab"><span class="label">Contactos</span><span class="indicator"></span></button>
+        <button class="tab"><span class="label">Documentos</span><span class="indicator"></span></button>
+      </div><div class="border hl"></div></div>
+      <span class="pin" style="left:18px;top:84px">4</span>
+      <span class="pin" style="left:110px;top:84px">5</span>
+      <span class="pin" style="left:440px;top:84px">6</span>
+    </div>
+    <ol>
+      <li><strong>Contenedor</strong> (<code>Tabs</code>) — obligatorio. Frame vertical sin padding (alto: 30&nbsp;px de la fila + 1&nbsp;px de borde). Ancho ajustable (FILL en el contenedor que lo use).</li>
+      <li><strong>Fila</strong> (<code>Row</code>) — obligatoria. Frame horizontal, 32&nbsp;px entre tabs (<code>spacing/xl</code>), alineada arriba.</li>
+      <li><strong>Tab</strong> (<code>Tab 1</code>, <code>Tab 2</code>… instancias de <code>Tab / Active</code> o <code>Tab / Inactive</code>) — obligatoria, mínimo 2. Hug del contenido; 8&nbsp;px entre label e indicador (<code>spacing/sm</code>).</li>
+      <li><strong>Label</strong> (<code>Label</code>, texto) — obligatoria. Inter Medium 14&nbsp;px, alto de línea 20&nbsp;px, una sola línea.</li>
+      <li><strong>Indicador</strong> (<code>Indicator</code>, rectángulo de 2&nbsp;px de alto, mismo ancho que el label) — obligatorio en la estructura; solo tiene relleno en la tab activa.</li>
+      <li><strong>Borde inferior</strong> (<code>Bottom border</code>, 1&nbsp;px, <code>color/border/default</code>) — obligatorio. Ocupa todo el ancho y queda debajo del indicador.</li>
+    </ol>
+  </section>
+
+  <!-- 07 -->
+  <section class="card" id="s07">
+    <h2><span class="num">07</span> Propiedades (Figma)</h2>
+    <p>Leídas del archivo (<code>componentPropertyDefinitions</code>). <code>Tabs</code> no define propiedades propias; el estado de cada tab se elige <strong>intercambiando la instancia</strong> (<code>Tab / Active</code> ↔ <code>Tab / Inactive</code>).</p>
+    <table>
+      <thead><tr><th>Propiedad</th><th>Tipo (Figma)</th><th>Valores</th><th>Default</th><th>Notas</th></tr></thead>
+      <tbody>
+        <tr><td><em>(ninguna)</em> en <code>Tabs</code></td><td>—</td><td>—</td><td>—</td><td>La cantidad de tabs se arma duplicando/quitando instancias dentro de <code>Row</code>.</td></tr>
+        <tr><td><code>Label</code> en <code>Tab / Active</code></td><td>Text</td><td>texto libre</td><td><code>Lorem ipsum</code></td><td>1–2 palabras.</td></tr>
+        <tr><td><code>Label</code> en <code>Tab / Inactive</code></td><td>Text</td><td>texto libre</td><td><code>Lorem ipsum</code></td><td>Idem.</td></tr>
+      </tbody>
+    </table>
+    <h3>Combinaciones inválidas</h3>
+    <ul>
+      <li>Más de una <code>Tab / Active</code> en la misma fila, o ninguna: siempre exactamente una.</li>
+      <li>Una sola tab en la fila: no hay nada que alternar (ver "Cuándo no usarlo").</li>
+    </ul>
+    <h3>API en código (<code>app/src/components/Tabs</code>)</h3>
+    <table>
+      <thead><tr><th>Prop</th><th>Tipo</th><th>Notas</th></tr></thead>
+      <tbody>
+        <tr><td><code>items</code></td><td><code>{ id, label }[]</code></td><td>Las tabs, en orden.</td></tr>
+        <tr><td><code>value</code></td><td><code>string</code></td><td><code>id</code> de la tab activa. <strong>Totalmente controlado</strong>: la pantalla es dueña del estado.</td></tr>
+        <tr><td><code>onChange</code></td><td><code>(id) =&gt; void</code></td><td>Se dispara al elegir una tab; la pantalla decide qué panel mostrar.</td></tr>
+        <tr><td><code>className</code></td><td><code>string</code></td><td>Opcional.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 08 -->
+  <section class="card" id="s08">
+    <h2><span class="num">08</span> Reglas de uso</h2>
+    <div class="cols">
+      <div class="do">
+        <h3>✅ Hacer</h3>
+        <ul>
+          <li>Una sola fila de tabs por pantalla, pegada al panel que controla.</li>
+          <li>Entre 2 y 5 tabs; etiquetas de 1–2 palabras, sin puntuación final, con solo la primera letra en mayúscula.</li>
+          <li>Mantener el mismo orden de tabs entre las vistas Crear, Visualizar y Editar.</li>
+          <li>Dejar una tab activa al abrir la pantalla (la primera por defecto).</li>
+          <li>Usar tabs para colecciones o grupos del <em>mismo peso</em>; lo opcional va en <code>Accordion</code>.</li>
+          <li>Usar solo los tokens del kit (<code>color/primary/default</code>, <code>color/text/secondary</code>, <code>color/border/default</code>, <code>spacing/sm</code>, <code>spacing/xl</code>).</li>
+          <li>Colocar <code>Tabs</code> sin margen superior propio: el espacio lo pone el contenedor (<code>FormContainer</code> añade su gap de 24&nbsp;px).</li>
+        </ul>
+      </div>
+      <div class="dont">
+        <h3>❌ No hacer</h3>
+        <ul>
+          <li>Anidar tabs dentro de tabs, o apilar dos filas de tabs.</li>
+          <li>Mezclar tabs de navegación (cambian de página) con tabs de contenido.</li>
+          <li>Esconder en una tab un campo obligatorio: un error de validación quedaría oculto.</li>
+          <li>Cambiar el ancho, el tipo o el peso de la letra para marcar la activa: el estado lo marcan el color y el indicador.</li>
+          <li>Poner tabs que dependan del paso anterior (eso es un wizard).</li>
+          <li>Usar tabs para menos de dos secciones o para más de seis.</li>
+          <li>Hardcodear colores o separaciones que no salgan de <code>tokens.css</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="card" id="s09">
+    <h2><span class="num">09</span> Notas de accesibilidad</h2>
+    <p>Patrón de referencia: <strong>WAI-ARIA APG — Tabs Pattern</strong>.</p>
+
+    <h3>Teclado</h3>
+    <table>
+      <thead><tr><th>Tecla</th><th>Acción</th><th>Estado en el código</th></tr></thead>
+      <tbody>
+        <tr><td><code>Tab</code> / <code>Shift+Tab</code></td><td>Entra y sale de la fila de tabs. Hoy cada tab es un <code>&lt;button&gt;</code> y entra al orden de foco por separado.</td><td><span class="yes">✓</span> (comportamiento actual)</td></tr>
+        <tr><td><code>Enter</code> / <code>Espacio</code></td><td>Activa la tab con foco.</td><td><span class="yes">✓</span> (nativo del botón)</td></tr>
+        <tr><td><code>←</code> / <code>→</code></td><td>Mueve el foco a la tab anterior/siguiente (con vuelta circular) y la activa. <span class="assume">[Supuesto — validar]</span></td><td><span class="no">✗</span> no implementado</td></tr>
+        <tr><td><code>Home</code> / <code>End</code></td><td>Foco a la primera/última tab. <span class="assume">[Supuesto — validar]</span></td><td><span class="no">✗</span> no implementado</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Orden de foco:</strong> de izquierda a derecha, igual que el orden visual. El componente no mueve el foco al cambiar de tab. Según APG lo recomendado es "roving tabindex": solo la tab activa entra con <code>Tab</code> y las demás se alcanzan con flechas — pendiente.</p>
+
+    <h3>Lector de pantalla</h3>
+    <ul>
+      <li><strong>Roles:</strong> contenedor <code>role="tablist"</code>; cada tab <code>role="tab"</code> con <code>aria-selected="true|false"</code>. Nombre accesible = el texto del label.</li>
+      <li><strong>Se lee:</strong> "Categorías, pestaña, seleccionada, 2 de 3" / "Conceptos, pestaña, no seleccionada, 3 de 3".</li>
+      <li><strong>Falta (APG):</strong> <code>aria-controls</code> en cada tab, y en el panel <code>role="tabpanel"</code> con <code>aria-labelledby</code> apuntando a su tab. Hoy el panel lo arma cada pantalla y no está vinculado. <span class="assume">[Supuesto — validar]</span></li>
+      <li>Si el contenido de una tab tiene un error de validación, anunciarlo en el resumen de errores del formulario (la tab no lo comunica por sí sola).</li>
+    </ul>
+
+    <h3>Visual</h3>
+    <table>
+      <thead><tr><th>Elemento</th><th>Combinación</th><th>Contraste</th><th>Criterio</th></tr></thead>
+      <tbody>
+        <tr><td>Label activa</td><td><code>#4059fd</code> sobre <code>#ffffff</code></td><td>5,17 : 1</td><td><span class="yes">✓</span> AA texto (4,5)</td></tr>
+        <tr><td>Label inactiva (sobre tarjeta blanca)</td><td><code>#6a7883</code> sobre <code>#ffffff</code></td><td>4,54 : 1</td><td><span class="yes">✓</span> AA, margen mínimo</td></tr>
+        <tr><td>Label inactiva (sobre fondo de página)</td><td><code>#6a7883</code> sobre <code>#f7f8fa</code></td><td>4,27 : 1</td><td><span class="no">✗</span> no llega a 4,5</td></tr>
+        <tr><td>Indicador activo</td><td><code>#4059fd</code> sobre <code>#ffffff</code></td><td>5,17 : 1</td><td><span class="yes">✓</span> UI (3,0)</td></tr>
+        <tr><td>Anillo de foco</td><td><code>#667afd</code> sobre <code>#ffffff</code></td><td>3,64 : 1</td><td><span class="yes">✓</span> foco (3,0)</td></tr>
+        <tr><td>Borde inferior</td><td><code>#e3e5ea</code> sobre <code>#ffffff</code></td><td>1,26 : 1</td><td>Decorativo; no comunica estado.</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><strong>No depende solo del color:</strong> la tab activa se distingue por color <em>y</em> por el indicador de 2&nbsp;px.</li>
+      <li><strong>Área táctil:</strong> alto de la tab 30&nbsp;px y ancho = texto. Cumple el mínimo AA (24×24) pero no el recomendado (44×44): <span class="assume">[Supuesto — validar]</span> ampliar el área clicable sin cambiar el aspecto (como ya hace <code>ToggleIcon</code>).</li>
+      <li><strong>Movimiento:</strong> el componente no tiene animación, no requiere <code>prefers-reduced-motion</code>.</li>
+    </ul>
+  </section>
+
+  <!-- 10 -->
+  <section class="card" id="s10">
+    <h2><span class="num">10</span> Componentes átomo relacionados</h2>
+    <h3>Usa internamente</h3>
+    <ul>
+      <li><code>Tab / Active</code> y <code>Tab / Inactive</code> (componentes de Figma que contienen <code>Label</code> e <code>Indicator</code>).</li>
+      <li>El borde inferior es un frame propio (<code>Bottom border</code>), no un componente <code>Divider</code>.</li>
+    </ul>
+    <h3>Hermanos / alternativos</h3>
+    <table>
+      <thead><tr><th>Componente</th><th>Elegirlo cuando…</th></tr></thead>
+      <tbody>
+        <tr><td><code>Accordion</code></td><td>El bloque es opcional o secundario, pueden convivir varios abiertos y no se compara con el resto.</td></tr>
+        <tr><td><code>FormContainer</code></td><td>El contenido es central y debe verse siempre; es el contenedor por defecto.</td></tr>
+        <tr><td>Progress Tracker (sin componente)</td><td>Los pasos son secuenciales y dependientes (solo altas nuevas).</td></tr>
+        <tr><td><code>Sidebar</code> / <code>Breadcrumb</code></td><td>La acción cambia de página o módulo (navegación, no contenido).</td></tr>
+        <tr><td><code>ChildGridSection</code></td><td>Es el <em>contenido</em> típico de cada tab en M-04c: una colección hija con su grilla.</td></tr>
+      </tbody>
+    </table>
+    <div class="stage white">
+      <div class="lbl">Uso real — tabs sobre una colección hija (M-04c)</div>
+      <div class="tabs"><div class="row">
+        <button class="tab active"><span class="label">Categorías</span><span class="indicator"></span></button>
+        <button class="tab"><span class="label">Conceptos</span><span class="indicator"></span></button>
+      </div><div class="border"></div></div>
+      <div class="panel">↳ <code>ChildGridSection</code> «Categorías» con su <code>DataGrid</code>.</div>
+    </div>
+  </section>
+
+  <!-- Pendientes -->
+  <section class="card" id="pendientes">
+    <h2>Pendientes</h2>
+    <ul>
+      <li><strong>Estados faltantes en Figma:</strong> dibujar Focus (ya existe en código) y decidir si hay Hover/Pressed. Para eso conviene convertir <code>Tab / Active</code> + <code>Tab / Inactive</code> en un component set con propiedad <code>State</code> (y valores como <code>Active</code>, <code>Inactive</code>, <code>Focus</code>). <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Teclado:</strong> agregar flechas ←/→, Home/End y "roving tabindex"; vincular <code>aria-controls</code> y <code>role="tabpanel"</code>/<code>aria-labelledby</code>. <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Contraste:</strong> la label inactiva sobre el fondo de página (<code>#f7f8fa</code>) da 4,27:1 (&lt; 4,5). Funciona sobre blanco (4,54:1) con margen mínimo; revisar el token <code>color/text/secondary</code> o evitar tabs sobre gris.</li>
+      <li><strong>Área táctil:</strong> 30&nbsp;px de alto; evaluar ampliar a 44&nbsp;px en puntero táctil.</li>
+      <li><strong>Margen superior:</strong> Figma tenía 16&nbsp;px de padding arriba del componente; se eliminó el 14/10/2026 para igualar el código (que no lo tiene porque el contenedor ya aporta el espacio). Confirmar con diseño.</li>
+      <li><strong>Overflow:</strong> con muchas tabs o en pantallas angostas no hay comportamiento definido (scroll horizontal, menú "más"). <span class="assume">[Supuesto — validar]</span></li>
+      <li><strong>Handoff dev:</strong> falta la página <code>Tabs - Handoff Dev</code> (sizing, tokens, responsive, edge cases).</li>
+    </ul>
+  </section>
+
+</main>
+
+<script>
+  // Demo mínimo: las tabs de ejemplo se pueden clickear (una activa por fila).
+  document.querySelectorAll('.tabs .row').forEach(function (row) {
+    row.addEventListener('click', function (e) {
+      var tab = e.target.closest('.tab'); if (!tab || tab.classList.contains('is-focus')) return;
+      row.querySelectorAll('.tab').forEach(function (t) { if (!t.classList.contains('is-focus')) t.classList.remove('active'); });
+      tab.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

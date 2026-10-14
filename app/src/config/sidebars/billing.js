@@ -7,6 +7,8 @@
 // de App.jsx, mismo criterio ya usado en MAIN_SIDEBAR_PROPS para ítems sin
 // Figma definido: `icon: 'app-window'` y el href no resuelve a ninguna ruta
 // hasta que se construya esa pantalla.
+import { MAESTROS_BILLING } from '../maestrosModulos.js';
+
 export const BILLING_SIDEBAR_PROPS = {
   brandLabel: 'Billing',
   brandIcon: 'icon-truckshift',
@@ -16,10 +18,14 @@ export const BILLING_SIDEBAR_PROPS = {
     {
       label: 'Maestros',
       icon: 'icon-maestros',
+      // Condiciones impositivas, Servicios y Clientes tienen pantalla propia; el resto sale de config/maestrosModulos.js
+      // (grilla estándar con datos de ejemplo). Orden alfabético.
       items: [
+        { label: 'Condiciones impositivas', icon: 'app-window', href: '/billing/condiciones-impositivas' },
+        { label: 'Servicios', icon: 'app-window', href: '/billing/servicios' },
         { label: 'Clientes', icon: 'app-window', href: '/billing/clientes' },
-        { label: 'Tarifas', icon: 'app-window', href: '/billing/tarifas' },
-      ],
+        ...MAESTROS_BILLING,
+      ].map(({ label, icon, href }) => ({ label, icon, href })).sort((x, y) => x.label.localeCompare(y.label, 'es')),
     },
     {
       label: 'Procesos',

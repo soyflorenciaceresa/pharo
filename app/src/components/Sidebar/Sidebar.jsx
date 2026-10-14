@@ -128,7 +128,7 @@ export default function Sidebar({
             <Icon name="bi-pin-angle" size={16} />
           </span>
           <span className={styles.pinFilled}>
-            <Icon name="bi-pin-fill" size={16} />
+            <Icon name="bi-pin" size={16} />
           </span>
         </button>
       </div>
@@ -193,7 +193,7 @@ export default function Sidebar({
                   onClick={() => setOpenGroup(openGroup === gi ? -1 : gi)}
                 >
                   <span className={styles.icon}>
-                    <Icon name={group.icon || 'bi-archive-fill'} size={16} />
+                    <Icon name={group.icon || 'bi-archive'} size={16} />
                   </span>
                   <span className={styles.label}>{group.label || ''}</span>
                   <span className={styles.chevron}>

@@ -97,6 +97,7 @@ function renderBlock(block, key) {
         actions={block.actions}
         searchable={block.searchable}
         emptyMessage={block.emptyMessage}
+        extraActions={block.extraActions}
       />
     );
   }

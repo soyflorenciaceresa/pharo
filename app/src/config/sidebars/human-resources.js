@@ -7,6 +7,8 @@
 // de App.jsx, mismo criterio ya usado en MAIN_SIDEBAR_PROPS para ítems sin
 // Figma definido: `icon: 'app-window'` y el href no resuelve a ninguna ruta
 // hasta que se construya esa pantalla.
+import { MAESTROS_HUMAN_RESOURCES } from '../maestrosModulos.js';
+
 export const HUMAN_RESOURCES_SIDEBAR_PROPS = {
   brandLabel: 'Human Resources',
   brandIcon: 'icon-administracion',
@@ -16,10 +18,8 @@ export const HUMAN_RESOURCES_SIDEBAR_PROPS = {
     {
       label: 'Maestros',
       icon: 'icon-maestros',
-      items: [
-        { label: 'Empleados', icon: 'app-window', href: '/human-resources/empleados' },
-        { label: 'Puestos', icon: 'app-window', href: '/human-resources/puestos' },
-      ],
+      // Todos los maestros salen de config/maestrosModulos.js (grilla estándar con datos de ejemplo). Orden alfabético.
+      items: MAESTROS_HUMAN_RESOURCES.map(({ label, icon, href }) => ({ label, icon, href })).sort((x, y) => x.label.localeCompare(y.label, 'es')),
     },
     {
       label: 'Procesos',

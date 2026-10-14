@@ -21,6 +21,8 @@ export default function LayoutMaestroDataGrid({
   reloadLabel = 'Recargar',
   onExport,
   exportLabel = 'Exportar',
+  onImport,
+  importLabel = 'Importar',
   columns,
   rows,
   selectable = false,
@@ -32,6 +34,7 @@ export default function LayoutMaestroDataGrid({
   const primary = onNew ? { label: newLabel, iconStart: 'icon-plus', onClick: onNew } : undefined;
   const secondaryActions = [
     onReload && { label: reloadLabel, iconStart: 'icon-refresh', onClick: onReload },
+    onImport && { label: importLabel, iconStart: 'bi-upload', onClick: onImport },
     onExport && { label: exportLabel, iconStart: 'icon-export', onClick: onExport },
   ].filter(Boolean);
 
